@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="gametitle">
+        <h1>ft_transcendence</h1>
+    </div>
+    <div class="container">
+        <h1>Register Users</h1>
+        <form id="registrationForm">
+            <div id="userInputs">
+                <div class="input-group" id="input-group-1">
+                    <label for="playername1">Player 1:</label>
+                    <div class="input-group-under">
+                        <input type="text" id="playername1" name="playername1" required>
+                        <button type="button" class="deletePlayer">X</button>
+                    </div>
+                </div>
+            </div>
+            <button type="button" id="addUserButton">Add Another Player</button>
+            <button type="submit">Start Game</button>
+        </form>
+    </div>
+    <script src="script.js" defer></script>
+</body>
+</html>
