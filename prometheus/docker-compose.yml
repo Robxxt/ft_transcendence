@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./config.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+
+volumes:
+  prometheus-data:
+    driver: local
