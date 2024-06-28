@@ -11,16 +11,19 @@
 // import the module as <filenameBase>Module !!!
 import * as loginModule from './login.js';
 import * as pongModule from './pong.js';
+import * as errorModule from './error.js';
 
 // routes are being mapped to modules
 const routes = {
     '/': loginModule,
-    '/login': loginModule
-    '/pong': pongModule
+    '/login': loginModule,
+    '/pong': pongModule,
+    '/404': errorModule,
     // we are adding our routes here
 };
 
 function navigateTo(path) {
+    console.log('Navigating to:', path);
     window.history.pushState({}, "", window.location.origin + path);
     loadContent(path);
 }
@@ -33,9 +36,12 @@ function loadContent(path) {
     app.innerHTML = '';
 
     // loadPage(app) is the entry point function of the route
-    let module = routes[path];
-    if (typeof module.loadPage === 'function') {
-        module.loadPage(app);
+    // let module = routes[path];
+    const route = routes[path] || routes['/404'];
+    if (typeof route.loadPage === 'function') {
+        route.loadPage(app);
+    } else {
+        console.error(`Route ${path} does not have a loadPage function`);
     }
 }
 
@@ -43,8 +49,21 @@ window.onpopstate = () => {
     loadContent(window.location.pathname);
 };
 
-// Default route
-document.addEventListener('DOMContentLoaded', () => {
+function initRouter() {
+    // Add event listeners for internal navigation
+    document.body.addEventListener('click', (e) => {
+        if (e.target.matches('[data-link]')) {
+            e.preventDefault();
+            navigateTo(new URL(e.target.href).pathname);
+        }
+    });
+
+    // Load initial content
     const path = window.location.pathname === '/' ? '/login' : window.location.pathname;
+    console.log('Initial path:', path);
     navigateTo(path);
-});
+}
+
+// Start the router when the DOM is ready
+document.addEventListener('DOMContentLoaded', initRouter);
+
