@@ -13,12 +13,58 @@ class PongGame {
       this.score2 = 0;
       this.paddleHeight = 100;
       this.paddleWidth = 10;
+      this.gameOver = false;
+      this.winner = null;
+  
+      this.keys = {
+        w: false,
+        s: false,
+        arrowUp: false,
+        arrowDown: false
+      };
+  
+      window.addEventListener('keydown', this.handleKeyDown.bind(this));
+      window.addEventListener('keyup', this.handleKeyUp.bind(this));
+    }
+  
+    handleKeyDown(e) {
+      if (e.key === 'w') this.keys.w = true;
+      if (e.key === 's') this.keys.s = true;
+      if (e.key === 'ArrowUp') this.keys.arrowUp = true;
+      if (e.key === 'ArrowDown') this.keys.arrowDown = true;
+    }
+  
+    handleKeyUp(e) {
+      if (e.key === 'w') this.keys.w = false;
+      if (e.key === 's') this.keys.s = false;
+      if (e.key === 'ArrowUp') this.keys.arrowUp = false;
+      if (e.key === 'ArrowDown') this.keys.arrowDown = false;
     }
   
     update() {
+      if (this.gameOver) return;
+  
+      this.movePaddles();
       this.moveBall();
       this.checkCollisions();
-      this.moveComputerPaddle();
+    }
+  
+    movePaddles() {
+      // Player 1 (Left paddle)
+      if (this.keys.w && this.paddle1Y > 0) {
+        this.paddle1Y -= 5;
+      }
+      if (this.keys.s && this.paddle1Y < this.canvas.height - this.paddleHeight) {
+        this.paddle1Y += 5;
+      }
+  
+      // Player 2 (Right paddle)
+      if (this.keys.arrowUp && this.paddle2Y > 0) {
+        this.paddle2Y -= 5;
+      }
+      if (this.keys.arrowDown && this.paddle2Y < this.canvas.height - this.paddleHeight) {
+        this.paddle2Y += 5;
+      }
     }
   
     moveBall() {
@@ -43,19 +89,22 @@ class PongGame {
       // Ball out of bounds
       if (this.ballX < 0) {
         this.score2++;
+        this.checkGameOver();
         this.resetBall();
       } else if (this.ballX > this.canvas.width) {
         this.score1++;
+        this.checkGameOver();
         this.resetBall();
       }
     }
   
-    moveComputerPaddle() {
-      const paddleCenter = this.paddle2Y + this.paddleHeight / 2;
-      if (paddleCenter < this.ballY - 35) {
-        this.paddle2Y += 6;
-      } else if (paddleCenter > this.ballY + 35) {
-        this.paddle2Y -= 6;
+    checkGameOver() {
+      if (this.score1 >= 2) {
+        this.gameOver = true;
+        this.winner = 'Player 1';
+      } else if (this.score2 >= 2) {
+        this.gameOver = true;
+        this.winner = 'Player 2';
       }
     }
   
@@ -85,16 +134,17 @@ class PongGame {
       this.ctx.font = '30px Arial';
       this.ctx.fillText(this.score1, 100, 50);
       this.ctx.fillText(this.score2, this.canvas.width - 100, 50);
-    }
   
-    handleMouseMove(event) {
-      const rect = this.canvas.getBoundingClientRect();
-      const mouseY = event.clientY - rect.top - this.paddleHeight / 2;
-      this.paddle1Y = Math.max(0, Math.min(this.canvas.height - this.paddleHeight, mouseY));
+      // Draw game over message
+      if (this.gameOver) {
+        this.ctx.fillStyle = 'white';
+        this.ctx.font = '40px Arial';
+        this.ctx.textAlign = 'center';
+        this.ctx.fillText(`Game Over! ${this.winner} wins!`, this.canvas.width / 2, this.canvas.height / 2);
+      }
     }
   
     start() {
-      this.canvas.addEventListener('mousemove', this.handleMouseMove.bind(this));
       this.gameLoop();
     }
   
@@ -106,22 +156,29 @@ class PongGame {
   }
   
   // Export the PongGame class
-export default PongGame;
+  export default PongGame;
 
 export function loadPage(app) {
     // document.getElementById('app').innerHTML = `
     app.innerHTML = `
       <div class="container mt-5">
-        <h1 class="text-center mb-4">Pong Game</h1>
+        <h1 class="text-center mb-4">Two-Player Pong Game</h1>
+        <div class="row justify-content-center mb-3">
+            <div class="col-auto">
+                <p><strong>Player 1:</strong> Use 'W' and 'S' keys to move up and down</p>
+                <p><strong>Player 2:</strong> Use 'Arrow Up' and 'Arrow Down' keys to move up and down</p>
+                <p>First player to score 2 points wins!</p>
+            </div>
+        </div>
         <div class="row justify-content-center">
-          <div class="col-auto">
-            <canvas id="pongCanvas" width="800" height="400"></canvas>
-          </div>
+            <div class="col-auto">
+                <canvas id="pongCanvas" width="800" height="400"></canvas>
+            </div>
         </div>
         <div class="row justify-content-center mt-3">
-          <div class="col-auto">
-            <button id="startButton" class="btn btn-primary">Start Game</button>
-          </div>
+            <div class="col-auto">
+                <button id="startButton" class="btn btn-primary">Start Game</button>
+            </div>
         </div>
       </div>
     `;
