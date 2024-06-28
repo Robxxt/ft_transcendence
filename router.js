@@ -10,12 +10,13 @@
 
 // import the module as <filenameBase>Module !!!
 import * as loginModule from './login.js';
+import * as pongModule from './pong.js';
 
 // routes are being mapped to modules
 const routes = {
     '/': loginModule,
     '/login': loginModule
-    // '/game': gameModule
+    '/pong': pongModule
     // we are adding our routes here
 };
 
