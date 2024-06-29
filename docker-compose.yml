@@ -22,6 +22,15 @@ services:
         ipv4_address: 10.5.0.7
     volumes:
       - grafana-storage:/var/lib/grafana
+  
+  node_exporter:
+    image: prom/node-exporter
+    container_name: tr_node_exporter
+    ports:
+      - "9100:9100"
+    networks:
+      tr_net:
+        ipv4_address: 10.5.0.8
 
 volumes:
   grafana-storage:
