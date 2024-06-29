@@ -6,6 +6,9 @@ services:
     container_name: tr_prometheus
     ports:
       - "9090:9090"
+    networks:
+      tr_net:
+        ipv4_address: 10.5.0.6
     volumes:
       - ./prometheus-config.yml:/etc/prometheus/prometheus.yml
   grafana:
@@ -14,9 +17,20 @@ services:
     restart: unless-stopped
     ports:
       - "3000:3000"
+    networks:
+      tr_net:
+        ipv4_address: 10.5.0.7
     volumes:
       - grafana-storage:/var/lib/grafana
 
 volumes:
   grafana-storage:
     driver: local
+
+networks:
+  tr_net:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 10.5.0.0/24
+         gateway: 10.5.0.1
