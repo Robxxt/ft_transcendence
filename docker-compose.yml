@@ -10,7 +10,7 @@ services:
       tr_net:
         ipv4_address: 10.5.0.6
     volumes:
-      - ./prometheus-config.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus/prometheus-config.yml:/etc/prometheus/prometheus.yml
   grafana:
     image: grafana/grafana
     container_name: tr_grafana
@@ -21,7 +21,12 @@ services:
       tr_net:
         ipv4_address: 10.5.0.7
     volumes:
-      - grafana-storage:/var/lib/grafana
+      - ./datasources:/etc/grafana/provisioning/datasources
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin  # Set the admin password
+    depends_on:
+      - prometheus  # Ensure Prometheus starts before Grafana
+
   
   node_exporter:
     image: prom/node-exporter
