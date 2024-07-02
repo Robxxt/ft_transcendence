@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-zb5$j3wdwu1l*p*y50=hnoty_g7n(qc-pibyrb3h6s9l3o+n%=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['transcendence.com', '127.0.0.1']
 
 
 # Application definition
@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'user_auth',
+    'rest_framework'
 ]
 
 MIDDLEWARE = [
@@ -75,8 +77,12 @@ WSGI_APPLICATION = 'db.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'ping_pong_user',
+        'USER': 'thesheriff',
+        'PASSWORD': 'test123',
+        'HOST': 'localhost',
+        'PORT': '',
     }
 }
 
