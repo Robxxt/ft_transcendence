@@ -10,11 +10,13 @@
 
 // import the module as <filenameBase>Module !!!
 import * as loginModule from './login.js';
+import * as startModule from './start.js';
 
 // routes are being mapped to modules
 const routes = {
     '/': loginModule,
-    '/login': loginModule
+    '/login': loginModule,
+    '/start': startModule
     // '/game': gameModule
     // we are adding our routes here
 };
@@ -25,6 +27,9 @@ function navigateTo(path) {
 }
 
 function loadContent(path) {
+    
+    console.log("path " + path);
+
     // everything is created in the <div> tag called app
     const app = document.getElementById('app');
 
@@ -39,11 +44,15 @@ function loadContent(path) {
 }
 
 window.onpopstate = () => {
+    console.log("here");
     loadContent(window.location.pathname);
 };
 
 // Default route
 document.addEventListener('DOMContentLoaded', () => {
-    const path = window.location.pathname === '/' ? '/login' : window.location.pathname;
+    console.log("begin");
+    let path = window.location.pathname;
+    if (path == "/")
+        path = "/login";
     navigateTo(path);
 });
