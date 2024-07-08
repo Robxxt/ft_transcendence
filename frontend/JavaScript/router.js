@@ -17,7 +17,8 @@ export function navigateTo(url) {
 function router() {
     const path = window.location.pathname;
     const loadRoute = routes[path];
-
+    console.log("path: " + path);
+    console.log("loadRoute: " + loadRoute);
     // set user item in local storage if we come here first
     if (localStorage.getItem("user") == null)
         localStorage.setItem("user", JSON.stringify({isLoggedIn : false}));

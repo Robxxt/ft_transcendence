@@ -1,7 +1,7 @@
 import { navigateTo } from './router.js';
 
 export function loadPage(app) {
-    fetch('profile.html')
+    fetch('frontend/HTML/start.html')
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok ' + response.statusText);
@@ -15,6 +15,7 @@ export function loadPage(app) {
                 navigateTo("/login");
                 return;
             }
+
             app.innerHTML = html;
         })
         .catch(error => {

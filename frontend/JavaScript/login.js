@@ -1,7 +1,7 @@
 import { navigateTo } from './router.js';
 
 export function loadPage(app) {
-    fetch('login.html')
+    fetch('frontend/HTML/login.html')
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok ' + response.statusText);
