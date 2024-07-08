@@ -1,19 +1,24 @@
-// Function to create NavBar
+import { navigateTo } from './router.js';
+
+// function to create NavBar
 export function createNavBar() {
     const navBar = document.getElementById('navBar');
     navBar.innerHTML = `
-        <a href="/profile" data-link>Profile</a>
-        <a href="/dashboard" data-link>Dashboard</a>
-        <button id="logoutButton">Logout</button>
+        <a href="/dashboard" data-link="true">Dashboard</a>
+        <a href="/profile" data-link="true">Profile</a>
+        <a href="/profile" data-link="true">${JSON.parse(localStorage.getItem('user')).name}</a>
         <img id="avatar" src="" alt="Avatar" />
+        <button id="logoutButton">Logout</button>
     `;
 
-    // // Handle logout
-    // document.getElementById('logoutButton').addEventListener('click', () => {
-    //     localStorage.removeItem('avatarUrl');
-    //     user.isLoggedIn = false;
-    //     renderApp();
-    // });
+    // logout
+    document.getElementById('logoutButton').addEventListener('click', () => {
+        localStorage.removeItem('user');
+        fetch('localhost/logout')
+            .then(() => {
+                navigateTo('/login');
+            })
+    });
 
     // // Set avatar
     // const avatarImg = document.getElementById('avatar');

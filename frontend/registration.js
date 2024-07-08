@@ -1,3 +1,5 @@
+import { navigateTo } from './router.js';
+
 export function loadPage(app) {
     fetch('registration.html')
         .then(response => {
@@ -7,6 +9,13 @@ export function loadPage(app) {
             return response.text();
         })
         .then(html => {
+            // check if user is logged in
+            const user = localStorage.getItem("user");
+            if (user && ! JSON.parse(user).isLoggedIn) {
+                navigateTo("/login");
+                return;
+            }
+            
             app.innerHTML = html;
         })
         .catch(error => {

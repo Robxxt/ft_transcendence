@@ -1,3 +1,5 @@
+import { navigateTo } from './router.js';
+
 export function loadPage(app) {
     fetch('login.html')
         .then(response => {
@@ -12,6 +14,9 @@ export function loadPage(app) {
             if (form) {
                 form.addEventListener('submit', handleFormSubmit);
             }
+            const errorMessage = document.createElement('p');
+            errorMessage.id = "errorMessage";
+            form.appendChild(errorMessage); 
         })
         .catch(error => {
             console.error('Error loading page:', error);
@@ -41,13 +46,23 @@ function handleFormSubmit(event) {
         }
         return response.json();
     })
-    .then(data => {
-        window.location.href = '/start';
+    .then(response => {
+       const errorMessage = document.getElementById("errorMessage");
+       errorMessage.textContent = "";
+
+        const user = localStorage.getItem("user");
+        if (user) {
+            const userObject = JSON.parse(user);
+            userObject.isLoggedIn = true;
+            userObject.name = data["username"];
+            localStorage.setItem("user", JSON.stringify(userObject));
+            console.log(userObject, data);
+        }
+        navigateTo('/start');
     })
     .catch(error => {
-        const errorMessage = document.createElement('p');
+        const errorMessage = document.getElementById("errorMessage");
         errorMessage.textContent = 'Login failed: ' + error.message;
         errorMessage.style.color = 'red';
-        form.appendChild(errorMessage);
     });
 }

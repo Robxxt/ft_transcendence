@@ -9,7 +9,7 @@ const routes = {
     '/dashboard': () => import('./dashboard.js').then(module => module.loadPage(document.getElementById('app'))),
 };
 
-function navigateTo(url) {
+export function navigateTo(url) {
     history.pushState(null, null, url);
     router();
 }
@@ -17,9 +17,18 @@ function navigateTo(url) {
 function router() {
     const path = window.location.pathname;
     const loadRoute = routes[path];
+
+    // set user item in local storage if we come here first
+    if (localStorage.getItem("user") == null)
+        localStorage.setItem("user", JSON.stringify({isLoggedIn : false}));
+
+    // get logged in status
+    const userObject = JSON.parse(localStorage.getItem("user"));
+    const isLoggedIn = userObject.isLoggedIn;
+
     if (loadRoute) {
         loadRoute().then(() => {
-            if (path !== '/' && path !== '/login' && path != 'registration') {
+            if (isLoggedIn) {
                 createNavBar();
             }
         });
