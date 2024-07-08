@@ -14,14 +14,16 @@ class PongGame {
       this.paddleWidth = 10;
       this.gameOver = false;
       this.winner = null;
+      this.gameState = 'waiting';
   
       this.keys = {
         w: false,
         s: false,
         arrowUp: false,
-        arrowDown: false
+        arrowDown: false,
+        space: false,
       };
-  
+
       window.addEventListener('keydown', this.handleKeyDown.bind(this));
       window.addEventListener('keyup', this.handleKeyUp.bind(this));
     }
@@ -31,6 +33,7 @@ class PongGame {
       if (e.key === 's') this.keys.s = true;
       if (e.key === 'ArrowUp') this.keys.arrowUp = true;
       if (e.key === 'ArrowDown') this.keys.arrowDown = true;
+      if (e.key === ' ') this.keys.space = true;
     }
   
     handleKeyUp(e) {
@@ -38,14 +41,22 @@ class PongGame {
       if (e.key === 's') this.keys.s = false;
       if (e.key === 'ArrowUp') this.keys.arrowUp = false;
       if (e.key === 'ArrowDown') this.keys.arrowDown = false;
+      if (e.key === ' ') this.keys.space = false;
     }
   
     update() {
       if (this.gameOver) return;
-  
-      this.movePaddles();
-      this.moveBall();
-      this.checkCollisions();
+      if (this.keys.space && this.gameState === 'waiting') {
+        this.gameState = 'playing';
+      }
+      if (this.gameState === 'playing') {
+        this.movePaddles();
+        this.moveBall();
+        this.checkCollisions();
+      }
+      if (this.gameState === 'scored' && this.keys.space) {
+        this.resetForNextRound();
+      }
     }
   
     movePaddles() {
@@ -89,11 +100,15 @@ class PongGame {
       if (this.ballX < 0) {
         this.score2++;
         this.checkGameOver();
-        this.resetBall();
+        if (!this.gameOver) {
+          this.gameState = 'scored';
+        }
       } else if (this.ballX > this.canvas.width) {
         this.score1++;
         this.checkGameOver();
-        this.resetBall();
+        if (!this.gameOver) {
+          this.gameState = 'scored';
+        }
       }
     }
   
@@ -113,7 +128,12 @@ class PongGame {
       this.ballSpeedX = -this.ballSpeedX;
       this.ballSpeedY = Math.random() > 0.5 ? 5 : -5;
     }
-  
+
+    resetForNextRound() {
+        this.gameState = 'waiting';
+        this.resetBall();
+    }
+
     draw() {
       // Clear canvas
       this.ctx.fillStyle = 'black';
@@ -134,6 +154,11 @@ class PongGame {
       this.ctx.fillText(this.score1, 100, 50);
       this.ctx.fillText(this.score2, this.canvas.width - 100, 50);
   
+      if (this.gameState === 'waiting') {
+        this.ctx.fillText('Press Space to Start', this.canvas.width / 2, this.canvas.height / 2);
+      } else if (this.gameState === 'scored') {
+        this.ctx.fillText('Point Scored! Press Space to Continue', this.canvas.width / 2, this.canvas.height / 2);
+      }
       // Draw game over message
       if (this.gameOver) {
         this.ctx.fillStyle = 'white';
@@ -172,18 +197,8 @@ export function loadPage(app) {
                 <canvas id="pongCanvas" width="800" height="400"></canvas>
             </div>
         </div>
-        <div class="row justify-content-center mt-3">
-            <div class="col-auto">
-                <button id="startButton" class="btn btn-primary">Start Game</button>
-            </div>
-        </div>
       </div>
     `;
     const game = new PongGame();
-    const startButton = document.getElementById('startButton');
-
-    startButton.addEventListener('click', () => {
-        game.start();
-        startButton.disabled = true;
-    });
+    game.start();
 }
