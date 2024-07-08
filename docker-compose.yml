@@ -21,7 +21,9 @@ services:
       tr_net:
         ipv4_address: 10.5.0.7
     volumes:
-      - ./datasources:/etc/grafana/provisioning/datasources
+      - ./provisioning/datasources:/etc/grafana/provisioning/datasources
+      - ./provisioning/grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - ./dashbord_grafana_node_export.json:/var/lib/grafana/dashboards/dashbord_grafana_node_export.json
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=admin  # Set the admin password
     depends_on:
