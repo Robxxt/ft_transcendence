@@ -1,58 +1,42 @@
-// We have a file for every route. Every file is being imported as module
-// and must have a function (export it) loadPage. That is the entry point
-// to that feature.
-// If we change "pages", for instance when clicking on a button, we
-// call navigateTo(path).
-// If one enters the url manually, we get a file not found yet, since 
-// the server must be configured to always serve our index page. So don't
-// wonder if that does not work.
+import { createNavBar } from './navBar.js';
 
-
-// import the module as <filenameBase>Module !!!
-import * as loginModule from './login.js';
-import * as startModule from './start.js';
-
-// routes are being mapped to modules
 const routes = {
-    '/': loginModule,
-    '/login': loginModule,
-    '/start': startModule
-    // '/game': gameModule
-    // we are adding our routes here
+    '/': () => import('./login.js').then(module => module.loadPage(document.getElementById('app'))),
+    '/login': () => import('./login.js').then(module => module.loadPage(document.getElementById('app'))),
+    '/registration': () => import('./registration.js').then(module => module.loadPage(document.getElementById('app'))),
+    '/start': () => import('./start.js').then(module => module.loadPage(document.getElementById('app'))),
+    '/profile': () => import('./profile.js').then(module => module.loadPage(document.getElementById('app'))),
+    '/dashboard': () => import('./dashboard.js').then(module => module.loadPage(document.getElementById('app'))),
 };
 
-function navigateTo(path) {
-    window.history.pushState({}, "", window.location.origin + path);
-    loadContent(path);
+function navigateTo(url) {
+    history.pushState(null, null, url);
+    router();
 }
 
-function loadContent(path) {
-    
-    console.log("path " + path);
-
-    // everything is created in the <div> tag called app
-    const app = document.getElementById('app');
-
-    // clear existing content
-    app.innerHTML = '';
-
-    // loadPage(app) is the entry point function of the route
-    let module = routes[path];
-    if (typeof module.loadPage === 'function') {
-        module.loadPage(app);
+function router() {
+    const path = window.location.pathname;
+    const loadRoute = routes[path];
+    if (loadRoute) {
+        loadRoute().then(() => {
+            if (path !== '/' && path !== '/login' && path != 'registration') {
+                createNavBar();
+            }
+        });
+    } else {
+        const appDiv = document.getElementById('app');
+        appDiv.innerHTML = '<h2>404</h2><p>Page not found.</p>';
     }
 }
 
-window.onpopstate = () => {
-    console.log("here");
-    loadContent(window.location.pathname);
-};
+window.addEventListener('popstate', router);
 
-// Default route
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("begin");
-    let path = window.location.pathname;
-    if (path == "/")
-        path = "/login";
-    navigateTo(path);
+    document.body.addEventListener('click', event => {
+        if (event.target.matches('[data-link]')) {
+            event.preventDefault();
+            navigateTo(event.target.href);
+        }
+    });
+    router();
 });
