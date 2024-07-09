@@ -8,4 +8,4 @@ if [ -z $TRANCENDENCE_NETWORK]; then
     echo There is no network to free
 fi
 
-docker rmi $(docker images -q)
+#docker rmi $(docker images -q)
