@@ -19,7 +19,8 @@ services:
       - ./provisioning/grafana/dashboards:/etc/grafana/provisioning/dashboards
       - ./dashbord_grafana_node_export.json:/var/lib/grafana/dashboards/dashbord_grafana_node_export.json
     environment:
-      - GF_SECURITY_ADMIN_PASSWORD=admin  # Set the admin password
+      - GF_SECURITY_ADMIN_USER=robert
+      - GF_SECURITY_ADMIN_PASSWORD=test
     depends_on:
       - prometheus  # Ensure Prometheus starts before Grafana
 
