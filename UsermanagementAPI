@@ -1,0 +1,9 @@
+- /register POST:
+sending json {"user": ..., "password":...}
+backend action: check if user already exists, check if username is alphanumeric,
+check if password is alphanumeric and at least 8-20 chars long. 
+set cookie on success.
+response: 200 or 400. 
+If 400, send a json with object {"error": 1 or 2}, according to the type of error,
+1 if username exists already, 2 if username or password are not rule conform.
+
