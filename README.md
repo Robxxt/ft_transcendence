@@ -5,11 +5,16 @@
 To run the the program:
 
 ```bash
-docker-compose up -d --build
+make
 ```
 
-After to remove the resources 
+To stop the program and remove volumes
 
 ```bash
-docker system prune -a -f
+make clean
+```
+
+To remove all unused containers and all trancendence images
+```bash
+make fclean
 ```
