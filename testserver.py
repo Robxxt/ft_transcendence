@@ -47,16 +47,65 @@ def do_register(handler):
     handler.end_headers()
     handler.wfile.write(json.dumps(response).encode('utf-8'))
 
+def do_changeAvatar(handler):
+    response = {}
+    handler.send_response(200)
+    handler.send_header('Content-Type', 'application/json')
+    handler.end_headers()
+    handler.wfile.write(json.dumps(response).encode('utf-8'))
+
+def do_changePassword(handler):
+    response = {'success' : 1}
+    handler.send_response(200)
+    handler.send_header('Content-Type', 'application/json')
+    handler.end_headers()
+    handler.wfile.write(json.dumps(response).encode('utf-8'))
+
+def do_winLossRecord(handler):
+    response = {'wins': '10', 'losses': '5'}
+    handler.send_response(200)
+    handler.send_header('Content-Type', 'application/json')
+    handler.end_headers()
+    handler.wfile.write(json.dumps(response).encode('utf-8'))
+
+def do_gameList(handler):
+    response = [{'date' : '01-01-1970', 'time' : '10:06', 'player1' : 'Ernie', 'player2' : 'Bert', 'result' : '2:0', 'winner' : 'Ernie'},
+    {'date' : '01-01-1970', 'time' : '10:07', 'player1' : 'Ernie', 'player2' : 'Duckie', 'result' : '2:10', 'winner' : 'Duckie'}]
+    handler.send_response(200)
+    handler.send_header('Content-Type', 'application/json')
+    handler.end_headers()
+    handler.wfile.write(json.dumps(response).encode('utf-8'))
+
+def do_friendList(handler):
+    response = [{"friend" : 'Bert', 'online' : True}, {"friend" : 'Duckie', 'online' : False}]
+    handler.send_response(200)
+    handler.send_header('Content-Type', 'application/json')
+    handler.end_headers()
+    handler.wfile.write(json.dumps(response).encode('utf-8'))
+
 class MyHandler(SimpleHTTPRequestHandler):
     def do_POST(self):
         if self.path == '/login':
             do_login(self)
         elif self.path == '/register':
             do_register(self)
+        elif self.path == '/changeAvatar':
+            do_changeAvatar(self)
+        elif self.path == '/changePassword':
+            do_changePassword(self)
         else:
             super().do_POST()
 
     def do_GET(self):
+        if self.path.startswith('/winLossRecord'):
+            do_winLossRecord(self)
+            return
+        elif self.path.startswith('/gameList'):
+            do_gameList(self)
+            return
+        elif self.path.startswith('/friendList'):
+            do_friendList(self)
+            return
         if not self.path.endswith(".js") and not self.path.endswith(".html"):
             self.path = "index.html"
         return super().do_GET()
