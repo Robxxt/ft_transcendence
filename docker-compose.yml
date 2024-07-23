@@ -23,14 +23,39 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=test
     depends_on:
       - prometheus  # Ensure Prometheus starts before Grafana
-
-  
   node_exporter:
     image: prom/node-exporter
     container_name: tr_node_exporter
     ports:
       - "9100:9100"
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: ping_pong_user
+      POSTGRES_USER: thesheriff
+      POSTGRES_PASSWORD: test123
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+  web:
+    build: ./database/db
+    volumes:
+      - ./database/db:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      - DATABASE_NAME=ping_pong_user
+      - DATABASE_USER=thesheriff
+      - DATABASE_PASSWORD=test123
+      - DATABASE_HOST=db
+      - DATABASE_PORT=5432
+    command: ["python3", "manage.py", "runserver", "0.0.0.0:8000"]
+
 
 volumes:
   grafana-storage:
     driver: local
+  postgres_data:
