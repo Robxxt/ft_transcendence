@@ -60,6 +60,12 @@ def do_changePassword(handler):
     handler.end_headers()
     handler.wfile.write(json.dumps(response).encode('utf-8'))
 
+def do_play(handler):
+    handler.send_response(200)
+    handler.send_header('Content-Type', 'application/json')
+    handler.end_headers()
+    handler.wfile.write(json.dumps(response).encode('utf-8'))
+
 def do_avatar(handler):
     with open('fish.png', 'rb') as f:
         imagedata = f.read()
@@ -91,6 +97,13 @@ def do_friendList(handler):
     handler.end_headers()
     handler.wfile.write(json.dumps(response).encode('utf-8'))
 
+def do_openChallenges(handler):
+    response = [{"player" : 'Bert'}, {"player" : 'Duckie'}]
+    handler.send_response(200)
+    handler.send_header('Content-Type', 'application/json')
+    handler.end_headers()
+    handler.wfile.write(json.dumps(response).encode('utf-8'))
+
 class MyHandler(SimpleHTTPRequestHandler):
     def do_POST(self):
         if self.path == '/login':
@@ -101,6 +114,8 @@ class MyHandler(SimpleHTTPRequestHandler):
             do_changeAvatar(self)
         elif self.path == '/changePassword':
             do_changePassword(self)
+        elif self.path == '/play':
+            do_play(self)
         else:
             super().do_POST()
 
@@ -116,6 +131,9 @@ class MyHandler(SimpleHTTPRequestHandler):
             return
         elif self.path.startswith('/avatar'):
             do_avatar(self)
+            return 
+        elif self.path.startswith('/openChallenges'):
+            do_openChallenges(self)
             return
         if not self.path.endswith(".js") and not self.path.endswith(".html"):
             self.path = "index.html"
