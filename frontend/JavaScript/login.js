@@ -11,12 +11,7 @@ export function loadPage(app) {
         .then(html => {
             app.innerHTML = html;
             const form = app.querySelector('#loginForm');
-            if (form) {
-                form.addEventListener('submit', handleFormSubmit);
-            }
-            const errorMessage = document.createElement('p');
-            errorMessage.id = "errorMessage";
-            form.appendChild(errorMessage); 
+            form.addEventListener('submit', handleFormSubmit);
         })
         .catch(error => {
             console.error('Error loading page:', error);
@@ -56,7 +51,6 @@ function handleFormSubmit(event) {
             userObject.isLoggedIn = true;
             userObject.name = data["username"];
             localStorage.setItem("user", JSON.stringify(userObject));
-            console.log(userObject, data);
         }
         navigateTo('/start');
     })

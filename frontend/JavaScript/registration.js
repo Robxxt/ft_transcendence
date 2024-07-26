@@ -11,8 +11,8 @@ export function loadPage(app) {
         .then(html => {
             // check if user is logged in
             const user = localStorage.getItem("user");
-            if (user && ! JSON.parse(user).isLoggedIn) {
-                navigateTo("/login");
+            if (user && JSON.parse(user).isLoggedIn) {
+                navigateTo("/start");
                 return;
             }
             
@@ -63,16 +63,21 @@ function handleFormSubmit(event) {
         body: JSON.stringify(data)
     })
     .then(response => {
-        if (response.status === 200)
-            navigateTo('/start');
+        if (response.status === 200) {
+            const userObject = {"name" : username, "isLoggedIn" : true};
+            localStorage.setItem("user", JSON.stringify(userObject));
+            return {'error': 0};
+        }
         else if (response.status == 400)
             return response.json();
         else
             throw new Error('Unexpected response');
     })
     .then(data => {
-        if (data.error) {
-            if (data.error == 1)
+        if (data) {
+            if (data.error == 0)
+                navigateTo('/start');
+            else if (data.error == 1)
                 printSubmitError(1);
             else if (data.error == 2)
                 printSubmitError(2);
@@ -105,7 +110,7 @@ function validatePassword() {
     const password = document.getElementById('password').value;
     const passwordRegex = /^[a-zA-Z0-9]{4,20}$/;
     if (!passwordRegex.test(password)) {
-        document.getElementById('passwordError').textContent = 'Password must be 4-20 characters long and alphanumeric.';
+        document.getElementById('passwordError').textContent = 'Password must be 8-20 characters long and alphanumeric.';
         return false;
     } else {
         document.getElementById('passwordError').textContent = '';

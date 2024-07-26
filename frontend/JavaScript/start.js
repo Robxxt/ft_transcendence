@@ -12,6 +12,7 @@ export function loadPage(app) {
             // check if user is logged in
             const user = localStorage.getItem("user");
             if (user && ! JSON.parse(user).isLoggedIn) {
+                console.log(user);
                 navigateTo("/login");
                 return;
             }

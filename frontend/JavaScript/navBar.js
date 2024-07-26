@@ -4,41 +4,44 @@ import { navigateTo } from './router.js';
 export function createNavBar() {
     const navBar = document.getElementById('navBar');
     navBar.innerHTML = `
-        <a href="/dashboard" data-link="true">Dashboard</a>
-        <a href="/profile" data-link="true">Profile</a>
-        <a href="/profile" data-link="true">${JSON.parse(localStorage.getItem('user')).name}</a>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/profile">Profile</a>
+        ${JSON.parse(localStorage.getItem('user')).name}
         <img id="avatar" src="" alt="Avatar" />
         <button id="logoutButton">Logout</button>
     `;
 
+    // load Avatart
+    loadAvatar(localStorage.getItem('user'));
+
     // logout
     document.getElementById('logoutButton').addEventListener('click', () => {
+        // remove user from storage
         localStorage.removeItem('user');
+
+        // logout at server
         fetch('localhost/logout')
             .then(() => {
-                navigateTo('/login');
+                navigateTo('/');
             })
     });
-
-    // // Set avatar
-    // const avatarImg = document.getElementById('avatar');
-    // const storedAvatarUrl = localStorage.getItem('avatarUrl');
-    // if (storedAvatarUrl) {
-    //     avatarImg.src = storedAvatarUrl;
-    // } else {
-    //     fetchAvatar().then(url => {
-    //         avatarImg.src = url;
-    //         localStorage.setItem('avatarUrl', url);
-    //     });
-    // }
 }
 
-// Function to fetch avatar from server
-// function fetchAvatar() {
-//     return new Promise(resolve => {
-//         // Simulate fetching avatar from server
-//         setTimeout(() => {
-//             resolve(user.avatarUrl);
-//         }, 1000);
-//     });
-// }
+
+export async function loadAvatar(user) {
+    try {
+        const user = localStorage.getItem('user');
+        const username = JSON.parse(user).name;
+        const response = await fetch(`/avatar?username=${username}`);
+
+        if (response.ok) {
+            const blob = await response.blob();
+            const imageUrl = URL.createObjectURL(blob);
+            document.getElementById('avatar').src = imageUrl;
+        } else {
+            console.error('Failed to load avatar:', response.statusText);
+        }
+    } catch (error) {
+        console.error('Error loading avatar:', error);
+    }
+}

@@ -1,4 +1,5 @@
 import { navigateTo } from './router.js';
+import { loadAvatar } from './navBar.js';
 
 export function loadPage(app) {
     fetch('frontend/HTML/profile.html')
@@ -61,9 +62,13 @@ function handleChangeAvatarDiv(app) {
             method: 'POST',
             body: formData
         })
-        .then(response => response.json())
-        .then(data => {
-            avatarUploadStatus.textContent = 'Avatar uploaded successfully!';
+        .then(response => {
+            if (response.status == 200) {
+                avatarUploadStatus.textContent = 'Avatar uploaded successfully!';
+                loadAvatar();
+            }
+            else
+                throw new Error();
         })
         .catch(error => {
             avatarUploadStatus.textContent = 'Error uploading avatar. Please try again.';

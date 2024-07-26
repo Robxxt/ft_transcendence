@@ -10,19 +10,16 @@ def do_login(handler):
 
         username = data.get('username')
         password = data.get('password')
-        print(post_data, username, password)
 
         valid_username = 'user'
         valid_password = 'pass'
 
         response = {}
         if username == valid_username and password == valid_password:
-            print("right")
             handler.send_response(200)
             response['message'] = 'Login successful!'
             response["Set-Cookie"] = "sessionid=foo"
         else:
-            print("wrong")
             handler.send_response(401)
             response['message'] = 'Invalid credentials'
 
@@ -37,14 +34,16 @@ def do_register(handler):
     if data["username"] == "existinguser":
         response = {"error": 1}
         handler.send_response(400)
-    elif not data["username"].isalnum() or not data["password"].isalnum():
+    elif not data["username"].isalnum() or not data["password"].isalnum() or len(data["password"]) < 8:
         response = {"error": 2}
+        print(data)
         handler.send_response(400)
     else:
         response = {}
         handler.send_response(200)
     handler.send_header('Content-Type', 'application/json')
     handler.end_headers()
+    print(response)
     handler.wfile.write(json.dumps(response).encode('utf-8'))
 
 def do_changeAvatar(handler):
@@ -60,6 +59,15 @@ def do_changePassword(handler):
     handler.send_header('Content-Type', 'application/json')
     handler.end_headers()
     handler.wfile.write(json.dumps(response).encode('utf-8'))
+
+def do_avatar(handler):
+    with open('fish.png', 'rb') as f:
+        imagedata = f.read()
+    handler.send_response(200)
+    handler.send_header('Content-Type', 'image/png')
+    handler.send_header('Content-Length', len(imagedata))
+    handler.end_headers()
+    handler.wfile.write(imagedata)
 
 def do_winLossRecord(handler):
     response = {'wins': '10', 'losses': '5'}
@@ -105,6 +113,9 @@ class MyHandler(SimpleHTTPRequestHandler):
             return
         elif self.path.startswith('/friendList'):
             do_friendList(self)
+            return
+        elif self.path.startswith('/avatar'):
+            do_avatar(self)
             return
         if not self.path.endswith(".js") and not self.path.endswith(".html"):
             self.path = "index.html"

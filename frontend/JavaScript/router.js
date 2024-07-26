@@ -18,9 +18,8 @@ export function navigateTo(url) {
 function router() {
     const path = window.location.pathname;
     const loadRoute = routes[path];
-    console.log("path: " + path);
-    console.log("loadRoute: " + loadRoute);
-    // set user item in local storage if we come here first
+    
+    // set user item in local storage if it didn't exist yet
     if (localStorage.getItem("user") == null)
         localStorage.setItem("user", JSON.stringify({isLoggedIn : false}));
 
@@ -30,8 +29,13 @@ function router() {
 
     if (loadRoute) {
         loadRoute().then(() => {
+            // create NavBar depending on login status
             if (isLoggedIn) {
                 createNavBar();
+            }
+            else {
+                const navBar = document.getElementById('navBar');
+                navBar.innerHTML = '';
             }
         });
     } else {
@@ -42,6 +46,7 @@ function router() {
 
 window.addEventListener('popstate', router);
 
+// do we still need this?
 document.addEventListener('DOMContentLoaded', () => {
     document.body.addEventListener('click', event => {
         if (event.target.matches('[data-link]')) {
