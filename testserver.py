@@ -60,14 +60,22 @@ def do_changePassword(handler):
     handler.end_headers()
     handler.wfile.write(json.dumps(response).encode('utf-8'))
 
-def do_play(handler):
+def do_playRandom(handler):
+    response = {}
+    handler.send_response(200)
+    handler.send_header('Content-Type', 'application/json')
+    handler.end_headers()
+    handler.wfile.write(json.dumps(response).encode('utf-8'))
+
+def do_playChosen(handler):
+    response = {}
     handler.send_response(200)
     handler.send_header('Content-Type', 'application/json')
     handler.end_headers()
     handler.wfile.write(json.dumps(response).encode('utf-8'))
 
 def do_avatar(handler):
-    with open('fish.png', 'rb') as f:
+    with open('Ernie.png', 'rb') as f:
         imagedata = f.read()
     handler.send_response(200)
     handler.send_header('Content-Type', 'image/png')
@@ -106,6 +114,7 @@ def do_openChallenges(handler):
 
 class MyHandler(SimpleHTTPRequestHandler):
     def do_POST(self):
+        print(self.path)
         if self.path == '/login':
             do_login(self)
         elif self.path == '/register':
@@ -114,8 +123,10 @@ class MyHandler(SimpleHTTPRequestHandler):
             do_changeAvatar(self)
         elif self.path == '/changePassword':
             do_changePassword(self)
-        elif self.path == '/play':
-            do_play(self)
+        elif self.path == '/playRandom':
+            do_playRandom(self)
+        elif self.path == '/playChosen':
+            do_playChosen(self)
         else:
             super().do_POST()
 

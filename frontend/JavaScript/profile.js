@@ -83,6 +83,8 @@ function handleChangePasswordDiv(app) {
     const confirmPasswordInput = document.getElementById('confirmPassword');
     const passwordChangeStatus = document.getElementById('passwordChangeStatus');
 
+    newPasswordInput.addEventListener('input', validatePassword);
+
     passwordForm.addEventListener('submit', function(event) {
         event.preventDefault();
 
@@ -91,8 +93,8 @@ function handleChangePasswordDiv(app) {
         const confirmPassword = confirmPasswordInput.value;
 
         // Check if new password and confirm password match
-        if (newPassword !== confirmPassword) {
-            passwordChangeStatus.textContent = 'New password and confirmation do not match.';
+        if (newPassword !== confirmPassword || !confirmPassword()) {
+            passwordChangeStatus.textContent = 'New password and confirmation do not match or password not ruleconform.';
             return;
         }
 
@@ -122,7 +124,6 @@ function handleChangePasswordDiv(app) {
         });
     });
 }
-
 
 function handleWinLossRecordDiv(app) {
     const username = localStorage.getItem("user");
@@ -182,4 +183,16 @@ function handleFriendsDiv(app) {
     .catch(error => {
         avatarUploadStatus.textContent = 'Error uploading avatar. Please try again.';
     });
+}
+
+function validatePassword() {
+    const password = document.getElementById('newPassword').value;
+    const passwordRegex = /^[a-zA-Z0-9]{8,20}$/;
+    if (!passwordRegex.test(password)) {
+        document.getElementById('passwordChangeStatus').textContent = 'Password must be 8-20 characters long and alphanumeric.';
+        return false;
+    } else {
+        document.getElementById('passwordChangeStatus').textContent = '';
+        return true;
+    }
 }

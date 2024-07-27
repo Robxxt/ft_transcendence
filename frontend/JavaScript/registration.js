@@ -108,7 +108,7 @@ function validatePassword() {
     document.getElementById('passwordRepetitionError').textContent = '';
 
     const password = document.getElementById('password').value;
-    const passwordRegex = /^[a-zA-Z0-9]{4,20}$/;
+    const passwordRegex = /^[a-zA-Z0-9]{8,20}$/;
     if (!passwordRegex.test(password)) {
         document.getElementById('passwordError').textContent = 'Password must be 8-20 characters long and alphanumeric.';
         return false;

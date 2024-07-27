@@ -7,7 +7,7 @@ export function createNavBar() {
         <a href="/dashboard">Dashboard</a>
         <a href="/profile">Profile</a>
         ${JSON.parse(localStorage.getItem('user')).name}
-        <img id="avatar" src="" alt="Avatar" />
+        <img id="avatar" src="" alt="Avatar" width=50 height=50 />
         <button id="logoutButton">Logout</button>
     `;
 
