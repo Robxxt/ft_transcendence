@@ -1,0 +1,43 @@
+{% block title %}Ping Pong Game{% endblock %}
+
+{% block content %}
+<h1>Ping Pong Game</h1>
+<div id="game-state">
+    <p id="player1">Player 1: Position (0, 0), Score: 0</p>
+    <p id="player2">Player 2: Position (0, 0), Score: 0</p>
+</div>
+<input id="chat-message-input" type="text" size="100">
+<button id="chat-message-submit">Send</button>
+<ul id="chat-log"></ul>
+
+<script>
+    const gameSocket = new WebSocket(
+        'ws://' + window.location.host + '/ws/game/'
+    );
+
+    gameSocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        document.querySelector('#chat-log').value += (data.message + '\n');
+    };
+
+    gameSocket.onclose = function(e) {
+        console.error('Game socket closed unexpectedly');
+    };
+
+    document.querySelector('#chat-message-input').focus();
+    document.querySelector('#chat-message-input').onkeyup = function(e) {
+        if (e.keyCode === 13) {  // enter, return
+            document.querySelector('#chat-message-submit').click();
+        }
+    };
+
+    document.querySelector('#chat-message-submit').onclick = function(e) {
+        const messageInputDom = document.querySelector('#chat-message-input');
+        const message = messageInputDom.value;
+        gameSocket.send(JSON.stringify({
+            'message': message
+        }));
+        messageInputDom.value = '';
+    };
+</script>
+{% endblock %}

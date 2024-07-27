@@ -20,3 +20,6 @@ def register(request):
 
 def home(request):
     return (render(request,'home.html'))
+
+def game_view(request):
+    return render(request, 'game.html') 
