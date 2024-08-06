@@ -22,4 +22,7 @@ def home(request):
     return (render(request,'home.html'))
 
 def game_view(request):
-    return render(request, 'game.html') 
+    return render(request, 'game.html')
+
+def index(request):
+    return render(request, "login.html")

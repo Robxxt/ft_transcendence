@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration</title>
+</head>
+<body>
+    <h2>Registration</h2>
+    <form id="registrationForm" action="/register" method="POST">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required><br>
+        <span id="usernameError"></span><br><br>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required><br>
+        <span id="passwordError"></span><br><br>
+
+        <label for="passwordRepetition">Repeat Password:</label>
+        <input type="password" id="passwordRepetition" name="passwordRepetition" required><br>
+        <span id="passwordRepetitionError"></span><br><br>
+
+        <button type="submit">Register</button><br><br>
+
+        <span id="submitError"></span><br><br>
+    </form>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+</head>
+<body>
+    <h2>Profile</h2>
+
+    <div id="changePassword">
+        <h5>Change your Password</h5>
+        <form id="passwordForm">
+            <div>
+                <label for="currentPassword">Current Password:</label>
+                <input type="password" id="currentPassword" name="currentPassword" required>
+            </div>
+            <div>
+                <label for="newPassword">New Password:</label>
+                <input type="password" id="newPassword" name="newPassword" required>
+            </div>
+            <div>
+                <label for="confirmPassword">Confirm New Password:</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" required>
+            </div>
+            <button type="submit">Change Password</button>
+        </form>
+        <div id="passwordChangeStatus"></div>
+    </div>
+    
+    <div id="changeAvatar">
+        <h5>Change your avatar</h5>
+        <form id="avatarForm" enctype="multipart/form-data">
+            <input type="file" id="avatarInput" name="avatar" accept=".jpg, .jpeg, .png"><br>
+            <button type="submit">Upload new Avatar</button>
+        </form>
+        <div id="avatarUploadStatus"></div>
+    </div>
+
+    <div id="winLossRecord">
+        <h5>Win Loss Record</h5>
+    </div>
+
+    <div id="gameHistory">
+        <h5>Game History</h5>
+        <div id='gameList'></div>
+    </div>
+
+    <div id="friends"></div>
+        <h5>Friend List</h5>
+        <ul id="friendList"></ul>
+</body>
+</html>
