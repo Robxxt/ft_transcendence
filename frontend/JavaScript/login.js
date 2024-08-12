@@ -1,6 +1,12 @@
 import { navigateTo } from './router.js';
 
 export function loadPage(app) {
+    // check if user is already logged in and redirect them to the profile page
+    if (JSON.parse(localStorage.getItem('user')).isLoggedIn == true) {
+        navigateTo('/profile');
+        return;
+    }
+
     fetch('frontend/HTML/login.html')
         .then(response => {
             if (!response.ok) {
@@ -36,26 +42,24 @@ function handleFormSubmit(event) {
         body: JSON.stringify(data)
     })
     .then(response => {
+        // user or password was wrong
         if (response.status === 401) {
             throw new Error('Unauthorized');
         }
-        return response.json();
-    })
-    .then(response => {
-       const errorMessage = document.getElementById("errorMessage");
-       errorMessage.textContent = "";
 
-        const user = localStorage.getItem("user");
-        if (user) {
-            const userObject = JSON.parse(user);
-            userObject.isLoggedIn = true;
-            userObject.name = data["username"];
-            localStorage.setItem("user", JSON.stringify(userObject));
-        }
+        // remove old error messages
+        const errorMessage = app.querySelector('#errorMessage');
+        errorMessage.textContent = '';
+
+        // set user object in local storage
+        let userObject = {};
+        userObject.isLoggedIn = true;
+        userObject.name = data['username'];
+        localStorage.setItem('user', JSON.stringify(userObject));
         navigateTo('/start');
     })
     .catch(error => {
-        const errorMessage = document.getElementById("errorMessage");
+        const errorMessage = document.getElementById('errorMessage');
         errorMessage.textContent = 'Login failed: ' + error.message;
         errorMessage.style.color = 'red';
     });
