@@ -7,7 +7,9 @@ services:
     ports:
       - "9090:9090"
     volumes:
-      - ./prometheus/prometheus-config.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus/prometheus-config.yaml:/etc/prometheus/prometheus.yaml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yaml'
   grafana:
     image: grafana/grafana
     container_name: tr_grafana
@@ -15,9 +17,9 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./provisioning/datasources:/etc/grafana/provisioning/datasources
-      - ./provisioning/grafana/dashboards:/etc/grafana/provisioning/dashboards
-      - ./dashbord_grafana_node_export.json:/var/lib/grafana/dashboards/dashbord_grafana_node_export.json
+      - ./provisioning:/etc/grafana/provisioning
+      # - ./provisioning/dashboards:/etc/grafana/provisioning/dashboards
+      # - ./dashbord_grafana_node_export.json:/etc/grafana/provisioning/dashboards
     environment:
       - GF_SECURITY_ADMIN_USER=robert
       - GF_SECURITY_ADMIN_PASSWORD=test
