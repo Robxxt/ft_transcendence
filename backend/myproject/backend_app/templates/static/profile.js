@@ -2,7 +2,7 @@ import { navigateTo } from './router.js';
 import { loadAvatar } from './navBar.js';
 
 export function loadPage(app) {
-    fetch('frontend/HTML/profile.html')
+    fetch('static/profile.html')
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok ' + response.statusText);
