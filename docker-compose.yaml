@@ -1,6 +1,17 @@
 version: '3.8'
 
 services:
+  # alertmanager:
+  #   image: prom/alertmanager
+  #   container_name: tr_alertmanager
+  #   env_file:
+  #     - ./.env
+  #   ports:
+  #     - "9090:9090"
+  #   volumes:
+  #     - ./provisioning/alertmanager/alertmanager.yaml:/etc/alertmanager/alertmanager.yaml
+  #   command:
+  #     - "--config.file=alertmanager.yaml"
   prometheus:
     image: prom/prometheus
     container_name: tr_prometheus
@@ -8,6 +19,7 @@ services:
       - "9090:9090"
     volumes:
       - ./prometheus/prometheus-config.yaml:/etc/prometheus/prometheus.yaml
+      - prometheus_data:/prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yaml'
   grafana:
@@ -18,11 +30,8 @@ services:
       - "3000:3000"
     volumes:
       - ./provisioning:/etc/grafana/provisioning
-      # - ./provisioning/dashboards:/etc/grafana/provisioning/dashboards
-      # - ./dashbord_grafana_node_export.json:/etc/grafana/provisioning/dashboards
-    environment:
-      - GF_SECURITY_ADMIN_USER=robert
-      - GF_SECURITY_ADMIN_PASSWORD=test
+    env_file:
+      - ./.env
     depends_on:
       - prometheus  # Ensure Prometheus starts before Grafana
   node_exporter:
@@ -48,12 +57,8 @@ services:
       - "8000:8000"
     depends_on:
       - db
-    environment:
-      - DATABASE_NAME=ping_pong_user
-      - DATABASE_USER=thesheriff
-      - DATABASE_PASSWORD=test123
-      - DATABASE_HOST=db
-      - DATABASE_PORT=5432
+    env_file:
+      - ./.env
     command: ["python3", "manage.py", "runserver", "0.0.0.0:8000"]
 
 
@@ -61,3 +66,9 @@ volumes:
   grafana-storage:
     driver: local
   postgres_data:
+  prometheus_data:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /Users/rdragan/Lab/ft_transcendence/volumes/prometheus/

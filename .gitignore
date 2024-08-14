@@ -1,2 +1,4 @@
 *venv*
 *cache*
+volumes/prometheus
+.env
