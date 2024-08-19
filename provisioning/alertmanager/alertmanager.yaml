@@ -1,31 +1,17 @@
-# global:
-#   resolve_timeout: 5m
+global:
+  resolve_timeout: 5m
 
-# route:
-#   receiver: 'mail'
-#   repeat_interval: 20s
-#   group_by: [ alertname ]
-
-# receivers:
-# - name: 'mail'
-#   email_configs:
-#   - smarthost: smtp.gmail.com:587
-#     from: ${SMTP_FROM}
-#     auth_username: ${SMTP_AUTH_USERNAME}
-#     auth_password: ${SMTP_AUTH_PASSWORD}
-#     auth_identity: ${SMTP_AUTH_USERNAME}
-#     to: ${SMTP_FROM}
 route:
   receiver: 'mail'
-  repeat_interval: 4h
+  repeat_interval: 20s
   group_by: [ alertname ]
 
-
 receivers:
-  - name: 'mail'
-    email_configs:
-      - smarthost: 'smtp.gmail.com:465'
-        auth_username: 'your_mail@gmail.com'
-        auth_password: ""
-        from: 'your_mail@gmail.com'
-        to: 'some_mail@gmail.com'
+- name: 'mail'
+  email_configs:
+  - smarthost: smtp.gmail.com:587
+    from: ${SMTP_FROM}
+    auth_username: ${SMTP_AUTH_USERNAME}
+    auth_password: ${SMTP_AUTH_PASSWORD}
+    auth_identity: ${SMTP_AUTH_USERNAME}
+    to: ${SMTP_FROM}

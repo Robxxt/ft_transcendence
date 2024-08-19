@@ -15,10 +15,12 @@ services:
   prometheus:
     image: prom/prometheus
     container_name: tr_prometheus
+    depends_on:
+      - alertmanager
     ports:
       - "9090:9090"
     volumes:
-      - ./prometheus/prometheus-config.yaml:/etc/prometheus/prometheus.yaml
+      - ./prometheus/:/etc/prometheus/
       # - prometheus_data:/prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yaml'
