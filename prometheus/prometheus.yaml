@@ -3,8 +3,8 @@ global:
   scrape_timeout: 10s
   evaluation_interval: 15s
 
-# rule_files:
-#   - 'server_alert.yaml'
+rule_files:
+  - 'server_alert.yaml'
 
 alerting:
   alertmanagers:

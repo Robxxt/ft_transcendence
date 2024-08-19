@@ -9,4 +9,5 @@ fclean: clean
 	docker rmi	prom/node-exporter \
 				prom/prometheus \
 				grafana/grafana \
+				prom/alertmanager
 
