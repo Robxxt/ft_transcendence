@@ -1,0 +1,11 @@
+groups:
+  - name: test_alert
+    rules:
+      - alert: TestAlert
+        expr: vector(1)
+        for: 20s
+        labels:
+          severity: critical
+        annotations:
+          summary: "Test Alert"
+          description: "This is a test alert to verify email notifications."

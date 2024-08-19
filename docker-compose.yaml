@@ -1,17 +1,17 @@
 version: '3.8'
 
 services:
-  # alertmanager:
-  #   image: prom/alertmanager
-  #   container_name: tr_alertmanager
-  #   env_file:
-  #     - ./.env
-  #   ports:
-  #     - "9090:9090"
-  #   volumes:
-  #     - ./provisioning/alertmanager/alertmanager.yaml:/etc/alertmanager/alertmanager.yaml
-  #   command:
-  #     - "--config.file=alertmanager.yaml"
+  alertmanager:
+    image: prom/alertmanager
+    container_name: tr_alertmanager
+    env_file:
+      - ./.env
+    ports:
+      - "9093:9093"
+    volumes:
+      - ./provisioning/alertmanager:/etc/alertmanager/
+    command:
+      - "--config.file=/etc/alertmanager/alertmanager.yaml"
   prometheus:
     image: prom/prometheus
     container_name: tr_prometheus
@@ -19,7 +19,7 @@ services:
       - "9090:9090"
     volumes:
       - ./prometheus/prometheus-config.yaml:/etc/prometheus/prometheus.yaml
-      - prometheus_data:/prometheus
+      # - prometheus_data:/prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yaml'
   grafana:
@@ -39,27 +39,27 @@ services:
     container_name: tr_node_exporter
     ports:
       - "9100:9100"
-  db:
-    image: postgres:13
-    environment:
-      POSTGRES_DB: ping_pong_user
-      POSTGRES_USER: thesheriff
-      POSTGRES_PASSWORD: test123
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
-  web:
-    build: ./database/db
-    volumes:
-      - ./database/db:/app
-    ports:
-      - "8000:8000"
-    depends_on:
-      - db
-    env_file:
-      - ./.env
-    command: ["python3", "manage.py", "runserver", "0.0.0.0:8000"]
+  # db:
+  #   image: postgres:13
+  #   environment:
+  #     POSTGRES_DB: ping_pong_user
+  #     POSTGRES_USER: thesheriff
+  #     POSTGRES_PASSWORD: test123
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #   ports:
+  #     - "5432:5432"
+  # web:
+  #   build: ./database/db
+  #   volumes:
+  #     - ./database/db:/app
+  #   ports:
+  #     - "8000:8000"
+  #   depends_on:
+  #     - db
+  #   env_file:
+  #     - ./.env
+  #   command: ["python3", "manage.py", "runserver", "0.0.0.0:8000"]
 
 
 volumes:
@@ -67,8 +67,8 @@ volumes:
     driver: local
   postgres_data:
   prometheus_data:
-    driver: local
-    driver_opts:
-      o: bind
-      type: none
-      device: /Users/rdragan/Lab/ft_transcendence/volumes/prometheus/
+    # driver: local
+    # driver_opts:
+    #   o: bind
+    #   type: none
+    #   device: /Users/rdragan/Lab/ft_transcendence/volumes/prometheus/

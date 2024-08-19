@@ -6,10 +6,7 @@ clean:
 
 fclean: clean
 	docker system prune -f
-	docker rmi	ft_transcendence_web \
-				db_web \
-				prom/node-exporter \
+	docker rmi	prom/node-exporter \
 				prom/prometheus \
 				grafana/grafana \
-				postgres
 
