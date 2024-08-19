@@ -7,12 +7,21 @@
 </head>
 <body>
     <h2>Start Page</h2>
-    You can play a random player or answer a challenge.<br>
+    You can play a random player or answer a challenge. You can also participate in a tournament!<br>
     Pong is a mindset.<br>
-    <button id="invitation">Just play Pong</button>
+    <button id="invitationRandom">Just play Pong</button>
+    <span id="statusLine" style="color: red;"></span>
+
     <div id="challenges">
         <h3>Open Challenges</h3>
+        <button id="reload">reload</button>
+        <ul id="challengesList"></ul>
     </div>
 
+    <div id="tournaments">
+        <h3>Open Tournaments</h3>
+        <button id="startTounament">Start your own awesome tournament!</button>
+        <ul id="tournamentsList"></ul>
+    </div>
 </body>
 </html>

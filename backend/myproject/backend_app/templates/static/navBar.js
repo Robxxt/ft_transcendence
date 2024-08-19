@@ -4,7 +4,9 @@ import { navigateTo } from './router.js';
 export function createNavBar() {
     const navBar = document.getElementById('navBar');
     navBar.innerHTML = `
-        <a href="/dashboard">Dashboard</a>
+        <a href="/start>Start</a>
+        <a href="/dashboard">User Dashboard</a>
+        ft_transcendence
         <a href="/profile">Profile</a>
         ${JSON.parse(localStorage.getItem('user')).name}
         <img id="avatar" src="" alt="Avatar" width=50 height=50 />
