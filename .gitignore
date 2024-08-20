@@ -5,3 +5,7 @@ UsermanagementAPI
 TODO
 fish.png
 backend/venv
+*venv*
+*cache*
+shared_volumes
+.env
