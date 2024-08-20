@@ -9,9 +9,11 @@ route:
 receivers:
 - name: 'mail'
   email_configs:
-  - smarthost: smtp.gmail.com:587
-    from: ${SMTP_FROM}
-    auth_username: ${SMTP_AUTH_USERNAME}
-    auth_password: ${SMTP_AUTH_PASSWORD}
-    auth_identity: ${SMTP_AUTH_USERNAME}
-    to: ${SMTP_FROM}
+  - smarthost: 'smtp.gmail.com:587'
+    from: '${SMTP_FROM}'
+    auth_username: '${SMTP_AUTH_USERNAME}'
+    auth_password: "${SMTP_AUTH_PASSWORD}"
+    auth_identity: '${SMTP_AUTH_USERNAME}'
+    to: '${SMTP_FROM}'
+    headers:
+      subject: "Hello World"

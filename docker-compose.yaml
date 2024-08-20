@@ -21,7 +21,7 @@ services:
       - "9090:9090"
     volumes:
       - ./prometheus/:/etc/prometheus/
-      # - prometheus_data:/prometheus
+      - ./shared_volumes/prometheus:/prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yaml'
   grafana:
@@ -65,12 +65,10 @@ services:
 
 
 volumes:
-  grafana-storage:
-    driver: local
   postgres_data:
-  prometheus_data:
-    # driver: local
-    # driver_opts:
-    #   o: bind
-    #   type: none
-    #   device: /Users/rdragan/Lab/ft_transcendence/volumes/prometheus/
+  # prometheus_data:
+  #   driver: local
+  #   driver_opts:
+  #     o: bind
+  #     type: none
+  #     device: /Users/rdragan/Lab/ft_transcendence/volumes/shared_volumes/prometheus

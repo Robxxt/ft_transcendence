@@ -11,3 +11,7 @@ fclean: clean
 				grafana/grafana \
 				prom/alertmanager
 
+apocalypsis: fclean
+	rm -Rf shared_volumes
+
+re: fclean all
