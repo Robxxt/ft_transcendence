@@ -1,6 +1,21 @@
 from rest_framework import generics
-from backend_app.models import User
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from backend_app.models import User, TableMatch
 from backend_app.api.serializer import UserSerializer  # Corrected import
+from backend_app.api.serializer import RegisterSerializer, TableMatchSerializer
+from rest_framework import viewsets
+
+@api_view(['POST'])
+def register(request):
+    if request.method == 'POST':
+        serializer = RegisterSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'error': 0}, status=status.HTTP_201_CREATED)
+        return Response({'error': 2, 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
 
 class UserListCreate(generics.ListCreateAPIView):
     queryset = User.objects.all()
@@ -9,3 +24,7 @@ class UserListCreate(generics.ListCreateAPIView):
 class UserDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer 
+
+class TableMatchViewSet(viewsets.ModelViewSet):
+    queryset = TableMatch.objects.all()
+    serializer_class = TableMatchSerializer
