@@ -1,0 +1,7 @@
+a {
+    color: magenta !important;
+}
+
+a:hover {
+    color: darkmagenta; /* Optional: Change color on hover */
+}

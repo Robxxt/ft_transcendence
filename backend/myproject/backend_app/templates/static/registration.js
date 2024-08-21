@@ -133,7 +133,7 @@ function validatePasswordRepetition() {
 function printSubmitError(errorcode) {
     const submitError = document.getElementById('submitError');
     if (errorcode == 1)
-        submitError.textContent = 'Player name already taken.';
+        submitError.textContent = 'Player name already taken. Choose again.';
     else if (errorcode == 2)
         submitError.textContent = 'Player name or password were not rule conform.';
     else

@@ -1,28 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registration</title>
-</head>
-<body>
-    <h2>Registration</h2>
-    <form id="registrationForm" action="/register" method="POST">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required><br>
-        <span id="usernameError"></span><br><br>
+<div class="container-fluid p-0">
+    <img src="static/pong_animation.gif" alt="ft_transcendence banner" class="banner" style="width: 100%">
+</div>
 
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required><br>
-        <span id="passwordError"></span><br><br>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-12 col-sm-8 col-lg-3 bg-black text-white pt-5">
+            <h2 class="text-center">Registration</h2>
+            <br>
+            <form id="registrationForm" action="/register" method="POST">
+                <input type="text" id="username" name="username" placeholder="User Name" class="form-control" required><br>
+                <span id="usernameError"></span><br><br>
 
-        <label for="passwordRepetition">Repeat Password:</label>
-        <input type="password" id="passwordRepetition" name="passwordRepetition" required><br>
-        <span id="passwordRepetitionError"></span><br><br>
+                <input type="password" id="password" name="password" placeholder="Password" class="form-control" required><br>
+                <span id="passwordError"></span><br><br>
 
-        <button type="submit">Register</button><br><br>
+                <input type="password" id="passwordRepetition" name="passwordRepetition" placeholder="Repeat Password" class="form-control" required><br>
+                <span id="passwordRepetitionError"></span><br><br>
 
-        <span id="submitError"></span><br><br>
-    </form>
-</body>
-</html>
+                <div class="d-flex justify-content-center">
+                    <button type="submit" class="btn btn-outline-light text-dark bg-light">Register</button><br><br>
+                </div>
+                <br>
+                <span id="submitError" class="text-center"></span><br><br>
+            </form>
+        </div>
+    </div>
+</div>
