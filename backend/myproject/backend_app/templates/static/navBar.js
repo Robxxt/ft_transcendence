@@ -4,13 +4,23 @@ import { navigateTo } from './router.js';
 export function createNavBar() {
     const navBar = document.getElementById('navBar');
     navBar.innerHTML = `
-        <a href="/start>Start</a>
-        <a href="/dashboard">User Dashboard</a>
-        ft_transcendence
-        <a href="/profile">Profile</a>
-        ${JSON.parse(localStorage.getItem('user')).name}
-        <img id="avatar" src="" alt="Avatar" width=50 height=50 />
-        <button id="logoutButton">Logout</button>
+        <ul class="nav nav justify-content-end">
+            <li class="nav-item">
+                <a class="nav-link" href="/start">Start</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/Profile">Profile</a>
+            </li>
+            <li>
+                <a href="#" id="logoutButton" class="nav-link">Logout</a>
+            </li>
+            <li class="navbar-text"">
+                ${JSON.parse(localStorage.getItem('user')).name}
+            </li>
+            <li>
+                <img id="avatar" src="" alt="Avatar" width=50 height=50 class="rounded-circle"/>
+            </li>
+        </ul>
     `;
 
     // load Avatart
