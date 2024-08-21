@@ -51,8 +51,9 @@ function handleFormSubmit(event) {
         return;
 
     // set data
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
+    const form = event.target;
+    const username = form.querySelector('#username').value;
+    const password = form.querySelector('#password').value;
     const data = {username: username, password: password};
 
     fetch('/register', {
