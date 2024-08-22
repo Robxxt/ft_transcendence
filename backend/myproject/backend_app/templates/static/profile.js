@@ -26,6 +26,9 @@ export function loadPage(app) {
             // JS for changeAvatar div
             handleChangeAvatarDiv(app);
 
+            // JS for setDisplayName
+            handleSetDisplayName(app);
+
             // JS for winLossRecord div
             handleWinLossRecordDiv(app);
 
@@ -125,6 +128,41 @@ function handleChangePasswordDiv(app) {
     });
 }
 
+function handleSetDisplayName(app) {
+    const form = document.getElementById("setDisplayName");
+    const displayName = document.getElementById("displayName");
+    const status = document.getElementById("displayNameStatus");
+
+    form.addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        fetch('/setDisplayName', {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              displayName: displayName.value
+            })
+          })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+            return response.json();
+          })
+          .then(data => {
+            if (data.nameExists === true)
+                status.innerHTML = "Name sadly already taken. But twas a cool name.";
+            else 
+                status.innerHTML = "Updated the display name."
+          })
+          .catch(error => {
+            console.error('Error:', error);
+          });       
+    })
+}
+
 function handleWinLossRecordDiv(app) {
     const username = localStorage.getItem("user");
     const winLossRecordDiv = document.getElementById('winLossRecord');
@@ -133,11 +171,9 @@ function handleWinLossRecordDiv(app) {
         .then(response => response.json())
         .then(data => {
             const winLossHTML = `
-                <h5>Win Loss Record</h5>
-                <p>Wins: ${data.wins}</p>
-                <p>Losses: ${data.losses}</p>
+                <h1 class="display-l" style="color: magenta;">${data.wins} : ${data.losses}</h1>
             `;
-            winLossRecordDiv.innerHTML = winLossHTML;
+            winLossRecordDiv.innerHTML += winLossHTML;
         })
         .catch(error => {
             console.error('Error fetching win/loss record:', error);
@@ -146,14 +182,25 @@ function handleWinLossRecordDiv(app) {
 
 function handleGameHistoryDiv(app) {
     const username = localStorage.getItem("user");
-    const gameList = document.getElementById('gameList');
+    const gamesTable = document.getElementById('gamesTable');
 
     fetch(`/gameList?username=${username}`)
     .then(response => response.json())
     .then(data => {
         for (const item of data) {
-            gameList.appendChild(document.createTextNode(JSON.stringify(item)));
-            gameList.appendChild(document.createElement('br'));
+            let newRow = gamesTable.insertRow();
+            let cell1 = newRow.insertCell(0);
+            let cell2 = newRow.insertCell(1);
+            let cell3 = newRow.insertCell(2);
+            let cell4 = newRow.insertCell(3);
+            let cell5 = newRow.insertCell(4);
+            let cell6 = newRow.insertCell(5);
+            cell1.textContent = item.date;
+            cell2.textContent = item.time;
+            cell3.textContent = item.player1;
+            cell4.textContent = item.player2;
+            cell5.textContent = item.winner;
+            cell6.textContent = item.result;
         }    
     })
     .catch(error => {
@@ -171,11 +218,11 @@ function handleFriendsDiv(app) {
         for (const friend of data) {
             const listItem = document.createElement('li');
 
-            const statusImage = document.createElement('img');
-            statusImage.alt = friend.online ? '🟢' : '🔴';
-            listItem.appendChild(statusImage);
-
-            listItem.appendChild(document.createTextNode(friend.friend));
+            if (friend.online)
+                listItem.innerHTML = `<span class="badge bg-success">online</span>`;
+            else 
+                listItem.innerHTML = `<span class="badge bg-dark">offline</span>`;
+            listItem.innerHTML += ` ${friend.friend}`;
 
             gameList.appendChild(listItem);
         }    

@@ -1,27 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Start Page</title>
-</head>
-<body>
-    <h2>Start Page</h2>
-    You can play a random player or answer a challenge. You can also participate in a tournament!<br>
-    Pong is a mindset.<br>
-    <button id="invitationRandom">Just play Pong</button>
-    <span id="statusLine" style="color: red;"></span>
+<div class="container-fluid p-0">
+    <img src="static/pong_banner_with_text.jpeg" alt="ft_transcendence banner" class="banner" style="width: 100%">
+</div>
 
-    <div id="challenges">
-        <h3>Open Challenges</h3>
-        <button id="reload">reload</button>
-        <ul id="challengesList"></ul>
+<div class="row">
+    <div class="col p-5 m-5 rounded background-magenta">
+        <p>Pong is a mindset.</p>
+        <button id="playPong" class="btn btn-outline-dark shadow">Just play Pong</button>
     </div>
-
-    <div id="tournaments">
-        <h3>Open Tournaments</h3>
-        <button id="startTounament">Start your own awesome tournament!</button>
-        <ul id="tournamentsList"></ul>
+    <div class="col p-5 m-5 rounded background-magenta">
+        <p>Relax with a round of Tic Tac Toe.</p>
+        <button id="playTictactoe" class="btn btn-outline-dark shadow">Play Tic Tac Toe</button>
     </div>
-</body>
-</html>
+</div>

@@ -1,34 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile</title>
-</head>
-<body>
-    <h2>Profile</h2>
 
-    <div id="changePassword">
+<h2 class="text-center text-white">Profile</h2>
+
+<div class="row">
+    <div id="changePassword" class="col m-5 bg-light">
         <h5>Change your Password</h5>
         <form id="passwordForm">
             <div>
-                <label for="currentPassword">Current Password:</label>
-                <input type="password" id="currentPassword" name="currentPassword" required>
+                <input type="password" id="currentPassword" name="currentPassword" placeholder="Current Password">
             </div>
             <div>
-                <label for="newPassword">New Password:</label>
-                <input type="password" id="newPassword" name="newPassword" required>
+                <input type="password" id="newPassword" name="newPassword" placeholder="New Password">
             </div>
             <div>
-                <label for="confirmPassword">Confirm New Password:</label>
-                <input type="password" id="confirmPassword" name="confirmPassword" required>
+                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm New Password">
             </div>
             <button type="submit">Change Password</button>
         </form>
         <div id="passwordChangeStatus"></div>
     </div>
-    
-    <div id="changeAvatar">
+
+    <div id="changeAvatar" class="col m-5 bg-light">
         <h5>Change your avatar</h5>
         <form id="avatarForm" enctype="multipart/form-data">
             <input type="file" id="avatarInput" name="avatar" accept=".jpg, .jpeg, .png"><br>
@@ -37,17 +28,43 @@
         <div id="avatarUploadStatus"></div>
     </div>
 
-    <div id="winLossRecord">
+    <div id="setDisplayName" class="col m-5 bg-light">
+        <h5>Set your display name for tournaments</h5>
+        <form id="setDisplayName">
+            <input type="text" id="displayName" placeholder="Choose a cool player name" required>
+            <button type="submit" id="sendDisplayName">Submit</button>
+            <p id="displayNameStatus"></p>
+        </form>
+    </div>
+</div>
+
+<div class="row">
+    <div id="winLossRecord" class="col m-5 bg-light">
         <h5>Win Loss Record</h5>
     </div>
 
-    <div id="gameHistory">
+    <div id="gameHistory" class="col m-5 bg-light">
         <h5>Game History</h5>
-        <div id='gameList'></div>
+        <table id='gamesTable' class="table table-dark table-striped table-hover">
+            <tr>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Player 1</th>
+                <th>Player 2</th>
+                <th>Winner</th>
+                <th>Result</th>
+            </tr>
+        </table>
     </div>
+</div>
 
-    <div id="friends"></div>
+<div class="row">
+    <div id="friends" class="col m-5 bg-light">
         <h5>Friend List</h5>
         <ul id="friendList"></ul>
-</body>
-</html>
+    </div>
+
+    <div id="addFriends" class="col m-5 bg-light">
+        <h5>Add friends</h5>
+    </div>
+</div>

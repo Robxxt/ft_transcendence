@@ -9,7 +9,7 @@ export function createNavBar() {
                 <a class="nav-link" href="/start">Start</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/Profile">Profile</a>
+                <a class="nav-link" href="/profile">Profile</a>
             </li>
             <li>
                 <a href="#" id="logoutButton" class="nav-link">Logout</a>

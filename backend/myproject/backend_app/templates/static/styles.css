@@ -5,3 +5,8 @@ a {
 a:hover {
     color: darkmagenta; /* Optional: Change color on hover */
 }
+
+.background-magenta {
+    background-color: #FF99FF;
+    color: black;
+}
