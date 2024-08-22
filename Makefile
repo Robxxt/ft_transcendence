@@ -10,7 +10,8 @@ fclean: clean
 				prom/prometheus \
 				grafana/grafana \
 				prom/alertmanager \
-				postgres:13
+				postgres:13 \
+				postgres_exporter
 
 apocalypsis: fclean
 	rm -Rf shared_volumes

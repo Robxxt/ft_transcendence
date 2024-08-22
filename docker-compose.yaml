@@ -63,6 +63,15 @@ services:
       - ./.env
     command: ["python3", "manage.py", "runserver", "0.0.0.0:8000"]
 
+  postgres_exporter:
+    container_name: tr_postgres_exporter
+    image: prometheuscommunity/postgres-exporter
+    depends_on:
+      - postgres
+    ports:
+      - "9187:9187"
+    env_file:
+      - ./.env
 
 volumes:
   postgres_data:
