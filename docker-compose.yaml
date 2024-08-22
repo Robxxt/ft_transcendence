@@ -35,33 +35,31 @@ services:
     env_file:
       - ./.env
     depends_on:
-      - prometheus  # Ensure Prometheus starts before Grafana
+      - prometheus
   node_exporter:
     image: prom/node-exporter
     container_name: tr_node_exporter
     ports:
       - "9100:9100"
-  # db:
-  #   image: postgres:13
-  #   environment:
-  #     POSTGRES_DB: ping_pong_user
-  #     POSTGRES_USER: thesheriff
-  #     POSTGRES_PASSWORD: test123
-  #   volumes:
-  #     - postgres_data:/var/lib/postgresql/data
-  #   ports:
-  #     - "5432:5432"
-  # web:
-  #   build: ./database/db
-  #   volumes:
-  #     - ./database/db:/app
-  #   ports:
-  #     - "8000:8000"
-  #   depends_on:
-  #     - db
-  #   env_file:
-  #     - ./.env
-  #   command: ["python3", "manage.py", "runserver", "0.0.0.0:8000"]
+  db:
+    image: postgres:13
+    env_file:
+      - ./.env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+  web:
+    build: ./backend/myproject
+    volumes:
+      - ./backend/myproject:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    env_file:
+      - ./.env
+    command: ["python3", "manage.py", "runserver", "0.0.0.0:8000"]
 
 
 volumes:
