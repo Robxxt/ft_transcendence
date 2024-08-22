@@ -41,7 +41,8 @@ services:
     container_name: tr_node_exporter
     ports:
       - "9100:9100"
-  db:
+  postgres:
+    container_name: tr_postgres
     image: postgres:13
     env_file:
       - ./.env
@@ -49,14 +50,15 @@ services:
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
-  web:
+  django:
+    container_name: tr_django
     build: ./backend/myproject
     volumes:
       - ./backend/myproject:/app
     ports:
       - "8000:8000"
     depends_on:
-      - db
+      - postgres
     env_file:
       - ./.env
     command: ["python3", "manage.py", "runserver", "0.0.0.0:8000"]

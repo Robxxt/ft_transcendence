@@ -24,7 +24,7 @@ SECRET_KEY = 'django-insecure-zb5$j3wdwu1l*p*y50=hnoty_g7n(qc-pibyrb3h6s9l3o+n%=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['transcendence.com', '127.0.0.1']
+ALLOWED_HOSTS = ['postgres', 'transcendence.com', '127.0.0.1']
 
 
 # Application definition
@@ -94,7 +94,7 @@ DATABASES = {
         'NAME': 'ping_pong_user',
         'USER': 'thesheriff',
         'PASSWORD': 'test123',
-        'HOST': 'localhost',
+        'HOST': 'postgres',
         'PORT': '',
     }
 }
