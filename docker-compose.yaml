@@ -17,6 +17,9 @@ services:
     container_name: tr_prometheus
     depends_on:
       - alertmanager
+      - django
+      - node_exporter
+      - postgres_exporter
     ports:
       - "9090:9090"
     volumes:
