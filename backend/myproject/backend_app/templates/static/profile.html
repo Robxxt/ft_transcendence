@@ -1,49 +1,54 @@
-
-<h2 class="text-center text-white">Profile</h2>
+<h2 class="text-center text-white pt-3">Profile</h2>
 
 <div class="row">
-    <div id="changePassword" class="col m-5 bg-light">
+    <div id="changePassword" class="col m-5 p-5 rounded bg-light">
         <h5>Change your Password</h5>
         <form id="passwordForm">
             <div>
-                <input type="password" id="currentPassword" name="currentPassword" placeholder="Current Password">
+                <input type="password" id="currentPassword" name="currentPassword" placeholder="Current Password" class="form-control">
             </div>
             <div>
-                <input type="password" id="newPassword" name="newPassword" placeholder="New Password">
+                <input type="password" id="newPassword" name="newPassword" placeholder="New Password" class="form-control">
             </div>
             <div>
-                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm New Password">
+                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm New Password" class="form-control">
             </div>
-            <button type="submit">Change Password</button>
+            <div class="d-flex justify-content-center">
+                <button type="submit" class="btn btn-outline-dark bg-dark text-white">Change Password</button>
+            </div>
         </form>
         <div id="passwordChangeStatus"></div>
     </div>
 
-    <div id="changeAvatar" class="col m-5 bg-light">
+    <div id="changeAvatar" class="col m-5 p-5 rounded bg-light">
         <h5>Change your avatar</h5>
         <form id="avatarForm" enctype="multipart/form-data">
-            <input type="file" id="avatarInput" name="avatar" accept=".jpg, .jpeg, .png"><br>
-            <button type="submit">Upload new Avatar</button>
+            <input type="file" id="avatarInput" name="avatar" accept=".jpg, .jpeg, .png" class="form-control"><br>
+            <div class="d-flex justify-content-center">
+                <button type="submit" class="btn btn-outline-dark bg-dark text-white">Upload new Avatar</button>
+            </div>
         </form>
         <div id="avatarUploadStatus"></div>
     </div>
 
-    <div id="setDisplayName" class="col m-5 bg-light">
+    <div id="setDisplayName" class="col m-5 p-5 rounded bg-light">
         <h5>Set your display name for tournaments</h5>
         <form id="setDisplayName">
-            <input type="text" id="displayName" placeholder="Choose a cool player name" required>
-            <button type="submit" id="sendDisplayName">Submit</button>
+            <input type="text" id="displayName" class="form-control" required>
+            <div class="d-flex justify-content-center">
+                <button type="submit" id="sendDisplayName" class="btn btn-outline-dark bg-dark text-white">Submit</button>
+            </div>
             <p id="displayNameStatus"></p>
         </form>
     </div>
 </div>
 
 <div class="row">
-    <div id="winLossRecord" class="col m-5 bg-light">
+    <div id="winLossRecord" class="col m-5 p-5 rounded bg-light">
         <h5>Win Loss Record</h5>
     </div>
 
-    <div id="gameHistory" class="col m-5 bg-light">
+    <div id="gameHistory" class="col m-5 p-5 rounded bg-light">
         <h5>Game History</h5>
         <table id='gamesTable' class="table table-dark table-striped table-hover">
             <tr>
@@ -59,12 +64,13 @@
 </div>
 
 <div class="row">
-    <div id="friends" class="col m-5 bg-light">
+    <div id="friends" class="col m-5 p-5 rounded bg-light">
         <h5>Friend List</h5>
-        <ul id="friendList"></ul>
+        <ul id="friendList" class="list-group"></ul>
     </div>
 
-    <div id="addFriends" class="col m-5 bg-light">
-        <h5>Add friends</h5>
+    <div id="addFriends" class="col m-5 p-5 rounded bg-light">
+        <h5>Add and remove friends</h5>
+        <div id="userList" class="list-group"></div>
     </div>
 </div>

@@ -16,6 +16,7 @@ export function loadPage(app) {
                 navigateTo("/login");
                 return;
             }
+            const username = JSON.parse(user).name;
 
             // load Html
             app.innerHTML = html;
@@ -27,7 +28,7 @@ export function loadPage(app) {
             handleChangeAvatarDiv(app);
 
             // JS for setDisplayName
-            handleSetDisplayName(app);
+            handleSetDisplayName(app, username);
 
             // JS for winLossRecord div
             handleWinLossRecordDiv(app);
@@ -37,6 +38,9 @@ export function loadPage(app) {
 
             // JS for friends div
             handleFriendsDiv(app);
+
+            // JS for addFrinends div
+            handleAddFriendsDiv(app, username);
         })
         .catch(error => {
             console.error('Error loading page:', error);
@@ -128,14 +132,32 @@ function handleChangePasswordDiv(app) {
     });
 }
 
-function handleSetDisplayName(app) {
+function handleSetDisplayName(app, username) {
     const form = document.getElementById("setDisplayName");
     const displayName = document.getElementById("displayName");
     const status = document.getElementById("displayNameStatus");
 
-    form.addEventListener("submit", function(event) {
-        event.preventDefault();
+    fetch(`/getDisplayName?username=${encodeURIComponent(username)}`, {
+        method: 'GET',
+      })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        displayName.placeholder = `Currently ${data.displayName}`;
+    })
+    .catch(error => {
+        console.error('There was a problem with the fetch operation:', error);
+    });
 
+    form.addEventListener("submit", function(event) {
+        const displayName = document.getElementById("displayName");
+
+        event.preventDefault();
+       
         fetch('/setDisplayName', {
             method: 'PATCH',
             headers: {
@@ -154,12 +176,15 @@ function handleSetDisplayName(app) {
           .then(data => {
             if (data.nameExists === true)
                 status.innerHTML = "Name sadly already taken. But twas a cool name.";
-            else 
+            else {
                 status.innerHTML = "Updated the display name."
+                displayName.placeholder = `Currently ${displayName.value}`;
+                displayName.value = "";
+            }
           })
           .catch(error => {
             console.error('Error:', error);
-          });       
+          });
     })
 }
 
@@ -223,12 +248,12 @@ function handleFriendsDiv(app) {
             else 
                 listItem.innerHTML = `<span class="badge bg-dark">offline</span>`;
             listItem.innerHTML += ` ${friend.friend}`;
-
+            listItem.classList.add('list-group-item');
             gameList.appendChild(listItem);
         }    
     })
     .catch(error => {
-        avatarUploadStatus.textContent = 'Error uploading avatar. Please try again.';
+        console.error('Error:', error);;
     });
 }
 
@@ -242,4 +267,106 @@ function validatePassword() {
         document.getElementById('passwordChangeStatus').textContent = '';
         return true;
     }
+}
+
+function handleAddFriendsDiv(app, username) {
+    const userList = document.getElementById('userList');
+
+
+    Promise.all([
+            fetch(`/friendList?${username}`),
+            fetch("/userList")
+        ])
+        .then(responses => {
+            return Promise.all(responses.map(response => response.json()));
+        })
+        .then(data => {
+            const friends = [];
+            const users = [];
+
+            for (const item of data[0]) {
+                friends.push(item.friend);
+            }
+            for (const item of data[1]) {
+                users.push(item);
+            }
+            
+            for (const user of users) {
+                if (user === username)
+                    continue;
+
+                const anchor = document.createElement('a');
+    
+                anchor.setAttribute('href', '#');
+                anchor.style.setProperty('color', 'black', 'important');
+                anchor.classList.add("list-group-item");
+                anchor.classList.add("list-group-item-action");
+                anchor.classList.add("list-group-item-action");
+                anchor.id = "add_" + user;
+                anchor.textContent = user;
+                if (friends.includes(user)) {
+                    anchor.innerHTML = user + ' <span class="badge bg-success">friend</span>';
+                }
+
+                anchor.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    addFriend(username, anchor.id.substring(4), friends.includes(user));
+                  });
+
+                userList.appendChild(anchor);
+            }  
+        })
+        .catch(error => {
+            console.error('Error during fetch operations:', error);
+        });
+}
+
+function addFriend(username, friend, isFriend) {
+    const data = {
+        user: username,
+        friend: friend
+      };
+      
+      if (! isFriend) {
+        fetch('/addFriend', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => {
+            if (!response.ok) {
+            throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            location.reload();
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+        });
+      }
+      else {
+        fetch('/removeFriend', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => {
+            if (!response.ok) {
+            throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            location.reload();
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+        });
+      }
 }
