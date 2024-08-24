@@ -1,31 +1,35 @@
-import { navigateTo } from './router.js';
-
-let challenges = [];
-let tournaments = [];
+import { navigateTo } from "./router.js";
 
 export async function loadPage(app) {
-    fetch('static/start.html')
+    // fetch basic html
+    fetch("static/start.html")
         .then(response => {
             if (!response.ok) {
-                throw new Error('Network response was not ok ' + response.statusText);
+                throw new Error("Network response was not ok " + response.statusText);
             }
             return response.text();
         })
         .then(html => {
             // check if user is logged in
             const user = localStorage.getItem("user");
-            if (user && ! JSON.parse(user).isLoggedIn) {
-                console.log(user);
+            if (!user || !JSON.parse(user).isLoggedIn) {
                 navigateTo("/login");
                 return;
             }
-            const username = JSON.parse(user).name;
+
+            // check if user name is present
+            if (!JSON.parse(user).name) {
+                localStorage.removeItem("user");
+                navigateTo("/login");
+                return;
+            }
 
             // fill html
             app.innerHTML = html;
 
             // event handler for the buttons
-            let button = app.querySelector("#playPong");
+            let button;
+            button = app.querySelector("#playPong");
             button.addEventListener("click", () => {
                 navigateTo("/pong");
                 return;
@@ -33,11 +37,11 @@ export async function loadPage(app) {
 
             button = app.querySelector("#playTictactoe");
             button.addEventListener("click", () => {
-                navigateTo("/pong");
+                navigateTo("/pong"); // here we have to change it to tictactoe!
                 return;
             });
         })
         .catch(error => {
-            console.error('Error loading page:', error);
+            console.error(error);
         });
 }
