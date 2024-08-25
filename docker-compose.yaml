@@ -8,10 +8,6 @@ services:
       - ./.env
     ports:
       - "9093:9093"
-    volumes:
-      - ./provisioning/alertmanager/alertmanager.yaml:/etc/alertmanager/alertmanager.yaml
-    # command: 
-    #   - '--config.file=/etc/alertmanager/alertmanager.yaml'
   prometheus:
     image: prom/prometheus
     container_name: tr_prometheus
