@@ -19,33 +19,83 @@ class TableMatch(models.Model):
     position_player1 = models.IntegerField(default=0)
     position_player2 = models.IntegerField(default=0)
 
+
 class PongGame(models.Model):
-    player1_score = models.IntegerField(default=0)
-    player2_score = models.IntegerField(default=0)
-    player1_position = models.FloatField(default=0.5)  # Paddle position (0 to 1)
-    player2_position = models.FloatField(default=0.5)
-    ball_x = models.FloatField(default=0.5)  # Ball position (0 to 1)
+    ball_x = models.FloatField(default=0.5)
     ball_y = models.FloatField(default=0.5)
-    ball_dx = models.FloatField(default=0.01)  # Ball direction and speed
-    ball_dy = models.FloatField(default=0.01)
+    ball_speed_x = models.FloatField(default=0.005)
+    ball_speed_y = models.FloatField(default=0.005)
+    paddle1_y = models.FloatField(default=0.5)
+    paddle2_y = models.FloatField(default=0.5)
+    score1 = models.IntegerField(default=0)
+    score2 = models.IntegerField(default=0)
     is_active = models.BooleanField(default=False)
+    game_state = models.CharField(max_length=20, default='waiting')
+    winner = models.CharField(max_length=20, null=True, blank=True)
 
     def reset(self):
-        self.player1_score = 0
-        self.player2_score = 0
-        self.player1_position = 0.5
-        self.player2_position = 0.5
         self.ball_x = 0.5
         self.ball_y = 0.5
-        self.ball_dx = 0.01
-        self.ball_dy = 0.01
+        self.ball_speed_x = 0.005 if self.ball_speed_x > 0 else -0.005
+        self.ball_speed_y = 0.005 if self.ball_speed_y > 0 else -0.005
+        self.paddle1_y = 0.5
+        self.paddle2_y = 0.5
         self.is_active = False
+        self.game_state = 'waiting'
         self.save()
-    
-    def start(self):
+
+    def start_game(self):
         self.is_active = True
+        self.game_state = 'playing'
         self.save()
-    
-    def end(self):
-        self.is_active = False
+
+    def update_game(self):
+        if not self.is_active:
+            return
+
+        # Move ball
+        self.ball_x += self.ball_speed_x
+        self.ball_y += self.ball_speed_y
+
+        # Ball collision with top and bottom walls
+        if self.ball_y <= 0 or self.ball_y >= 1:
+            self.ball_speed_y = -self.ball_speed_y
+
+        # Ball collision with paddles
+        paddle_width = 0.02
+        paddle_height = 0.2
+        if (self.ball_x <= paddle_width and self.paddle1_y <= self.ball_y <= self.paddle1_y + paddle_height) or \
+           (self.ball_x >= 1 - paddle_width and self.paddle2_y <= self.ball_y <= self.paddle2_y + paddle_height):
+            self.ball_speed_x = -self.ball_speed_x
+
+        # Ball out of bounds
+        if self.ball_x < 0:
+            self.score2 += 1
+            self.check_game_over()
+            if not self.winner:
+                self.game_state = 'scored'
+                self.reset()
+        elif self.ball_x > 1:
+            self.score1 += 1
+            self.check_game_over()
+            if not self.winner:
+                self.game_state = 'scored'
+                self.reset()
+
+        self.save()
+
+    def check_game_over(self):
+        if self.score1 >= 2:
+            self.winner = 'Player 1'
+            self.is_active = False
+        elif self.score2 >= 2:
+            self.winner = 'Player 2'
+            self.is_active = False
+        self.save()
+
+    def move_paddle(self, player, position):
+        if player == 1:
+            self.paddle1_y = max(0, min(position, 0.8))
+        else:
+            self.paddle2_y = max(0, min(position, 0.8))
         self.save()

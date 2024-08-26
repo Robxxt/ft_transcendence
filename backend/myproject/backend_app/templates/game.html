@@ -1,55 +1,37 @@
-<!DOCTYPE html>
 {% load static %}
+
+<!DOCTYPE html>
 <html>
 <head>
     <title>Pong Game</title>
     <style>
-        #game-board {
-            width: 600px;
-            height: 400px;
-            border: 1px solid black;
-            position: relative;
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
         }
-        .paddle {
-            width: 10px;
-            height: 60px;
-            background-color: black;
-            position: absolute;
+        #game-container {
+            text-align: center;
         }
-        #player1 { left: 10px; }
-        #player2 { right: 10px; }
-        #ball {
-            width: 10px;
-            height: 10px;
-            background-color: red;
-            border-radius: 50%;
-            position: absolute;
+        #pongCanvas {
+            border: 2px solid #000;
         }
     </style>
 </head>
 <body>
-    <h1>Pong Game</h1>
-    <div id="game-board">
-        <div id="player1" class="paddle"></div>
-        <div id="player2" class="paddle"></div>
-        <div id="ball"></div>
+    <div id="game-container">
+        <h1>Pong Game</h1>
+        <canvas id="pongCanvas" width="800" height="400"></canvas>
+        <div>
+            <p><strong>Player 1:</strong> Use 'W' and 'S' keys to move up and down</p>
+            <p><strong>Player 2:</strong> Use 'Arrow Up' and 'Arrow Down' keys to move up and down</p>
+            <p>First player to score 2 points wins!</p>
+            <p>Press Space to start the game or continue after scoring.</p>
+        </div>
     </div>
-    <p>Player 1 Score: <span id="player1-score">0</span></p>
-    <p>Player 2 Score: <span id="player2-score">0</span></p>
-    {% if not game.is_active %}
-        <form method="post">
-            {% csrf_token %}
-            <input type="hidden" name="action" value="start">
-            <button type="submit">Start Game</button>
-        </form>
-    {% endif %}
-    {% if game.player1_score == 2 or game.player2_score == 2 %}
-        <form method="post">
-            {% csrf_token %}
-            <input type="hidden" name="action" value="reset">
-            <button type="submit">Restart Game</button>
-        </form>
-    {% endif %}
     <script src="{% static 'js/game.js' %}"></script>
 </body>
 </html>
