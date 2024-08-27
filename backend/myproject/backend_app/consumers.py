@@ -29,6 +29,8 @@ class PongGameConsumer(AsyncWebsocketConsumer):
             await database_sync_to_async(self.game_logic.start_game)()
         elif action == 'update_game':
             await database_sync_to_async(self.game_logic.update_game)()
+        elif action == 'reset_game':
+            await database_sync_to_async(self.game.reset)()
 
         await self.send_game_state()
 

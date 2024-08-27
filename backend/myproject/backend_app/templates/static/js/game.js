@@ -35,7 +35,11 @@ class PongGame {
         if (e.key === 's') this.keys.s = true;
         if (e.key === 'ArrowUp') this.keys.arrowUp = true;
         if (e.key === 'ArrowDown') this.keys.arrowDown = true;
-        if (e.key === 'space') this.keys.space = true;
+        if (e.key === 'r') {this.keys.r = true;
+            console.log('Sending reset_game action');
+            this.socket.send(JSON.stringify({ action: 'reset_game' }));
+        }
+        if (e.key === ' ') this.keys.space = true;
 
         this.sendPaddlePosition();
     }
@@ -46,7 +50,8 @@ class PongGame {
         if (e.key === 's') this.keys.s = false;
         if (e.key === 'ArrowUp') this.keys.arrowUp = false;
         if (e.key === 'ArrowDown') this.keys.arrowDown = false;
-        if (e.key === 'space') {
+        if (e.key === 'r') this.keys.r = false;
+        if (e.key === ' ') {
             this.keys.space = false;
             if (this.gameState.game_state === 'waiting' || this.gameState.game_state === 'scored') {
                 console.log('Sending start_game action');
@@ -114,9 +119,8 @@ class PongGame {
         }, 1000 / 60);  // 60 FPS
     }
 }
-alert('Script loaded');
 document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM fully loaded and parsed');
     const game = new PongGame();
-    game.start();
+    // game.start();
 });

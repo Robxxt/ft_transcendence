@@ -42,4 +42,7 @@ class PongGame(models.Model):
         self.paddle2_y = 0.5
         self.is_active = False
         self.game_state = 'waiting'
+        self.score1 = 0
+        self.score2 = 0
+        self.winner = None
         self.save()
