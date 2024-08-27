@@ -13,17 +13,24 @@ class PongGame {
 
         this.socket = new WebSocket(`ws://${window.location.host}/ws/game/`);
         this.socket.onmessage = (e) => this.handleServerMessage(JSON.parse(e.data));
+        this.socket.onopen = () => console.log('WebSocket connection opened');
+        this.socket.onclose = () => console.log('WebSocket connection closed');
+        this.socket.onerror = (error) => console.error('WebSocket error:', error);
 
         window.addEventListener('keydown', this.handleKeyDown.bind(this));
         window.addEventListener('keyup', this.handleKeyUp.bind(this));
+
+        console.log('PongGame initialized');
     }
 
     handleServerMessage(data) {
+        console.log('Received server message:', data);
         this.gameState = data;
         this.draw();
     }
 
     handleKeyDown(e) {
+        console.log('Key down:', e.key);
         if (e.key === 'w') this.keys.w = true;
         if (e.key === 's') this.keys.s = true;
         if (e.key === 'ArrowUp') this.keys.arrowUp = true;
@@ -34,13 +41,15 @@ class PongGame {
     }
 
     handleKeyUp(e) {
+        console.log('Key up:', e.key);
         if (e.key === 'w') this.keys.w = false;
         if (e.key === 's') this.keys.s = false;
         if (e.key === 'ArrowUp') this.keys.arrowUp = false;
         if (e.key === 'ArrowDown') this.keys.arrowDown = false;
-        if (e.key === ' ') {
+        if (e.key === 'space') {
             this.keys.space = false;
             if (this.gameState.game_state === 'waiting' || this.gameState.game_state === 'scored') {
+                console.log('Sending start_game action');
                 this.socket.send(JSON.stringify({ action: 'start_game' }));
             }
         }
@@ -51,17 +60,20 @@ class PongGame {
             let newPosition = this.gameState.paddle1_y;
             if (this.keys.w) newPosition -= 0.02;
             if (this.keys.s) newPosition += 0.02;
+            console.log('Sending move_paddle action for player 1:', newPosition);
             this.socket.send(JSON.stringify({ action: 'move_paddle', player: 1, position: newPosition }));
         }
         if (this.keys.arrowUp || this.keys.arrowDown) {
             let newPosition = this.gameState.paddle2_y;
             if (this.keys.arrowUp) newPosition -= 0.02;
             if (this.keys.arrowDown) newPosition += 0.02;
+            console.log('Sending move_paddle action for player 2:', newPosition);
             this.socket.send(JSON.stringify({ action: 'move_paddle', player: 2, position: newPosition }));
         }
     }
 
     draw() {
+        console.log('Drawing game state:', this.gameState);
         // Clear canvas
         this.ctx.fillStyle = 'black';
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
@@ -93,15 +105,18 @@ class PongGame {
     }
 
     start() {
+        console.log('Starting game loop');
         setInterval(() => {
             if (this.gameState.is_active) {
+                console.log('Sending update_game action');
                 this.socket.send(JSON.stringify({ action: 'update_game' }));
             }
         }, 1000 / 60);  // 60 FPS
     }
 }
-
+alert('Script loaded');
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM fully loaded and parsed');
     const game = new PongGame();
     game.start();
 });

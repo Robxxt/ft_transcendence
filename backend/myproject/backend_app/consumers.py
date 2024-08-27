@@ -1,12 +1,16 @@
+# consumers.py
+
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from .models import PongGame
+from .game_logic import GameLogic
 
 class PongGameConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         await self.accept()
         self.game, _ = await database_sync_to_async(PongGame.objects.get_or_create)(pk=1)
+        self.game_logic = GameLogic(self.game)
         await self.channel_layer.group_add("game", self.channel_name)
         await self.send_game_state()
 
@@ -20,30 +24,21 @@ class PongGameConsumer(AsyncWebsocketConsumer):
         if action == 'move_paddle':
             player = data.get('player')
             position = data.get('position')
-            await database_sync_to_async(self.game.move_paddle)(player, position)
+            await database_sync_to_async(self.game_logic.move_paddle)(player, position)
         elif action == 'start_game':
-            await database_sync_to_async(self.game.start_game)()
+            await database_sync_to_async(self.game_logic.start_game)()
         elif action == 'update_game':
-            await database_sync_to_async(self.game.update_game)()
+            await database_sync_to_async(self.game_logic.update_game)()
 
         await self.send_game_state()
 
     async def send_game_state(self):
+        game_state = await database_sync_to_async(self.game_logic.get_game_state)()
         await self.channel_layer.group_send(
             "game",
             {
                 "type": "game_state_update",
-                "game_state": {
-                    'ball_x': self.game.ball_x,
-                    'ball_y': self.game.ball_y,
-                    'paddle1_y': self.game.paddle1_y,
-                    'paddle2_y': self.game.paddle2_y,
-                    'score1': self.game.score1,
-                    'score2': self.game.score2,
-                    'is_active': self.game.is_active,
-                    'game_state': self.game.game_state,
-                    'winner': self.game.winner,
-                }
+                "game_state": game_state
             }
         )
 
