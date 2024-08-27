@@ -1,6 +1,7 @@
 # consumers.py
 
 import json
+import asyncio
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from .models import PongGame
@@ -13,6 +14,7 @@ class PongGameConsumer(AsyncWebsocketConsumer):
         self.game_logic = GameLogic(self.game)
         await self.channel_layer.group_add("game", self.channel_name)
         await self.send_game_state()
+        asyncio.create_task(self.game_loop())
 
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard("game", self.channel_name)
@@ -46,3 +48,9 @@ class PongGameConsumer(AsyncWebsocketConsumer):
 
     async def game_state_update(self, event):
         await self.send(text_data=json.dumps(event["game_state"]))
+
+    async def game_loop(self):
+        while True:
+            await database_sync_to_async(self.game_logic.update_game)()
+            await self.send_game_state()
+            await asyncio.sleep(1/640) 

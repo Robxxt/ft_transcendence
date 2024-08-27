@@ -23,8 +23,8 @@ class TableMatch(models.Model):
 class PongGame(models.Model):
     ball_x = models.FloatField(default=0.5)
     ball_y = models.FloatField(default=0.5)
-    ball_speed_x = models.FloatField(default=0.005)
-    ball_speed_y = models.FloatField(default=0.005)
+    ball_speed_x = models.FloatField(default=0.009)
+    ball_speed_y = models.FloatField(default=0.009)
     paddle1_y = models.FloatField(default=0.5)
     paddle2_y = models.FloatField(default=0.5)
     score1 = models.IntegerField(default=0)
@@ -36,8 +36,8 @@ class PongGame(models.Model):
     def reset(self):
         self.ball_x = 0.5
         self.ball_y = 0.5
-        self.ball_speed_x = 0.005 if self.ball_speed_x > 0 else -0.005
-        self.ball_speed_y = 0.005 if self.ball_speed_y > 0 else -0.005
+        self.ball_speed_x = 0.009 if self.ball_speed_x > 0 else -0.009
+        self.ball_speed_y = 0.009 if self.ball_speed_y > 0 else -0.009
         self.paddle1_y = 0.5
         self.paddle2_y = 0.5
         self.is_active = False
