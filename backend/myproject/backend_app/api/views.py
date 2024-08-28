@@ -2,9 +2,9 @@ from rest_framework import generics
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from backend_app.models import User, TableMatch
-from backend_app.api.serializer import UserSerializer  # Corrected import
-from backend_app.api.serializer import RegisterSerializer, TableMatchSerializer
+from backend_app.models import User, TableMatch, UserMetric
+from backend_app.api.serializer import UserSerializer
+from backend_app.api.serializer import RegisterSerializer, TableMatchSerializer, UserMetricSerializer
 from rest_framework import viewsets
 
 @api_view(['POST'])
@@ -28,3 +28,7 @@ class UserDetail(generics.RetrieveUpdateDestroyAPIView):
 class TableMatchViewSet(viewsets.ModelViewSet):
     queryset = TableMatch.objects.all()
     serializer_class = TableMatchSerializer
+
+class UserMetricViewSet(viewsets.ModelViewSet):
+    queryset = UserMetric.objects.all()
+    serializer_class = UserMetricSerializer

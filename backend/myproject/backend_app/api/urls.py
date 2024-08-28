@@ -4,6 +4,7 @@ from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
 router.register(r'matches', views.TableMatchViewSet)
+router.register(r'usermetrics', views.UserMetricViewSet)
 
 urlpatterns = [
     path('users/', views.UserListCreate.as_view(), name='userListCreate'),

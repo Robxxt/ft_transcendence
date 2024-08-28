@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from backend_app.models import User, TableMatch
+from backend_app.models import User, TableMatch, UserMetric
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -31,5 +31,10 @@ class RegisterSerializer(serializers.ModelSerializer):
 class TableMatchSerializer(serializers.ModelSerializer):
     class Meta:
         model = TableMatch
+        fields = '__all__'
+
+class UserMetricSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserMetric
         fields = '__all__'
         
