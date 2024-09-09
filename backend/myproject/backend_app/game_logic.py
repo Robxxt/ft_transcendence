@@ -6,13 +6,12 @@ import time
 
 class GameLogic:
     def __init__(self, game: PongGame) -> None:
-        self.game: PongGame = game  # This makes it clear that `self.game` is of type `PongGame`
+        self.game: PongGame = game
 
     def update_game(self) -> None:
         if not self.game.is_active:
             return
 
-        # Move ball
         self.game.ball_x += self.game.ball_speed_x
         self.game.ball_y += self.game.ball_speed_y
 
@@ -58,8 +57,11 @@ class GameLogic:
     def _reset_ball(self) -> None:
         self.game.ball_x = 0.5
         self.game.ball_y = 0.5
-        self.game.ball_speed_x = 0.005 if self.game.ball_speed_x > 0 else -0.005
-        self.game.ball_speed_y = 0.005 if self.game.ball_speed_y > 0 else -0.005
+        self.game.ball_speed_x = 0
+        self.game.ball_speed_y = 0
+        self.game.paddle1_y = 0.5
+        self.game.paddle2_y = 0.5
+        self.game.save()
 
     def move_paddle(self, player: int, position: float) -> None:
         if player == 1:
@@ -71,6 +73,8 @@ class GameLogic:
     def start_game(self) -> None:
         self.game.is_active = True
         self.game.game_state = 'playing'
+        self.game.ball_speed_x = 0.005 if self.game.ball_speed_x > 0 else -0.005
+        self.game.ball_speed_y = 0.005 if self.game.ball_speed_y > 0 else -0.005
         self.game.save()
 
     def get_game_state(self) -> dict[str, Optional[float | int | bool | str]]:

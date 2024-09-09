@@ -51,7 +51,7 @@ function handleFormSubmit(event) {
     const data = {username: username, password: password};
 
     // post form data
-    fetch("/register", {
+    fetch("register", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
