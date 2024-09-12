@@ -12,7 +12,7 @@ export function loadPage(app) {
     fetch("/static/registration.html")
         .then(response => {
             if (!response.ok) {
-                throw new Error("Network response was not ok " + response.statusText);
+                throw new Error(response.statusText);
             }
             return response.text();
         })
@@ -24,7 +24,7 @@ export function loadPage(app) {
             const form = app.querySelector("#registrationForm");
             form.addEventListener("submit", handleFormSubmit);
 
-            // check input before sending
+            // add event listeners for checking the input while typing
             let inputField;
             inputField = app.querySelector("#username");
             inputField.addEventListener("input", validateUsername);
@@ -66,7 +66,7 @@ function handleFormSubmit(event) {
             return response.json();
         }
         else
-            throw new Error("Network response was not ok " + response.statusText);
+            throw new Error(response.statusText);
     })
     .then(data => {
         if (data) {

@@ -52,7 +52,7 @@ export function createNavBar() {
         })
         .then(response => {
             if (!response.ok) {
-                throw new Error("Network response was not ok " + response.statusText);
+                throw new Error(response.statusText);
             }
         })
         .catch(error => {
@@ -63,14 +63,16 @@ export function createNavBar() {
 
 export async function loadAvatar(username) {
     try {
-        const response = await fetch(`/getAvatar?username=${encodeURIComponent(username)}`);
-
+        const response = await fetch(`/getAvatar?user=${username}&t` +  new Date().getTime(), {
+            cache: 'no-store' // Ensure the request bypasses the cache
+        });
         if (response.ok) {
-            const blob = await response.blob();
+            let blob = await response.blob();
             const imageUrl = URL.createObjectURL(blob);
-            document.getElementById("avatar").src = imageUrl;
+            const imgElement = document.getElementById("avatar");
+            imgElement.src = imageUrl;          
         } else {
-            throw new Error("Network response was not ok " + response.statusText);
+            throw new Error(response.statusText);
         }
     } catch (error) {
         console.error(error);
