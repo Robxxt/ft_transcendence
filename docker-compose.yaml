@@ -47,20 +47,19 @@ services:
       - ./.env
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
+    # ports:
+    #   - "5432:5432"
   django:
     container_name: tr_django
-    build: ./backend/myproject
+    build: ./backend
     volumes:
-      - ./backend/myproject:/app
+      - ./backend:/app
     ports:
       - "8000:8000"
     depends_on:
       - postgres
     env_file:
       - ./.env
-    command: ["python3", "manage.py", "runserver", "0.0.0.0:8000"]
 
   postgres_exporter:
     container_name: tr_postgres_exporter

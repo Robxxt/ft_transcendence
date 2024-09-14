@@ -24,7 +24,7 @@ SECRET_KEY = 'django-insecure-zb5$j3wdwu1l*p*y50=hnoty_g7n(qc-pibyrb3h6s9l3o+n%=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['transcendence.com', '127.0.0.1', 'localhost', 'django']
+ALLOWED_HOSTS = ['transcendence.com', '127.0.0.1']
 
 
 # Application definition
@@ -39,11 +39,9 @@ INSTALLED_APPS = [
     'backend_app',
     'rest_framework',
     'corsheaders',
-    'django_prometheus',
 ]
 
 MIDDLEWARE = [
-    'django_prometheus.middleware.PrometheusBeforeMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -53,7 +51,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
-    'django_prometheus.middleware.PrometheusAfterMiddleware',
 ]
 
 ROOT_URLCONF = 'backend_setting.urls'
@@ -94,11 +91,11 @@ CHANNEL_LAYERS = {
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'ping_pong_user',
-        'USER': 'thesheriff',
-        'PASSWORD': 'test123',
-        'HOST': 'postgres',
-        'PORT': '',
+        'NAME': os.environ.get("DATABASE_NAME"),
+        'USER': os.environ.get("DATABASE_USER"),
+        'PASSWORD': os.environ.get("DATABASE_PASSWORD"),
+        'HOST': os.environ.get("DATABASE_HOST"),
+        'PORT': os.environ.get("DATABASE_PORT"),
     }
 }
 
@@ -146,6 +143,6 @@ STATICFILES_DIRS = [
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.backend_setting.models.BigAutoField'
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOW_ALL_ORIGINS = True

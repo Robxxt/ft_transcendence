@@ -18,3 +18,13 @@ class TableMatch(models.Model):
     end_time = models.DateTimeField(null=True, blank=True)
     position_player1 = models.IntegerField(default=0)
     position_player2 = models.IntegerField(default=0)
+
+class UserMetric(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    avarage = models.IntegerField(default=0)
+    allPoints = models.IntegerField(default=0)
+    longestStreak = models.IntegerField(default=0)
+    allPoints = models.IntegerField(default=0)
+    
+    def __str__(self) -> str:
+        return f'this is {self.user.nickname} Profile'
