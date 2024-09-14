@@ -61,16 +61,6 @@ services:
     env_file:
       - ./.env
 
-  postgres_exporter:
-    container_name: tr_postgres_exporter
-    image: prometheuscommunity/postgres-exporter
-    depends_on:
-      - postgres
-    ports:
-      - "9187:9187"
-    env_file:
-      - ./.env
-
 volumes:
   postgres_data:
   # prometheus_data:

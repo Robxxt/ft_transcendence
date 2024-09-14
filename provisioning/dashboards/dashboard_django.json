@@ -446,6 +446,7 @@
     },
     {
       "datasource": {
+        "default": false,
         "type": "prometheus",
         "uid": "$datasource"
       },
@@ -519,7 +520,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "sum(irate(django_http_responses_total_by_status_total{status=~\"2.+\",app=~\"^$application$\"}[$__rate_interval]))",
+          "expr": "sum(irate(django_http_responses_total_by_status_total{status=~\"2.+\"}[$__rate_interval]))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "",
@@ -532,6 +533,7 @@
     },
     {
       "datasource": {
+        "default": false,
         "type": "prometheus",
         "uid": "$datasource"
       },
@@ -605,7 +607,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "sum(irate(django_http_responses_total_by_status_total{status=~\"4.+\",app=~\"^$application$\"}[$__rate_interval]))",
+          "expr": "sum(irate(django_http_responses_total_by_status_total{status=~\"4.+\"}[$__rate_interval]))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "",
@@ -618,6 +620,7 @@
     },
     {
       "datasource": {
+        "default": false,
         "type": "prometheus",
         "uid": "$datasource"
       },
@@ -691,7 +694,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "sum(irate(django_http_responses_total_by_status_total{status=~\"3.+\",app=~\"^$application$\"}[$__rate_interval]))",
+          "expr": "sum(irate(django_http_responses_total_by_status_total{status=~\"3.+\"}[$__rate_interval]))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "",
@@ -704,6 +707,7 @@
     },
     {
       "datasource": {
+        "default": false,
         "type": "prometheus",
         "uid": "$datasource"
       },
@@ -777,7 +781,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "sum(irate(django_http_responses_total_by_status_total{status=~\"5.+\",app=~\"^$application$\"}[$__rate_interval]))",
+          "expr": "sum(irate(django_http_responses_total_by_status_total{status=~\"5.+\"}[$__rate_interval]))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "",
@@ -1453,7 +1457,7 @@
     ]
   },
   "timezone": "",
-  "title": "Django",
+  "title": "Django & DB",
   "uid": "O6v4rMpizda",
   "version": 1,
   "weekStart": ""
