@@ -11,7 +11,6 @@ fclean: clean
 				grafana/grafana \
 				ft_transcendence_alertmanager \
 				postgres:13 \
-				prometheuscommunity/postgres-exporter \
 				ft_transcendence_django \
 
 apocalypsis: fclean
