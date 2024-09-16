@@ -15,14 +15,14 @@ services:
       - alertmanager
       - django
       - node_exporter
-      - postgres_exporter
     ports:
       - "9090:9090"
     volumes:
       - ./prometheus/:/etc/prometheus/
-      - ./shared_volumes/prometheus:/prometheus
+      # - ./shared_volumes/prometheus:/prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yaml'
+      - '--storage.tsdb.path=/prometheus/data'
   grafana:
     image: grafana/grafana
     container_name: tr_grafana
@@ -42,7 +42,7 @@ services:
       - "9100:9100"
   postgres:
     container_name: tr_postgres
-    image: postgres:13
+    image: postgres
     env_file:
       - ./.env
     volumes:
