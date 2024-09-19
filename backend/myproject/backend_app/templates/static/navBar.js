@@ -15,7 +15,7 @@ export function createNavBar() {
 
     // create html
     navBar.innerHTML = `
-        <ul class="nav nav justify-content-end">
+        <ul class="nav nav justify-content-end bg-white">
             <li class="nav-item">
                 <a class="nav-link" href="/start">Start</a>
             </li>

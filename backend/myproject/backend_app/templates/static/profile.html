@@ -44,11 +44,15 @@
 </div>
 
 <div class="row">
-    <div id="winLossRecord" class="col m-5 p-5 rounded bg-light">
+    <div id="winLossRecord" class="col-2 m-5 p-5 rounded bg-light">
         <h5>Win Loss Record</h5>
     </div>
 
-    <div id="gameHistory" class="col m-5 p-5 rounded bg-light">
+    <div class="col-2 m-5 p-5">
+        <img src="static/paddles.jpg" alt="paddles">
+    </div>
+
+    <div id="gameHistory" class="col m-5 p-5 rounded bg-light" style="height: 300px; overflow-y: auto;">
         <h5>Game History</h5>
         <table id='gamesTable' class="table table-dark table-striped table-hover">
             <tr>
@@ -64,12 +68,12 @@
 </div>
 
 <div class="row">
-    <div id="friends" class="col m-5 p-5 rounded bg-light">
+    <div id="friends" class="col m-5 p-5 rounded bg-light" style="height: 250px; overflow-y: auto;">
         <h5>Friend List</h5>
         <ul id="friendList" class="list-group"></ul>
     </div>
 
-    <div id="addFriends" class="col m-5 p-5 rounded bg-light">
+    <div id="addFriends" class="col m-5 p-5 rounded bg-light" style="height: 250px; overflow-y: auto;">
         <h5>Add and remove friends</h5>
         <div id="userList" class="list-group"></div>
     </div>

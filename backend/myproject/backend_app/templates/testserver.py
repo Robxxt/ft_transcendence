@@ -175,7 +175,7 @@ def do_friendList(handler):
     handler.wfile.write(json.dumps(response).encode('utf-8'))
 
 def do_userList(handler):
-    response = ["user", "Bert", "Duckie", "aaa", "bbb"]
+    response = ["user", "Bert", "Duckie", "aaa", "bbb", "ccc", "ddd", "eee", "fff"]
     handler.send_response(200)
     handler.send_header('Content-Type', 'application/json')
     handler.end_headers()
@@ -220,6 +220,7 @@ class MyHandler(SimpleHTTPRequestHandler):
             super().do_POST()
 
     def do_GET(self):
+        print("Get: ", self.path)
         if self.path.startswith('/getAvatar'):
             do_getAvatar(self)
             return 
@@ -238,7 +239,7 @@ class MyHandler(SimpleHTTPRequestHandler):
         elif self.path.startswith('/getDisplayName'):
             do_getDisplayName(self)
             return
-        if not self.path.endswith(".js") and not self.path.endswith(".html") and not self.path.endswith(".jpeg") and not self.path.endswith(".png") and not self.path.endswith(".css"):
+        if not self.path.endswith(".js") and not self.path.endswith(".html") and not self.path.endswith(".jpeg") and not self.path.endswith(".png") and not self.path.endswith(".css") and not self.path.endswith(".gif") and not self.path.endswith(".jpg"):
             self.path = "index.html"
         return super().do_GET()
 
@@ -251,9 +252,14 @@ class MyHandler(SimpleHTTPRequestHandler):
     def guess_type(self, path):
         if path.endswith('.js'):
             return 'application/javascript'
-        if path.endswith('.jpeg'):
+        if path.endswith('.jpeg') or path.endswith(".jpg"):
             return 'image/jpeg'
         return super().guess_type(path)
+
+    def end_headers(self):
+        self.send_header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+        self.send_header('Pragma', 'no-cache')
+        super().end_headers()
 
 def run(server_class=HTTPServer, handler_class=MyHandler, port=8000):
     server_address = ('', port)

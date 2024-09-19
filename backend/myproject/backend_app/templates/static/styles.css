@@ -10,3 +10,18 @@ a:hover {
     background-color: #FF99FF;
     color: black;
 }
+
+html, body {
+    height: 100%;            /* Ensure html and body take full height */
+    background-color: black;  /* Set black background for the entire page */
+}
+
+@media screen and (max-height: 600px) {
+    .img-upper {
+        display: none;
+    }
+
+    .start-upper {
+        display: none;
+    }
+}
