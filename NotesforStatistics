@@ -1,0 +1,15 @@
+Thoughts for statiscics
+=======================
+
+
+- Win/Loss Record: Total games won and lost. bar plot
+- Average Points Per Game: Average points scored per game. number
+- Consecutive Wins: Longest winning streak. number
+- Ranking: Current ranking in the leaderboard. leaderboard ausschnitt mit highlighted rank
+- Tournaments Won: Number of tournaments won. number
+- Best Finish: Highest position achieved in a tournament. number
+- Points Scored: Total points scored across all games. number
+- Performance Over Time: Graphs showing improvement or decline in performance. graph
+
+Visualizations: Use graphs, charts, and heatmaps to visualize data effectively.
+Real-Time Updates: Provide real-time updates to keep the statistics current.

@@ -1,7 +1,7 @@
 - login POST
 sending json {"user": ..., "password": ...}
 backend action: check if user/password is correct. if yes, set cookie, if not
-send back unauthorized code.
+send back unauthorized code (401).
 
 - /register POST:
 sending json {"user": ..., "password": ...}
@@ -12,11 +12,71 @@ response: 200 or 400.
 If 400, send a json with object {"error": 1 or 2}, according to the type of error,
 1 if username exists already, 2 if username or password are not rule conform.
 
-- /avatar GET:
-sending ?username=...
-backend action: send back jpeg or png image.
+- /getAvatar?username=... GET:
+backend action: send back the avatar of the user as jpeg or png.
+NOTE: There must always be a default avatar for every user, even if they haven't uploaded one!
+response:
 
-- /changeAvatar POST:
-sending file
-backend action: store file 
+- /logout POST:
+sending json {user : username}
+backend action: logout user from session and set online status to false.
+If user doesnt exist or is already logged out, send back 200 anyway.
+response: 200
+
+- /changePassword POST:
+sending json {user: ..., currentPassword: ..., newPassword: ...}
+backend action: check if user / currentPassword is correct,
+check if newPassword is alphanumeric and at least 8-20 chars long,
+change password on success.
+response: 200 or 400 or 401 or 404. 
+404 if user does not exist, 401 if currentPassword is wrong for the user name, 400 if newPassword is not rule conform.
+
+- /changeAvatar POST
+sending multipart/form-data. One key is username, the other is avatar (the picture)
+backend action: substitute the old image with the new.
+check if data is a valid png or jpg.
 response: 200 or 400
+if file is not jpg or png, send 400.
+
+- getDisplayName GET
+sending parameter: username=...
+backend action: send back the display name for the user. Note: If there is no display name yet, just send back the username!
+response: 200 or 404.
+404 if user does not exist.
+
+- /setDisplayName PATCH
+sending json {user: ..., newDisplayName:...}
+backend action: check if new display name is unique. (It also must not be any username!). Set displayName to newDisplayName.
+response: 200 or 404 or 409.
+404 if user does not exist, 409 if new display name is not unique.
+
+- /winLossRecord?username=... GET
+backend action: send json {wins: number as string, losses: number as string}
+response: 200 or 404
+404 if user does not exist.
+
+- /gameList?username=...
+backend action: send list of objects {date, time, player1, player2, winner, result}. If possible, all values as string.
+response: 200 or 404
+404 if user does not exist.
+
+- /friendList?username=... GET
+backend action: Send list of objects {friend: ..., online: boolean}
+response: 200 or 404
+404 if user does not exist.
+
+- /userList GET
+backend action: send list of all users
+response: 200
+
+- /addFriend POST
+sending json {username:..., friend:...}
+backend action: add friend to friend list of user
+response: 200 or 404
+404 if user does not exist.
+
+- removeFriend POST
+sending json {username:..., friend:...}
+backend action: remove friend to friend list of user
+response: 200 or 404
+404 if user does not exist.
