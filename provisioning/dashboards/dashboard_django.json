@@ -201,7 +201,7 @@
         "type": "prometheus",
         "uid": "PBFA97CFB590B2093"
       },
-      "description": "Keeps track of the total number of SQL queries executed by your Django application across the entire lifespan of the application since the last restart",
+      "description": "Keeps track of the total number of SQL queries executed in the last five minutes by your Django application. It's useful for monitoring peaks in requests",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -220,11 +220,11 @@
               },
               {
                 "color": "#EAB839",
-                "value": 100
+                "value": 1000
               },
               {
                 "color": "red",
-                "value": 200
+                "value": 2000
               }
             ]
           }
@@ -261,7 +261,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(max_over_time(django_db_execute_total[$__range]))",
+          "expr": "increase(django_db_execute_total[5m])",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
