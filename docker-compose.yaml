@@ -19,10 +19,11 @@ services:
       - "9090:9090"
     volumes:
       - ./prometheus/:/etc/prometheus/
-      # - ./shared_volumes/prometheus:/prometheus
+      - prometheus_data:/prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yaml'
       - '--storage.tsdb.path=/prometheus/data'
+    restart: always
   grafana:
     image: grafana/grafana
     container_name: tr_grafana
@@ -63,6 +64,8 @@ services:
 
 volumes:
   postgres_data:
+  prometheus_data:
+    driver: local
   # prometheus_data:
   #   driver: local
   #   driver_opts:
