@@ -4,7 +4,8 @@ all:
 clean:
 	docker compose down
 
-fclean: clean
+fclean:
+	docker compose down -v
 	docker system prune -f
 	docker rmi	prom/node-exporter \
 				prom/prometheus \

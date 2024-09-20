@@ -35,3 +35,15 @@ groups:
         description: >
           RAM usage has been above 80% for the last 3 minutes.
           Please remediate it 🧯!
+  - name: 🚨 DjangoDatabaseAlerts 🚒
+    rules:
+      - alert: HighDatabaseErrorRate
+        expr: rate(django_db_errors_total[10m]) > 10
+        for: 10m
+        labels:
+          severity: critical
+        annotations:
+          summary: "High database error rate on {{ $labels.instance }} 🔥🔥"
+          description: >
+            The database error rate has exceeded 10 errors
+            per second for the last 10 minutes on {{ $labels.instance }}.

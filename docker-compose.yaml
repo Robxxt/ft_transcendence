@@ -23,6 +23,7 @@ services:
     command:
       - '--config.file=/etc/prometheus/prometheus.yaml'
       - '--storage.tsdb.path=/prometheus/data'
+      - '--storage.tsdb.retention.time=5d'
     restart: always
   grafana:
     image: grafana/grafana
@@ -48,8 +49,6 @@ services:
       - ./.env
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    # ports:
-    #   - "5432:5432"
   django:
     container_name: tr_django
     build: ./backend
@@ -66,9 +65,3 @@ volumes:
   postgres_data:
   prometheus_data:
     driver: local
-  # prometheus_data:
-  #   driver: local
-  #   driver_opts:
-  #     o: bind
-  #     type: none
-  #     device: /Users/rdragan/Lab/ft_transcendence/volumes/shared_volumes/prometheus

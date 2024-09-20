@@ -124,7 +124,7 @@
         "type": "prometheus",
         "uid": "${datasource}"
       },
-      "description": "Get the rate of db query errors in the last minute",
+      "description": "Get the rate of db query errors in the last ten minutes",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -142,7 +142,7 @@
               },
               {
                 "color": "#EAB839",
-                "value": 1
+                "value": 5
               },
               {
                 "color": "red",
@@ -184,7 +184,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "rate(django_db_errors_total[1m])",
+          "expr": "rate(django_db_errors_total[10m])",
           "format": "time_series",
           "instant": false,
           "legendFormat": "__auto",
