@@ -16,4 +16,4 @@ receivers:
     auth_identity: SMTP_FROM
     to: SMTP_FROM
     headers:
-      subject: "Hello World"
+      subject: "🚨🚨 Transcendence Prometheus Alert"
