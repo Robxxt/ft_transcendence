@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  alertmanager:
+    build: ./provisioning/alertmanager
+    container_name: tr_alertmanager
+    env_file:
+      - ./.env
+    ports:
+      - "9093:9093"
+  prometheus:
+    image: prom/prometheus
+    container_name: tr_prometheus
+    depends_on:
+      - alertmanager
+      - django
+      - node_exporter
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/:/etc/prometheus/
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yaml'
+      - '--storage.tsdb.path=/prometheus/data'
+      - '--storage.tsdb.retention.time=5d'
+    restart: always
+  grafana:
+    image: grafana/grafana
+    container_name: tr_grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./provisioning:/etc/grafana/provisioning
+    env_file:
+      - ./.env
+    depends_on:
+      - prometheus
+  node_exporter:
+    image: prom/node-exporter
+    container_name: tr_node_exporter
+    ports:
+      - "9100:9100"
+  postgres:
+    container_name: tr_postgres
+    image: postgres
+    env_file:
+      - ./.env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+  django:
+    container_name: tr_django
+    build: ./backend
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+    env_file:
+      - ./.env
+
+volumes:
+  postgres_data:
+  prometheus_data:
+    driver: local

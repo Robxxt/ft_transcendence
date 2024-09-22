@@ -1,0 +1,19 @@
+global:
+  resolve_timeout: 5m
+
+route:
+  receiver: 'mail'
+  repeat_interval: 20s
+  group_by: [ alertname ]
+
+receivers:
+- name: 'mail'
+  email_configs:
+  - smarthost: SMTP_SMARTHOST
+    from: SMTP_FROM
+    auth_username: SMTP_FROM
+    auth_password: SMTP_AUTH_PASSWORD
+    auth_identity: SMTP_FROM
+    to: SMTP_FROM
+    headers:
+      subject: "🚨🚨 Transcendence Prometheus Alert"

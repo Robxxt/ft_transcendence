@@ -1,0 +1,49 @@
+groups:
+  - name: test_alert
+    rules:
+      - alert: TestAlert
+        expr: vector(1)
+        for: 20s
+        labels:
+          severity: critical
+        annotations:
+          summary: "🧪 Test Alert"
+          description: >
+            This is a test simple alert to verify that email notifications work 🤪.
+            I wish you have a wonderful day 😘
+  - name: cpu_alert
+    rules:
+    - alert: HighCPUUsage
+      expr: 100 - (avg(irate(node_cpu_seconds_total{mode="idle"}[3m])) by (instance) * 100) > 80
+      for: 3m
+      labels:
+        severity: critical
+      annotations:
+        summary: "🚒 High CPU usage detected on {{ $labels.instance }} "
+        description: >
+          CPU usage has been above 80% for the last 3 minutes.
+          Please remediate it 🧯!
+  - name: ram_alert
+    rules:
+    - alert: HighRAMUsage
+      expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 80
+      for: 3m
+      labels:
+        severity: critical
+      annotations:
+        summary: "🚒 High RAM usage detected on {{ $labels.instance }}"
+        description: >
+          RAM usage has been above 80% for the last 3 minutes.
+          Please remediate it 🧯!
+  - name: 🚨 DjangoDatabaseAlerts 🚒
+    rules:
+      - alert: HighDatabaseErrorRate
+        expr: rate(django_db_errors_total[10m]) > 10
+        for: 10m
+        labels:
+          severity: critical
+        annotations:
+          summary: "High database error rate on {{ $labels.instance }} 🔥🔥"
+          description: >
+            The database error rate has exceeded 10 errors
+            per second for the last 10 minutes on {{ $labels.instance }}.

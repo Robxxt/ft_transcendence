@@ -1,0 +1,22 @@
+- login POST
+sending json {"user": ..., "password": ...}
+backend action: check if user/password is correct. if yes, set cookie, if not
+send back unauthorized code.
+
+- /register POST:
+sending json {"user": ..., "password": ...}
+backend action: check if user already exists, check if username is alphanumeric,
+check if password is alphanumeric and at least 8-20 chars long. 
+set cookie on success.
+response: 200 or 400. 
+If 400, send a json with object {"error": 1 or 2}, according to the type of error,
+1 if username exists already, 2 if username or password are not rule conform.
+
+- /avatar GET:
+sending ?username=...
+backend action: send back jpeg or png image.
+
+- /changeAvatar POST:
+sending file
+backend action: store file 
+response: 200 or 400

@@ -1,0 +1,72 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #090909;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+#gametitle {
+    position: fixed;
+    top: 0;
+    color: #fff;
+    font-size: 150px;
+    text-align: center;
+    padding: 10px;
+}
+
+.container {
+    z-index: 2;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    width: 300px;
+}
+
+h1 {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.input-group {
+    margin-bottom: 10px;
+}
+
+.input-group-under {
+    display: flex;
+    gap: 10px;
+}
+
+.deletePlayer {
+    width: 40px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+input {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    background-color: #de55ce;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+button:hover {
+    background-color: #de55ce;
+}
