@@ -9,10 +9,14 @@ class TestEndPoints(TestCase):
 	def test_django(self):
 		django_url = "http://localhost:8000"
 		django_metrics_url = "http://localhost:8000/metrics"
+		django_admin_url = "http://localhost:8000/admin"
 		django_reponse = requests.get(django_url)
 		django_metrics_reponse = requests.get(django_metrics_url)
+		django_admin_reponse = requests.get(django_admin_url)
 		self.assertEqual(django_reponse.ok, True)
 		self.assertEqual(django_metrics_reponse.ok, True)
+		self.assertEqual(django_metrics_reponse.ok, True)
+		self.assertEqual(django_admin_reponse.ok, True)
 	def test_prometheus(self):
 		prometheus_url = "http://prometheus:9090"
 		prometheus_metrics_url = "http://prometheus:9090/metrics"
