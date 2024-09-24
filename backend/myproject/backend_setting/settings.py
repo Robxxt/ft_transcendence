@@ -15,11 +15,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-<<<<<<< Updated upstream:backend/myproject/backend_setting/settings.py
-=======
-STATIC_URL = '/static/'
-
->>>>>>> Stashed changes:database/db/db/settings.py
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 

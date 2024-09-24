@@ -200,6 +200,7 @@ def do_setDisplayName(handler):
     
 class MyHandler(SimpleHTTPRequestHandler):
     def do_POST(self):
+        print(f"this is the path {self.path}")
         if self.path == '/login':
             do_login(self)
         elif self.path == '/register':

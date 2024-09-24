@@ -1,5 +1,9 @@
 import { navigateTo } from "./router.js";
 
+document.addEventListener("DOMContentLoaded", function() {
+    const csrftoken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+});
+
 export function loadPage(app) {
     // if user is already logged in we redirect to /start
     const user = localStorage.getItem("user");
@@ -51,10 +55,11 @@ function handleFormSubmit(event) {
     const data = {username: username, password: password};
 
     // post form data
-    fetch("/register", {
+    fetch("/api/register/", {
         method: "POST",
         headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrftoken
         },
         body: JSON.stringify(data)
     })
