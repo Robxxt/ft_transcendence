@@ -1,7 +1,8 @@
-- login POST
-sending json {"user": ..., "password": ...}
+- login_user GET
+Parameters: user, password
 backend action: check if user/password is correct. if yes, set cookie, if not
 send back unauthorized code (401).
+Description: logs in the user. (login.js)
 
 - /register POST:
 sending json {"user": ..., "password": ...}
@@ -11,17 +12,20 @@ set cookie on success.
 response: 200 or 400. 
 If 400, send a json with object {"error": 1 or 2}, according to the type of error,
 1 if username exists already, 2 if username or password are not rule conform.
+Description: registers a user. (registration.js)
 
 - /getAvatar?username=... GET:
 backend action: send back the avatar of the user as jpeg or png.
 NOTE: There must always be a default avatar for every user, even if they haven't uploaded one!
 response:
+Description: Fetches the avatar picture. (navBar.js)
 
 - /logout POST:
 sending json {user : username}
 backend action: logout user from session and set online status to false.
 If user doesnt exist or is already logged out, send back 200 anyway.
 response: 200
+Description: logs out the user. (navBar.js)
 
 - /changePassword POST:
 sending json {user: ..., currentPassword: ..., newPassword: ...}
@@ -30,6 +34,7 @@ check if newPassword is alphanumeric and at least 8-20 chars long,
 change password on success.
 response: 200 or 400 or 401 or 404. 
 404 if user does not exist, 401 if currentPassword is wrong for the user name, 400 if newPassword is not rule conform.
+Description: changes the password (profile.js)
 
 - /changeAvatar POST
 sending multipart/form-data. One key is username, the other is avatar (the picture)
@@ -37,46 +42,55 @@ backend action: substitute the old image with the new.
 check if data is a valid png or jpg.
 response: 200 or 400
 if file is not jpg or png, send 400.
+Description: changes the avatar picture in the database (profile.js)
 
 - getDisplayName GET
 sending parameter: username=...
 backend action: send back the display name for the user. Note: If there is no display name yet, just send back the username!
 response: 200 or 404.
 404 if user does not exist.
+Description: fetches the display name (profile.js)
 
 - /setDisplayName PATCH
 sending json {user: ..., newDisplayName:...}
 backend action: check if new display name is unique. (It also must not be any username!). Set displayName to newDisplayName.
 response: 200 or 404 or 409.
 404 if user does not exist, 409 if new display name is not unique.
+Description: changes the display name (profile.js)
 
 - /winLossRecord?username=... GET
 backend action: send json {wins: number as string, losses: number as string}
 response: 200 or 404
 404 if user does not exist.
+Description: fetches win / loss record (profile.js)
 
 - /gameList?username=...
 backend action: send list of objects {date, time, player1, player2, winner, result}. If possible, all values as string.
 response: 200 or 404
 404 if user does not exist.
+Description: fetches all game stats of a user (profile.js)
 
 - /friendList?username=... GET
 backend action: Send list of objects {friend: ..., online: boolean}
 response: 200 or 404
 404 if user does not exist.
+Description: fetches the friends of a user (profile.js)
 
 - /userList GET
 backend action: send list of all users
 response: 200
+Description: fetches a list of all users (profile.js)
 
 - /addFriend POST
 sending json {username:..., friend:...}
 backend action: add friend to friend list of user
 response: 200 or 404
 404 if user does not exist.
+Description: adds a friend to the friend list of a user (profile.js)
 
 - removeFriend POST
 sending json {username:..., friend:...}
 backend action: remove friend to friend list of user
 response: 200 or 404
 404 if user does not exist.
+Description: removes a friend from the friend list of a user (profile.js)

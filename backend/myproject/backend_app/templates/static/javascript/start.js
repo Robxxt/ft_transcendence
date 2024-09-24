@@ -1,4 +1,4 @@
-import { navigateTo } from "./router.js";
+import { navigateTo } from staticUrl + "/javascript/router.js";
 
 export async function loadPage(app) {
     // check if user is logged in
@@ -16,7 +16,7 @@ export async function loadPage(app) {
     }
 
     // fetch basic html
-    fetch("static/start.html")
+    fetch(staticUrl + "/start.html")
         .then(response => {
             if (!response.ok) {
                 throw new Error(response.statusText);

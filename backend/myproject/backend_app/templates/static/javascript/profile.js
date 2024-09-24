@@ -1,5 +1,5 @@
-import { navigateTo } from "./router.js";
-import { loadAvatar } from "./navBar.js";
+import { navigateTo } from staticUrl + "/javascript/router.js";
+import { loadAvatar } from staticUrl + "/javascript/navBar.js";
 
 export function loadPage(app) {
     // check if user is logged in
@@ -18,7 +18,7 @@ export function loadPage(app) {
     const username = JSON.parse(user).name;
 
     // fetch basic html
-    fetch("static/profile.html")
+    fetch(staticUrl + "/profile.html")
         .then(response => {
             if (!response.ok) {
                 throw new Error(response.statusText);

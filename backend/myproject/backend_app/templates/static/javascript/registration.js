@@ -1,4 +1,4 @@
-import { navigateTo } from "./router.js";
+import { navigateTo } from staticUrl + "/javascript/router.js";
 
 document.addEventListener("DOMContentLoaded", function() {
     const csrftoken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
@@ -13,7 +13,7 @@ export function loadPage(app) {
     }
             
     // load registration page
-    fetch("/static/registration.html")
+    fetch(staticUrl + "/registration.html")
         .then(response => {
             if (!response.ok) {
                 throw new Error(response.statusText);

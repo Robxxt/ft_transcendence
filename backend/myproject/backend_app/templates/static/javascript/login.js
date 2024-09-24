@@ -1,4 +1,4 @@
-import { navigateTo } from "./router.js";
+import { navigateTo } from staticUrl + "/javascript/router.js";
 
 export function loadPage(app) {
     // if user is already logged in we redirect to /start
@@ -9,7 +9,7 @@ export function loadPage(app) {
     }
 
     // load login page
-    fetch("/static/login.html")
+    fetch(staticUrl + "/login.html")
         .then(response => {
             if (!response.ok) {
                 throw new Error(response.statusText);
@@ -34,21 +34,12 @@ function handleFormSubmit(event) {
 
     event.preventDefault();
 
-    // get form data
-    const form = event.target;
-    const formData = new FormData(form);
-    const data = {};
-    formData.forEach((value, key) => {
-        data[key] = value;
-    });
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
 
     // post to /login
-    fetch("/login", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)
+    fetch(`/login_user?user=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`, {
+        method: "GET"
     })
     .then(response => {
         // if user/password is wrong
@@ -66,7 +57,7 @@ function handleFormSubmit(event) {
             // put user object into storage
             const userObject = {};
             userObject.isLoggedIn = true;
-            userObject.name = data["username"];
+            userObject.name = username;
             localStorage.setItem("user", JSON.stringify(userObject));
             navigateTo("/start");
         }

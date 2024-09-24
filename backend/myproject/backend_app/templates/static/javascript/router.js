@@ -1,13 +1,13 @@
-import { createNavBar } from './navBar.js';
+import { createNavBar } from staticUrl + '/javascript/navBar.js';
 
 const routes = {
-    '/': () => import('./login.js').then(module => module.loadPage(document.getElementById('app'))),
-    '/login': () => import('./login.js').then(module => module.loadPage(document.getElementById('app'))),
-    '/registration': () => import('./registration.js').then(module => module.loadPage(document.getElementById('app'))),
-    '/start': () => import('./start.js').then(module => module.loadPage(document.getElementById('app'))),
-    '/profile': () => import('./profile.js').then(module => module.loadPage(document.getElementById('app'))),
-    '/dashboard': () => import('./dashboard.js').then(module => module.loadPage(document.getElementById('app'))),
-    '/pong': () => import('./pong.js').then(module => module.loadPage(document.getElementById('app'))),
+    '/': () => import(staticUrl + '/javascript/login.js').then(module => module.loadPage(document.getElementById('app'))),
+    '/login': () => import(staticUrl + '/javascript/login.js').then(module => module.loadPage(document.getElementById('app'))),
+    '/registration': () => import(staticUrl + '/javascript/registration.js').then(module => module.loadPage(document.getElementById('app'))),
+    '/start': () => import(staticUrl + '/javascript/start.js').then(module => module.loadPage(document.getElementById('app'))),
+    '/profile': () => import(staticUrl + '/javascript/profile.js').then(module => module.loadPage(document.getElementById('app'))),
+    '/dashboard': () => import(staticUrl + '/javascript/dashboard.js').then(module => module.loadPage(document.getElementById('app'))),
+    '/pong': () => import(staticUrl + '/javascript/pong.js').then(module => module.loadPage(document.getElementById('app'))),
 };
 
 export function navigateTo(url) {
