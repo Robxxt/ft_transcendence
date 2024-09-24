@@ -2,4 +2,4 @@ venv
 TODO
 backend/venv
 Notes
-backend/myproject/backend_app/__pycache__
+backend/myproject/backend_app/__pycache__/
