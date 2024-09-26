@@ -9,3 +9,4 @@ backend/venv
 *cache*
 shared_volumes
 .env
+backend/myproject/backend_app/__pycache__

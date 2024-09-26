@@ -1,4 +1,4 @@
-import { navigateTo } from "./javascript/router.js";
+import { navigateTo } from "./router.js";
 
 export async function loadPage(app) {
     // check if user is logged in

@@ -1,4 +1,4 @@
-import { navigateTo } from "./javascript/router.js";
+import { navigateTo } from "./router.js";
 
 document.addEventListener("DOMContentLoaded", function() {
     const csrftoken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;

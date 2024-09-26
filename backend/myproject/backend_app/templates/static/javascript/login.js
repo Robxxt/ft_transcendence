@@ -1,4 +1,4 @@
-import { navigateTo } from "./javascript/router.js";
+import { navigateTo } from "./router.js";
 
 export function loadPage(app) {
     // if user is already logged in we redirect to /start
@@ -9,7 +9,7 @@ export function loadPage(app) {
     }
 
     // load login page
-    fetch(staticUrl + "/login.html")
+    fetch("../templates/login.html")
         .then(response => {
             if (!response.ok) {
                 throw new Error(response.statusText);

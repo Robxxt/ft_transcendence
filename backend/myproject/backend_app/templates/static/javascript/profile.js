@@ -1,5 +1,5 @@
-import { navigateTo } from "./javascript/router.js";
-import { loadAvatar } from "./javascript/navBar.js";
+import { navigateTo } from "./router.js";
+import { loadAvatar } from "./navBar.js";
 
 export function loadPage(app) {
     // check if user is logged in

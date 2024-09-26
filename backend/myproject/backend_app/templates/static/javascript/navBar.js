@@ -1,4 +1,4 @@
-import { navigateTo } from "./javascript/router.js";
+import { navigateTo } from "./router.js";
 
 // function to create NavBar
 export function createNavBar() {
