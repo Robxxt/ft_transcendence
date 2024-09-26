@@ -16,7 +16,7 @@ export async function loadPage(app) {
     }
 
     // fetch basic html
-    fetch(staticUrl + "/start.html")
+    fetch("/static/start.html")
         .then(response => {
             if (!response.ok) {
                 throw new Error(response.statusText);

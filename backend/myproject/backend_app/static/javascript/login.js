@@ -9,7 +9,7 @@ export function loadPage(app) {
     }
 
     // load login page
-    fetch("../templates/login.html")
+    fetch("/static/login.html")
         .then(response => {
             if (!response.ok) {
                 throw new Error(response.statusText);

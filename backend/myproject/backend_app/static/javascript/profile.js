@@ -18,7 +18,7 @@ export function loadPage(app) {
     const username = JSON.parse(user).name;
 
     // fetch basic html
-    fetch(staticUrl + "/profile.html")
+    fetch("/static/profile.html")
         .then(response => {
             if (!response.ok) {
                 throw new Error(response.statusText);
