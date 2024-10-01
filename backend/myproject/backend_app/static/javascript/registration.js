@@ -13,7 +13,7 @@ export function loadPage(app) {
     }
             
     // load registration page
-    fetch("/static/registration.html")
+    fetch("/registration/")
         .then(response => {
             if (!response.ok) {
                 throw new Error(response.statusText);

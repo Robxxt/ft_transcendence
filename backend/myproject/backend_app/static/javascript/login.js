@@ -9,7 +9,7 @@ export function loadPage(app) {
     }
 
     // load login page
-    fetch("/static/login.html")
+    fetch("/login/")
         .then(response => {
             if (!response.ok) {
                 throw new Error(response.statusText);
@@ -38,7 +38,7 @@ function handleFormSubmit(event) {
     const password = document.getElementById("password").value;
 
     // post to /login
-    fetch(`/login_user?user=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`, {
+    fetch(`/user?user=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`, {
         method: "GET"
     })
     .then(response => {
