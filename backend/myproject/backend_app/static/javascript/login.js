@@ -34,12 +34,12 @@ function handleFormSubmit(event) {
 
     event.preventDefault();
 
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
-
-    // post to /login
     fetch("/api/login/", {
         method: "POST",
+        headers: {
+            "Content-Type": "application/json", // specifying that we're sending JSON
+        },
+        body: JSON.stringify({ username, password }) // converting the data to JSON
     })
     .then(response => {
         // if user/password is wrong
