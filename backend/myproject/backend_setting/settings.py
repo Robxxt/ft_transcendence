@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'backend_app',
     'rest_framework',
+	'rest_framework.authtoken',
     'corsheaders',
     'django_prometheus',
 ]

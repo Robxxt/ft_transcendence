@@ -38,8 +38,8 @@ function handleFormSubmit(event) {
     const password = document.getElementById("password").value;
 
     // post to /login
-    fetch(`/user?user=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`, {
-        method: "GET"
+    fetch("/api/login/", {
+        method: "POST",
     })
     .then(response => {
         // if user/password is wrong
