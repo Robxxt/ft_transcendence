@@ -1,14 +1,14 @@
 import { navigateTo } from "./router.js";
 
 export function loadPage(app) {
-    // if user is already logged in we redirect to /start
+    // If user is already logged in we redirect to /start
     const user = localStorage.getItem("user");
     if (user && JSON.parse(user).isLoggedIn) {
         navigateTo("/start");
         return;
     }
 
-    // load login page
+    // Load login page
     fetch("/login/")
         .then(response => {
             if (!response.ok) {
@@ -17,44 +17,52 @@ export function loadPage(app) {
             return response.text();
         })
         .then(html => {
-            // put base html into the app div
+            // Put base html into the app div
             app.innerHTML = html;
 
-            // event handler for form submit
+            // Fetch CSRF token
+            const csrftoken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+
+            // Event handler for form submit
             const form = app.querySelector("#loginForm");
-            form.addEventListener("submit", handleFormSubmit);
+            form.addEventListener("submit", function(event) {
+                handleFormSubmit(event, csrftoken); // Pass the csrftoken to the function
+            });
         })
         .catch(error => {
             console.error(error);
         });
 }
 
-function handleFormSubmit(event) {
+function handleFormSubmit(event, csrftoken) {
     const errorMessage = document.getElementById("errorMessage");
-
+    
     event.preventDefault();
+
+    // Fetching username and password from form inputs
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
 
     fetch("/api/login/", {
         method: "POST",
         headers: {
             "Content-Type": "application/json", // specifying that we're sending JSON
+            "X-CSRFToken": csrftoken
         },
         body: JSON.stringify({ username, password }) // converting the data to JSON
     })
     .then(response => {
-        // if user/password is wrong
+        // If user/password is wrong
         if (response.status === 401) {
             errorMessage.textContent = "Login failed: Username / Password combination wrong.";
             errorMessage.style.color = "red";
-        }
-        else if (!response.ok) {
+        } else if (!response.ok) {
             throw new Error(response.statusText);
-        }
-        else {
-            // reset error message
+        } else {
+            // Reset error message
             errorMessage.textContent = "";
 
-            // put user object into storage
+            // Put user object into storage
             const userObject = {};
             userObject.isLoggedIn = true;
             userObject.name = username;

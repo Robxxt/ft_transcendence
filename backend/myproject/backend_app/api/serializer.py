@@ -9,18 +9,11 @@ class UserSerializer(serializers.ModelSerializer):
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, min_length=8, max_length=20)
-
+    
     class Meta:
         model = User
-        fields = ['username', 'password']
-    
-    def validate_username(self, value):
-        if not value.isalnum():
-            raise serializers.ValidationError("Username must be alphanumeric.")
-        if User.objects.filter(username=value).exists():
-            raise serializers.ValidationError("Username already exists")
-        return value
-    
+        fields = ['username', 'password', 'won', 'lost']
+        
     def create(self, validated_data):
         won = validated_data.get('won', 0)
         lost = validated_data.get('lost', 0)
@@ -29,7 +22,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             won=won,
             lost=lost,
         )
-        validated_data['password'] = make_password(validated_data['password'])
+        user.password = make_password(validated_data['password'])
         user.save()
         return user
     

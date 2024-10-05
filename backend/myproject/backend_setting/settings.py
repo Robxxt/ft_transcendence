@@ -26,6 +26,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['transcendence.com', '0.0.0.0', "localhost", "django"]
 
+AUTH_USER_MODEL = 'backend_app.User'
 
 # Application definition
 
