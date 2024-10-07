@@ -4,7 +4,7 @@ export function loadPage(app) {
     // If user is already logged in we redirect to /start
     const user = localStorage.getItem("user");
     if (user && JSON.parse(user).isLoggedIn) {
-        navigateTo("/start");
+        navigateTo("/start/"); // Line giving infinite request
         return;
     }
 
@@ -67,7 +67,7 @@ function handleFormSubmit(event, csrftoken) {
             userObject.isLoggedIn = true;
             userObject.name = username;
             localStorage.setItem("user", JSON.stringify(userObject));
-            navigateTo("/start");
+            navigateTo("/start/");
         }
     })
     .catch(error => {
