@@ -1,0 +1,6 @@
+# POST http://0.0.0.0:8000/api/login/ HTTP/1.1
+# content-type: application/json
+
+# {
+#     "username": "paghe", "password": "P4p3r1n0","token": "94fe272bca203ece7b947c76f2a48487b41b1d4c"
+# }

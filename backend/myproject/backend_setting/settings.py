@@ -24,8 +24,9 @@ SECRET_KEY = 'django-insecure-zb5$j3wdwu1l*p*y50=hnoty_g7n(qc-pibyrb3h6s9l3o+n%=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['transcendence.com', '127.0.0.1', "localhost", "django"]
+ALLOWED_HOSTS = ['transcendence.com', '0.0.0.0', "localhost", "django"]
 
+AUTH_USER_MODEL = 'backend_app.User'
 
 # Application definition
 
@@ -38,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'backend_app',
     'rest_framework',
+	'rest_framework.authtoken',
     'corsheaders',
     'django_prometheus',
 ]
@@ -61,7 +63,7 @@ ROOT_URLCONF = 'backend_setting.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, '../../frontend/HTML')],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -140,7 +142,8 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "backend_app/templates/static"),
+    # os.path.join(BASE_DIR, "backend_app/templates/static"),
+    os.path.join(BASE_DIR, "backend_app/static"),
 ]
 
 # Default primary key field type
