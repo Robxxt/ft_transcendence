@@ -53,4 +53,4 @@ class PongGameConsumer(AsyncWebsocketConsumer):
         while True:
             await database_sync_to_async(self.game_logic.update_game)()
             await self.send_game_state()
-            await asyncio.sleep(1/640) 
+            await asyncio.sleep(1/1000) 
