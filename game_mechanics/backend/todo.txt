@@ -1,0 +1,5 @@
+TODO:
+- Add a canvas overlay between the games
+- Handle connection loss
+- Handle tournament
+- Add extra feature
