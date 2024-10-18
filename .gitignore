@@ -8,3 +8,4 @@ backend/venv
 shared_volumes
 .env
 backend/myproject/backend_app/__pycache__
+game_mechanics/my_env
