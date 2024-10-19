@@ -1,5 +1,3 @@
-console.log("here");
-
 import { createNavBar } from './navBar.js';
 
 const routes = {
