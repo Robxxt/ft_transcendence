@@ -3,14 +3,14 @@ from backend_app.api import views
 
 def index_view(request):
     return render(request, 'index.html') # Main page
-def login_view(request):
-    return render(request, 'login.html') # login
-def register_view(request):
-    return render(request, 'registration.html') # register
-def start_view(request):
-    return render(request, 'start.html')
-def profile_view(request):
-    return render(request, 'profile.html')
+# def login_view(request):
+#     return render(request, 'login.html') # login
+# def register_view(request):
+#     return render(request, 'registration.html') # register
+# def start_view(request):
+#     return render(request, 'start.html')
+# def profile_view(request):
+#     return render(request, 'profile.html')
 
 # def registration_view(request):
 #     return render(request, 'static/registration.html') # Registration page

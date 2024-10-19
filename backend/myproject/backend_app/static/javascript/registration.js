@@ -6,14 +6,14 @@ document.addEventListener("DOMContentLoaded", function() {
 
 export function loadPage(app) {
     // if user is already logged in we redirect to /start
-    const user = localStorage.getItem("user");
-    if (user && JSON.parse(user).isLoggedIn) {
-        navigateTo("/start");
-        return;
-    }
+    // const user = localStorage.getItem("user");
+    // if (user && JSON.parse(user).isLoggedIn) {
+    //     navigateTo("/start");
+    //     return;
+    // }
             
     // load registration page
-    fetch("/registration/")
+    fetch("/static/html/registration.html")
         .then(response => {
             if (!response.ok) {
                 throw new Error(response.statusText);

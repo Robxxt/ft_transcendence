@@ -2,14 +2,15 @@ import { navigateTo } from "./router.js";
 
 export function loadPage(app) {
     // If user is already logged in we redirect to /start
-    const user = localStorage.getItem("user");
-    if (user && JSON.parse(user).isLoggedIn) {
-        navigateTo("/start/"); // Line giving infinite request
-        return;
-    }
+    // const user = localStorage.getItem("user");
+    // console.log(user);console.log(JSON.parse(user).isLoggedIn);
+    // if (user && JSON.parse(user).isLoggedIn) {
+    //     navigateTo("/start/"); // Line giving infinite request
+    //     return;
+    // }
 
     // Load login page
-    fetch("/login/")
+    fetch("/static/html/login.html")
         .then(response => {
             if (!response.ok) {
                 throw new Error(response.statusText);
@@ -21,7 +22,7 @@ export function loadPage(app) {
             app.innerHTML = html;
 
             // Fetch CSRF token
-            const csrftoken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+            const csrftoken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
             // Event handler for form submit
             const form = app.querySelector("#loginForm");
@@ -67,7 +68,7 @@ function handleFormSubmit(event, csrftoken) {
             userObject.isLoggedIn = true;
             userObject.name = username;
             localStorage.setItem("user", JSON.stringify(userObject));
-            navigateTo("/start/");
+            navigateTo("/start");
         }
     })
     .catch(error => {

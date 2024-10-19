@@ -3,22 +3,22 @@ import { loadAvatar } from "./navBar.js";
 
 export function loadPage(app) {
     // check if user is logged in
-    const user = localStorage.getItem("user");
-    if (!user || !JSON.parse(user).isLoggedIn) {
-        navigateTo("/login");
-        return;
-    }
+    // const user = localStorage.getItem("user");
+    // if (!user || !JSON.parse(user).isLoggedIn) {
+    //     navigateTo("/login");
+    //     return;
+    // }
 
-    // check if user name is present
-    if (!JSON.parse(user).name) {
-        localStorage.removeItem("user");
-        navigateTo("/login");
-        return;
-    }
-    const username = JSON.parse(user).name;
+    // // check if user name is present
+    // if (!JSON.parse(user).name) {
+    //     localStorage.removeItem("user");
+    //     navigateTo("/login");
+    //     return;
+    // }
+    const username = "testuser";    // debug
 
     // fetch basic html
-    fetch("/profile/")
+    fetch("/static/html/profile.html")
         .then(response => {
             if (!response.ok) {
                 throw new Error(response.statusText);
