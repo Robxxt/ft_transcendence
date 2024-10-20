@@ -2,9 +2,11 @@ from rest_framework import generics, status, viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.authtoken.models import Token
-from backend_app.models import User, TableMatch, UserMetric
+from backend_app.models import User, TableMatch, UserMetric, GameRoom
 from backend_app.api.serializer import RegisterSerializer, TableMatchSerializer, UserMetricSerializer, UserSerializer
 from django.shortcuts import get_object_or_404
+from django.core.exceptions import ValidationError
+
 
 @api_view(['POST'])
 def register(request):
@@ -42,3 +44,45 @@ class TableMatchViewSet(viewsets.ModelViewSet):
 class UserMetricViewSet(viewsets.ModelViewSet):
     queryset = UserMetric.objects.all()
     serializer_class = UserMetricSerializer
+
+class GameRoomView(APIView):
+    def post(self, request):
+        # Set var for aiPlay
+        aiPlay = request.data["aiPlay"]
+
+        # Find an available room, or create a new one if none exists
+        if not aiPlay:
+            room = GameRoom.objects.filter(state=GameRoom.State.WAITING).first()
+        else:
+            room = None
+        
+        if not room:
+            room = GameRoom.objects.create(player1=request.user.user_profile)
+        elif not room.player2 and not aiPlay:
+            room.player2 = request.user.user_profile
+            room.state = GameRoom.State.FULL
+
+        # Set second player as AI
+        if aiPlay:
+            ai_user = User.objects.get(username='game_ai')
+            room.player2 = UserProfile.objects.get(user=ai_user)
+            room.isAiPlay = True
+            room.state = GameRoom.State.FULL
+
+        try:
+            room.save()  # This triggers validation, including the clean() method
+        except ValidationError as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        print(f"Room: {room}")
+        # Use the serializer to return the room data
+        serializer = GameRoomSerializer(room)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def get(self, request, room_id):
+        try:
+            room = GameRoom.objects.get(id=room_id)
+            # Use the serializer to return the room data
+            serializer = GameRoomSerializer(room, context={'request': request})
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except GameRoom.DoesNotExist:
+            return Response({'error': 'Game room not found'}, status=status.HTTP_404_NOT_FOUND)
