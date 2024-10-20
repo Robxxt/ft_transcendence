@@ -11,13 +11,13 @@ export function createNavBar() {
         navBar.innerHTML = "Something went wrong";
     }
     else
-        username = JSON.parse(user).name;
+        username = "testuser";
 
     // create html
     navBar.innerHTML = `
         <ul class="nav nav justify-content-end bg-white">
             <li class="nav-item">
-                <a class="nav-link" href="/start">Start</a>
+                <a class="nav-link" href="/start" data-link>Start</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/profile" data-link>Profile</a>
@@ -26,7 +26,7 @@ export function createNavBar() {
                 <a href="#" id="logoutButton" class="nav-link">Logout</a>
             </li>
             <li class="navbar-text"">
-                ${JSON.parse(localStorage.getItem("user")).name}
+                ${username}
             </li>
             <li>
                 <img id="avatar" src="" alt="Avatar" width=50 height=50 class="rounded-circle"/>
@@ -62,6 +62,7 @@ export function createNavBar() {
 }
 
 export async function loadAvatar(username) {
+    return;
     try {
         const response = await fetch(`/getAvatar?user=${username}&t` +  new Date().getTime(), {
             cache: 'no-store' // Ensure the request bypasses the cache

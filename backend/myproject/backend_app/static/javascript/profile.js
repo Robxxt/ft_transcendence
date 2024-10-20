@@ -80,6 +80,7 @@ function confirmPassword() {
 }
 
 function handleChangePasswordDiv(app, username) {
+    const csrftoken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     const passwordForm = document.getElementById("passwordForm");
     const currentPasswordInput = document.getElementById("currentPassword");
     const newPasswordInput = document.getElementById("newPassword");
@@ -113,7 +114,8 @@ function handleChangePasswordDiv(app, username) {
         fetch("/changePassword", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrftoken
             },
             body: JSON.stringify(data)
         })
@@ -139,6 +141,7 @@ function handleChangePasswordDiv(app, username) {
 }
 
 function handleChangeAvatarDiv(app, username) {
+    const csrftoken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     const avatarForm = document.getElementById("avatarForm");
     const avatarInput = document.getElementById("avatarInput");
     const avatarUploadStatus = document.getElementById("avatarUploadStatus");
@@ -159,7 +162,8 @@ function handleChangeAvatarDiv(app, username) {
 
         fetch("/changeAvatar", {
             method: "POST",
-            body: formData
+            body: formData,
+            headers: {"X-CSRFToken": csrftoken}
         })
         .then(response => {
             if (response.status == 200) {
@@ -201,6 +205,7 @@ function handleSetDisplayName(app, username) {
     });
 
     form.addEventListener("submit", function(event) {
+        const csrftoken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         const displayName = document.getElementById("displayName");
 
         event.preventDefault();
@@ -215,7 +220,8 @@ function handleSetDisplayName(app, username) {
         fetch("/setDisplayName", {
             method: "PATCH",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrftoken
             },
             body: JSON.stringify({
                 username: username,
@@ -370,6 +376,7 @@ function handleAddFriendsDiv(app, username) {
 }
 
 function addFriend(username, friend, isFriend) {
+    const csrftoken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     const data = {
         user: username,
         friend: friend
@@ -380,7 +387,8 @@ function addFriend(username, friend, isFriend) {
         fetch("/addFriend", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrftoken
             },
             body: JSON.stringify(data)
         })
@@ -402,7 +410,8 @@ function addFriend(username, friend, isFriend) {
         fetch("/removeFriend", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrftoken
             },
             body: JSON.stringify(data)
         })

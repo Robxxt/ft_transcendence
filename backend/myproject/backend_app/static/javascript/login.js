@@ -21,13 +21,10 @@ export function loadPage(app) {
             // Put base html into the app div
             app.innerHTML = html;
 
-            // Fetch CSRF token
-            const csrftoken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
             // Event handler for form submit
             const form = app.querySelector("#loginForm");
             form.addEventListener("submit", function(event) {
-                handleFormSubmit(event, csrftoken); // Pass the csrftoken to the function
+                handleFormSubmit(event);
             });
         })
         .catch(error => {
@@ -35,8 +32,9 @@ export function loadPage(app) {
         });
 }
 
-function handleFormSubmit(event, csrftoken) {
+function handleFormSubmit(event) {
     const errorMessage = document.getElementById("errorMessage");
+    const csrftoken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     
     event.preventDefault();
 
