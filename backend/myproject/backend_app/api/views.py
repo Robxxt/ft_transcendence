@@ -20,14 +20,13 @@ def register(request):
 @api_view(['POST'])
 def login(request):
     print("***")
-    # user = get_object_or_404(User, username=request.data['username'])
-    # if not user.check_password(request.data['password']):
-    #     return Response({"detail": "Not Found!"}, status=status.HTTP_401_UNAUTHORIZED)
-    # token, created = Token.objects.get_or_create(user=user)
-    # serializer = UserSerializer(instance=user)
-    # print(f"User exist: {user}, ID: {user.id}")  
-    # return Response({"token": token.key, "user": serializer.data})
-    return Response({"token": "test", "user": "test"})
+    user = get_object_or_404(User, username=request.data['username'])
+    if not user.check_password(request.data['password']):
+        return Response({"detail": "Not Found!"}, status=status.HTTP_401_UNAUTHORIZED)
+    token, created = Token.objects.get_or_create(user=user)
+    serializer = UserSerializer(instance=user)
+    print(f"User exist: {user}, ID: {user.id}")  
+    return Response({"token": token.key, "user": serializer.data})
 
 class UserListCreate(generics.ListCreateAPIView):
     queryset = User.objects.all()
