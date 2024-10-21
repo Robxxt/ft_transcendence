@@ -1,6 +1,6 @@
 import { navigateTo } from './router.js';
 // apiService.js
-export const API_BASE_URL = '/';
+export const API_BASE_URL = 'api/';
 
 export async function apiRequest(url, method, body = null, headers = {}) {
     headers['Content-Type'] = 'application/json';

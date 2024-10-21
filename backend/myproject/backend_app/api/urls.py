@@ -11,5 +11,6 @@ urlpatterns = [
     path('users/<int:pk>/', views.UserDetail.as_view(), name='userDetail'),
 	path('login/', views.login, name="login"),
     path('register/', views.register, name='register'),
+    path('join-game-room/', views.GameRoomView.as_view(), name='game_room'),
     path('', include(router.urls)),
 ]
