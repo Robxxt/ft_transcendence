@@ -1,19 +1,15 @@
 import { navigateTo } from "./router.js";
 
-document.addEventListener("DOMContentLoaded", function() {
-    const csrftoken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
-});
-
 export function loadPage(app) {
     // if user is already logged in we redirect to /start
-    const user = localStorage.getItem("user");
-    if (user && JSON.parse(user).isLoggedIn) {
-        navigateTo("/start");
-        return;
-    }
+    // const user = localStorage.getItem("user");
+    // if (user && JSON.parse(user).isLoggedIn) {
+    //     navigateTo("/start");
+    //     return;
+    // }
             
     // load registration page
-    fetch("/registration/")
+    fetch("/static/html/registration.html")
         .then(response => {
             if (!response.ok) {
                 throw new Error(response.statusText);
@@ -43,6 +39,7 @@ export function loadPage(app) {
 }
 
 function handleFormSubmit(event) {
+    const csrftoken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     event.preventDefault();
 
     // check username and password again

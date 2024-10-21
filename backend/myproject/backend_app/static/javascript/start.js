@@ -2,21 +2,21 @@ import { navigateTo } from "./router.js";
 
 export async function loadPage(app) {
     // check if user is logged in
-    const user = localStorage.getItem("user");
-    if (!user || !JSON.parse(user).isLoggedIn) {
-        navigateTo("/login");
-        return;
-    }
+    // const user = localStorage.getItem("user");
+    // if (!user || !JSON.parse(user).isLoggedIn) {
+    //     navigateTo("/login");
+    //     return;
+    // }
 
-    // check if user name is present
-    if (!JSON.parse(user).name) {
-        localStorage.removeItem("user");
-        navigateTo("/login");
-        return;
-    }
+    // // check if user name is present
+    // if (!JSON.parse(user).name) {
+    //     localStorage.removeItem("user");
+    //     navigateTo("/login");
+    //     return;
+    // }
 
     // fetch basic html
-    fetch("/start/")
+    fetch("/static/html/start.html")
         .then(response => {
             if (!response.ok) {
                 throw new Error(response.statusText);

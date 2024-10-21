@@ -1,4 +1,4 @@
-import { navigate } from './router.js';
+import { navigateTo } from './router.js';
 // apiService.js
 export const API_BASE_URL = '/';
 

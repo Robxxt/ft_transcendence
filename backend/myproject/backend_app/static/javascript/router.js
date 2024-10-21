@@ -1,13 +1,12 @@
 import { createNavBar } from './navBar.js';
 
 const routes = {
-    '/': () => import('./login.js').then(module => module.loadPage(document.getElementById('app'))),
-    '/login': () => import('./login.js').then(module => module.loadPage(document.getElementById('app'))),
-    '/registration': () => import('./registration.js').then(module => module.loadPage(document.getElementById('app'))),
-    '/start': () => import('./start.js').then(module => module.loadPage(document.getElementById('app'))),
-    '/profile': () => import('./profile.js').then(module => module.loadPage(document.getElementById('app'))),
-    '/dashboard': () => import('./dashboard.js').then(module => module.loadPage(document.getElementById('app'))),
-    '/pong': () => import('./homeView.js').then(module => module.homeView()),
+    '/': () => import('/static/javascript/login.js').then(module => module.loadPage(document.getElementById('app'))),
+    '/login': () => import('/static/javascript/login.js').then(module => module.loadPage(document.getElementById('app'))),
+    '/registration': () => import('/static/javascript/registration.js').then(module => module.loadPage(document.getElementById('app'))),
+    '/start': () => import('/static/javascript/start.js').then(module => module.loadPage(document.getElementById('app'))),
+    '/profile': () => import('/static/javascript/profile.js').then(module => module.loadPage(document.getElementById('app'))),
+    '/pong': () => import('/static/javascript/homeView.js').then(module => module.homeView()),
 };
 
 export function navigateTo(url) {
@@ -17,36 +16,36 @@ export function navigateTo(url) {
 
 function router() {
     const path = window.location.pathname;
-    const loadRoute = routes[path] || routes['/'];;
-    
-    // set user item in local storage if it didn't exist yet
-    if (localStorage.getItem("user") == null)
-        localStorage.setItem("user", JSON.stringify({isLoggedIn : false}));
+    const gameroom = path.match(/\/game-room\/(\d+)/);
+    const pong = path.match(/\/pong/);
 
     // get logged in status
-    const userObject = JSON.parse(localStorage.getItem("user"));
-    const isLoggedIn = userObject.isLoggedIn;
+    const isLoggedIn = true; // debug
 
-    if (loadRoute) {
-        loadRoute().then(() => {
-            // create NavBar depending on login status
-            if (isLoggedIn) {
-                createNavBar();
-            }
-            else {
-                const navBar = document.getElementById('navBar');
-                navBar.innerHTML = '';
-            }
-        });
+    if (gameroom) {
+        // Handle game-room route with dynamic id
+        routes['/game-room'](params[1]);
     } else {
-        const appDiv = document.getElementById('app');
-        appDiv.innerHTML = '<h2>404</h2><p>Page not found.</p>';
+        const loadRoute = routes[path];
+        if (loadRoute) {
+            loadRoute().then(() => {
+                // create NavBar depending on login status
+                if (isLoggedIn) {
+                    createNavBar();
+                } else {
+                    const navBar = document.getElementById('navBar');
+                    navBar.innerHTML = '';
+                }
+            });
+        } else {
+            const appDiv = document.getElementById('app');
+            appDiv.innerHTML = '<h2>404</h2><p>Page not found.</p>';
+        }
     }
 }
 
 window.addEventListener('popstate', router);
 
-// do we still need this?
 document.addEventListener('DOMContentLoaded', () => {
     document.body.addEventListener('click', event => {
         if (event.target.matches('[data-link]')) {

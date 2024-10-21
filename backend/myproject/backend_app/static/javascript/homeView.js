@@ -1,10 +1,9 @@
-import { navigate } from './router.js';
+import { navigateTo } from './router.js';
 import { logout, joinGameRoom } from './apiServices.js';
-// homeView.js
 export function homeView() {
     console.log('homeView');
     const app = document.getElementById('app');
-    const username = localStorage.getItem('username');
+    const username = JSON.parse(localStorage.getItem('user')).name;
     
     if (!username) {
         // navigate('/login');
@@ -27,7 +26,7 @@ export function homeView() {
             const response = await joinGameRoom(isClicked);
             const roomId = response.id;
             console.log('navigate to game room:', roomId);
-            navigate(`/game-room/${roomId}`);
+            // navigate(`/game-room/${roomId}`);
         } catch (error) {
             console.error('Error joining game room:', error);
             alert('Failed to join game room. Please try again.');
