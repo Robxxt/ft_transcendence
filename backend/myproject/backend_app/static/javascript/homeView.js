@@ -7,7 +7,7 @@ export function homeView() {
     const username = localStorage.getItem('username');
     
     if (!username) {
-        navigate('/login');
+        // navigate('/login');
         return;
     }
 

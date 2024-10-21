@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.hashers import make_password
-from backend_app.models import User, TableMatch, UserMetric
+from backend_app.models import User, TableMatch, UserMetric, GameRoom
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -35,4 +35,11 @@ class UserMetricSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserMetric
         fields = '__all__'
-        
+
+class GameRoomSerializer(serializers.ModelSerializer):
+    current_user = serializers.SerializerMethodField()
+    player_number = serializers.SerializerMethodField()
+
+    class Meta:
+        model = GameRoom
+        fields = ['id', 'player1', 'player2', 'state', 'current_user', 'player_number']

@@ -7,7 +7,7 @@ const routes = {
     '/start': () => import('./start.js').then(module => module.loadPage(document.getElementById('app'))),
     '/profile': () => import('./profile.js').then(module => module.loadPage(document.getElementById('app'))),
     '/dashboard': () => import('./dashboard.js').then(module => module.loadPage(document.getElementById('app'))),
-    '/pong': () => import('./pong.js').then(module => module.loadPage(document.getElementById('app'))),
+    '/pong': () => import('./homeView.js').then(module => module.homeView()),
 };
 
 export function navigateTo(url) {

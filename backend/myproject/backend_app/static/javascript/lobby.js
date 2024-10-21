@@ -5,8 +5,8 @@ import { gameRoomView } from './gameRoomView.js';
 // Define routes with dynamic params
 const routes = {
     '/': homeView,
-    '/login': () => authView('login'),
-    '/register': () => authView('register'),
+    // '/login': () => authView('login'),
+    // '/register': () => authView('register'),
     '/game-room/:id': gameRoomView,
 };
 

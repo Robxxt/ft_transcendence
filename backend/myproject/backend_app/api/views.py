@@ -3,9 +3,10 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.authtoken.models import Token
 from backend_app.models import User, TableMatch, UserMetric, GameRoom
-from backend_app.api.serializer import RegisterSerializer, TableMatchSerializer, UserMetricSerializer, UserSerializer
+from backend_app.api.serializer import RegisterSerializer, TableMatchSerializer, UserMetricSerializer, UserSerializer, GameRoomSerializer
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
+from rest_framework.views import APIView
 
 
 @api_view(['POST'])
@@ -57,15 +58,15 @@ class GameRoomView(APIView):
             room = None
         
         if not room:
-            room = GameRoom.objects.create(player1=request.user.user_profile)
+            room = GameRoom.objects.create(player1=request.user)
         elif not room.player2 and not aiPlay:
-            room.player2 = request.user.user_profile
+            room.player2 = request.user
             room.state = GameRoom.State.FULL
 
         # Set second player as AI
         if aiPlay:
             ai_user = User.objects.get(username='game_ai')
-            room.player2 = UserProfile.objects.get(user=ai_user)
+            room.player2 = User.objects.get(user=ai_user)
             room.isAiPlay = True
             room.state = GameRoom.State.FULL
 
