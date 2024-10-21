@@ -25,7 +25,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('metrics/', include('django_prometheus.urls')),
     path('api/', include('backend_app.api.urls')),
-    path('', include('backend_app.urls'))
+    path('', include('backend_app.urls')),
+    path('<path:resource>', include('backend_app.urls'))
 ]
 
 
