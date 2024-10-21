@@ -95,3 +95,6 @@ response: 200 or 404
 404 if user does not exist.
 Description: removes a friend from the friend list of a user (profile.js)
 
+- /api/get-user-info/ GET
+backend action: view that checks request.user.is_authenticated
+sends back json object: {is_authenticated: boolean, username: ...}
