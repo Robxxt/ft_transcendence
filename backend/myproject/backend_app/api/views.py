@@ -7,6 +7,7 @@ from backend_app.api.serializer import RegisterSerializer, TableMatchSerializer,
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
 from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
 
 
 @api_view(['POST'])
@@ -22,7 +23,6 @@ def register(request):
 
 @api_view(['POST'])
 def login(request):
-    print("***")
     user = get_object_or_404(User, username=request.data['username'])
     if not user.check_password(request.data['password']):
         return Response({"detail": "Not Found!"}, status=status.HTTP_401_UNAUTHORIZED)
@@ -48,10 +48,12 @@ class UserMetricViewSet(viewsets.ModelViewSet):
     serializer_class = UserMetricSerializer
 
 class GameRoomView(APIView):
-    def post(self, request):
+    permission_classes = [IsAuthenticated]
+    def post(request):
         # Set var for aiPlay
         aiPlay = request.data["aiPlay"]
-
+        print(f"my request {request}")
+        user = get_object_or_404(User, username=request.data['username'])
         # Find an available room, or create a new one if none exists
         if not aiPlay:
             room = GameRoom.objects.filter(state=GameRoom.State.WAITING).first()
@@ -59,9 +61,9 @@ class GameRoomView(APIView):
             room = None
         
         if not room:
-            room = GameRoom.objects.create(player1=request.user)
+            room = GameRoom.objects.create(player1=user)
         elif not room.player2 and not aiPlay:
-            room.player2 = request.user
+            room.player2 = user
             room.state = GameRoom.State.FULL
 
         # Set second player as AI
