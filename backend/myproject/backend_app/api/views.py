@@ -49,13 +49,13 @@ class UserMetricViewSet(viewsets.ModelViewSet):
     serializer_class = UserMetricSerializer
 
 class GameRoomView(APIView):
-    permission_classes = [IsAuthenticated]
-    authentication_classes = [TokenAuthentication]
+    # permission_classes = [IsAuthenticated]
+    # authentication_classes = [TokenAuthentication]
 
     def post(self, request):
         try:
             aiPlay = request.data.get("aiPlay")
-            username = request.data.get("username")
+            username = request.data["username"]
             if username is None:
                 return Response({"error": "Username is required"}, status=status.HTTP_400_BAD_REQUEST)
             user = get_object_or_404(User, username=username)
