@@ -66,6 +66,7 @@ function handleFormSubmit(event) {
             userObject.isLoggedIn = true;
             userObject.name = username;
             userObject.token = csrftoken;
+            localStorage.setItem("token", csrftoken);
             localStorage.setItem("user", JSON.stringify(userObject));
             console.log("Your user", JSON.parse(localStorage.getItem('user')));
             navigateTo("/start");
