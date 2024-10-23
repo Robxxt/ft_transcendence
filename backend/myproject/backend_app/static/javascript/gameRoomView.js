@@ -8,6 +8,7 @@ export async function gameRoomView(roomId) {
     const app = document.getElementById('app');
 
     try {
+        console.log("trying to acces!")
         const [templateHtml, data] = await Promise.all([
             fetchTemplate('/static/templates/gameRoom.html'),
             fetchGameRoomData(roomId)

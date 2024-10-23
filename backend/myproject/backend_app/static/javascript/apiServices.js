@@ -8,13 +8,7 @@ export async function apiRequest(url, method, body = null, headers = {}) {
     const token = storedUser.token
     if (token) {
         headers['Authorization'] = `Token ${token}`;
-        console.log("saved token");
     }
-    console.log("my url:", url)
-    console.log('Making request to:', url);
-    console.log('Method:', method);
-    console.log('Headers:', headers);
-    console.log('Body:', body);
     const response = await fetch(url, {
         method: method,
         headers: headers,
@@ -107,7 +101,6 @@ export async function joinGameRoom(aiPlay) {
     //     requestBody = {"aiPlay": false};
     try {
         const response = await apiRequest(API_BASE_URL + 'join-game-room/', 'POST', requestBody);
-        console.log(response);
         if (response.ok) {
             const data = await response.json();
             return data;
