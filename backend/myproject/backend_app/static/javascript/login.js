@@ -65,7 +65,10 @@ function handleFormSubmit(event) {
             const userObject = {};
             userObject.isLoggedIn = true;
             userObject.name = username;
+            userObject.token = csrftoken;
+            localStorage.setItem("token", csrftoken);
             localStorage.setItem("user", JSON.stringify(userObject));
+            console.log("Your user", JSON.parse(localStorage.getItem('user')));
             navigateTo("/start");
         }
     })
