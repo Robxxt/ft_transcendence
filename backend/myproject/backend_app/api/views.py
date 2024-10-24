@@ -8,6 +8,7 @@ from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import TokenAuthentication
 
 
 @api_view(['POST'])
@@ -48,44 +49,45 @@ class UserMetricViewSet(viewsets.ModelViewSet):
     serializer_class = UserMetricSerializer
 
 class GameRoomView(APIView):
-    permission_classes = [IsAuthenticated]
-    def post(request):
-        # Set var for aiPlay
-        aiPlay = request.data["aiPlay"]
-        print(f"my request {request}")
-        user = get_object_or_404(User, username=request.data['username'])
-        # Find an available room, or create a new one if none exists
-        if not aiPlay:
-            room = GameRoom.objects.filter(state=GameRoom.State.WAITING).first()
-        else:
-            room = None
-        
-        if not room:
-            room = GameRoom.objects.create(player1=user)
-        elif not room.player2 and not aiPlay:
-            room.player2 = user
-            room.state = GameRoom.State.FULL
+    # permission_classes = [IsAuthenticated]
+    # authentication_classes = [TokenAuthentication]
 
-        # Set second player as AI
-        if aiPlay:
-            ai_user = User.objects.get(username='game_ai')
-            room.player2 = User.objects.get(user=ai_user)
-            room.isAiPlay = True
-            room.state = GameRoom.State.FULL
-
+    def post(self, request):
         try:
-            room.save()  # This triggers validation, including the clean() method
-        except ValidationError as e:
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        print(f"Room: {room}")
-        # Use the serializer to return the room data
-        serializer = GameRoomSerializer(room)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+            aiPlay = request.data["aiPlay"]
+            # username = request.data["username"]
+            username = get_object_or_404(User, username=request.data['username'])
+            if username is None:
+                return Response({"error": "Username is required"}, status=status.HTTP_400_BAD_REQUEST)
+            user = get_object_or_404(User, username=username)
+
+            if not aiPlay:
+                room = GameRoom.objects.filter(state=GameRoom.State.WAITING).first()
+            else:
+                room = None
+
+            if not room:
+                room = GameRoom.objects.create(player1=user)
+            elif not room.player2 and not aiPlay:
+                room.player2 = user
+                room.state = GameRoom.State.FULL
+
+            if aiPlay:
+                ai_user = User.objects.get(username='game_ai')
+                room.player2 = ai_user
+                room.isAiPlay = True
+                room.state = GameRoom.State.FULL
+
+            room.save()
+            serializer = GameRoomSerializer(room)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(f"Error occurred: {e}")
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def get(self, request, room_id):
         try:
             room = GameRoom.objects.get(id=room_id)
-            # Use the serializer to return the room data
             serializer = GameRoomSerializer(room, context={'request': request})
             return Response(serializer.data, status=status.HTTP_200_OK)
         except GameRoom.DoesNotExist:
