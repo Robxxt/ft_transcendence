@@ -7,7 +7,7 @@ const routes = {
     '/start': () => import('/static/javascript/start.js').then(module => module.loadPage(document.getElementById('app'))),
     '/profile': () => import('/static/javascript/profile.js').then(module => module.loadPage(document.getElementById('app'))),
     '/pong': () => import('/static/javascript/homeView.js').then(module => module.homeView()),
-    '/game-room/:id': () => import('/static/javascript/gameRoomView.js').then(module => module.gameRoomView()),
+    '/game-room/:id': (id) => import('/static/javascript/gameRoomView.js').then(module => module.gameRoomView(id)),
 };
 
 export function navigateTo(url) {
@@ -19,15 +19,16 @@ function router() {
     const path = window.location.pathname;
     const gameroom = path.match(/\/game-room\/(\d+)/);
     const pong = path.match(/\/pong/);
-    console.log(path);
+    console.log("My path", path);
 
     // get logged in status
     const isLoggedIn = true; // debug
 
     if (gameroom) {
-        console.log(gameroom[1]);
+        console.log("Gameroom", gameroom[1]);
         // Handle game-room route with dynamic id
-        routes['/game-room/'](gameroom[1]);
+        routes['/game-room/:id'](gameroom[1]);
+        console.log(routes['/game-room/:id'](gameroom[1]));
     } else {
         const loadRoute = routes[path];
         if (loadRoute) {
