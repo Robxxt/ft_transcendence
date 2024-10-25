@@ -6,6 +6,7 @@ echo "Creating superuser..."
 python myproject/manage.py createsuperuser --noinput
 echo "Starting server..."
 python myproject/manage.py runserver 0.0.0.0:8000
+#daphne -b 0.0.0.0 -p 8000 backend_setting.asgi:application
 
 # sleep 5
 # pytest
