@@ -31,7 +31,7 @@ def run(playwright: Playwright, user_name: str) -> None:
     page.get_by_role("button", name="Join Game Room").click()
     page.get_by_role("button", name="Start Game").click()
     page.get_by_role("button", name="Start Game").click()
-    time.sleep(20)
+    time.sleep(500)
     page.close()
 
     # ---------------------

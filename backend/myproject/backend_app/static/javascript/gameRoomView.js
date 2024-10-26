@@ -41,6 +41,8 @@ async function fetchGameRoomData(roomId) {
 function renderGameRoom(app, templateHtml, roomId, data) {
     app.innerHTML = templateHtml;
     document.getElementById('room-id').textContent = roomId;
+    console.log("=====HELLO====");
+    console.log(document.getElementById('username'));
     document.getElementById('username').textContent = data.current_user?.username || 'Unknown Player';
 }
 
