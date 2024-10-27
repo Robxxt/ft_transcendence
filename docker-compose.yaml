@@ -58,8 +58,15 @@ services:
       - "8000:8000"
     depends_on:
       - postgres
+      - redis
     env_file:
       - ./.env
+  redis:
+    container_name: tr_redis
+    image: redis
+    ports:
+      - "6379:6379"
+    restart: always  
 
 volumes:
   postgres_data:

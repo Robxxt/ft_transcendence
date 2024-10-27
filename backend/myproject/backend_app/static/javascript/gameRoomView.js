@@ -1,6 +1,6 @@
 import { apiRequest, API_BASE_URL } from './apiServices.js';
 
-const WEBSOCKET_BASE_URL = `ws://${window.location.host}/ws`;
+const WEBSOCKET_BASE_URL = `ws://${window.location.host}`;
 
 let gameRoomData = null;
 
@@ -41,6 +41,8 @@ async function fetchGameRoomData(roomId) {
 function renderGameRoom(app, templateHtml, roomId, data) {
     app.innerHTML = templateHtml;
     document.getElementById('room-id').textContent = roomId;
+    console.log("=====HELLO====");
+    console.log(document.getElementById('username'));
     document.getElementById('username').textContent = data.current_user?.username || 'Unknown Player';
 }
 
@@ -60,7 +62,7 @@ function handleError(app, error) {
 }
 
 function setupGame(roomId, data) {
-    const gameSocket = new WebSocket(`${WEBSOCKET_BASE_URL}/game/${roomId}/`);
+    const gameSocket = new WebSocket(`${WEBSOCKET_BASE_URL}/ws/game/${roomId}/`);
     const canvas = document.getElementById('pong-canvas');
     const ctx = canvas.getContext('2d');
 
@@ -218,8 +220,8 @@ function updateStartGameButton(gameState, playerNumber, player1Ready, player2Rea
 
 // Chat WebSocket setup
 function setupChatWebSocket(roomId, data) {
-    console.log("WEB SOCKET", `${WEBSOCKET_BASE_URL}/game-room/${roomId}/`)
-    const chatSocket = new WebSocket(`${WEBSOCKET_BASE_URL}/game-room/${roomId}/`);
+    console.log("WEB SOCKET", `${WEBSOCKET_BASE_URL}/ws/game-room/${roomId}/`)
+    const chatSocket = new WebSocket(`${WEBSOCKET_BASE_URL}/ws/game-room/${roomId}/`);
     const chatMessages = document.getElementById('chat-messages');
     const chatInput = document.getElementById('chat-input');
     const sendMessageBtn = document.getElementById('send-message-btn');
