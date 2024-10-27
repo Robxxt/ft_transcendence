@@ -49,8 +49,8 @@ class UserMetricViewSet(viewsets.ModelViewSet):
     serializer_class = UserMetricSerializer
 
 class GameRoomView(APIView):
-    # permission_classes = [IsAuthenticated]
-    # authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
 
     def post(self, request):
         try:

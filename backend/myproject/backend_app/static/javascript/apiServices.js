@@ -5,7 +5,7 @@ export const API_BASE_URL = 'api/';
 export async function apiRequest(url, method, body = null, headers = {}) {
     headers['Content-Type'] = 'application/json';
     const storedUser = JSON.parse(localStorage.getItem('user'));
-    const token = storedUser.token
+    const token = localStorage.getItem("token");
     console.log("YOUR URL===>", url);
     if (token) {
         headers['Authorization'] = `Token ${token}`;

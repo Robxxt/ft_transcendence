@@ -15,6 +15,7 @@ export async function gameRoomView(roomId) {
         ]);
 
         gameRoomData = data;
+        console.log("Data from the gameRoomView", data);
         renderGameRoom(app, templateHtml, roomId, data);
         setupGame(roomId, data);
         setupChatWebSocket(roomId, data);

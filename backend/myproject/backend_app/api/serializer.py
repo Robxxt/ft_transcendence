@@ -45,6 +45,7 @@ class GameRoomSerializer(serializers.ModelSerializer):
         fields = ['id', 'player1', 'player2', 'state', 'current_user', 'player_number']
 
     def get_current_user(self, obj):
+        print(f"self.context: {self.context}")
         request = self.context.get('request')
         if request and hasattr(request, 'user'):
             player_number = self.get_player_number(obj)
