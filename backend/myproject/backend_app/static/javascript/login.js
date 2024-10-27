@@ -32,51 +32,6 @@ export function loadPage(app) {
         });
 }
 
-// function handleFormSubmit(event) {
-//     const errorMessage = document.getElementById("errorMessage");
-//     const csrftoken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-    
-//     event.preventDefault();
-
-//     // Fetching username and password from form inputs
-//     const username = document.getElementById("username").value;
-//     const password = document.getElementById("password").value;
-
-//     fetch("/api/login/", {
-//         method: "POST",
-//         headers: {
-//             "Content-Type": "application/json", // specifying that we're sending JSON
-//             "X-CSRFToken": csrftoken
-//         },
-//         body: JSON.stringify({ username, password }) // converting the data to JSON
-//     })
-//     .then(response => {
-//         // If user/password is wrong
-//         if (response.status === 401) {
-//             errorMessage.textContent = "Login failed: Username / Password combination wrong.";
-//             errorMessage.style.color = "red";
-//         } else if (!response.ok) {
-//             throw new Error(response.statusText);
-//         } else {
-//             // Reset error message
-//             errorMessage.textContent = "";
-
-//             // Put user object into storage
-//             const userObject = {};
-//             userObject.isLoggedIn = true;
-//             userObject.name = username;
-//             userObject.token = csrftoken;
-//             localStorage.setItem("token", csrftoken);
-//             localStorage.setItem("user", JSON.stringify(userObject));
-//             console.log("Your user", JSON.parse(localStorage.getItem('user')));
-//             navigateTo("/start");
-//         }
-//     })
-//     .catch(error => {
-//         console.error(error);
-//     });
-// }
-
 function handleFormSubmit(event) {
     const errorMessage = document.getElementById("errorMessage");
     const csrftoken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
