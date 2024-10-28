@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="/static/style_tictac.css">
+	<script src="/static/tictactoe.js" defer></script>
+	<title>Tic Tac Toe</title>
+</head>
+<body>
+	<div class="row justifyContent-space-evenly fill margin padding">
+		<div class="player-name column" id="player1Name">{{ player1 }}</div>
+		<div class="player-name column" id="player2Name">{{ player2 }}</div>
+	</div>
+
+	<div id="settings" class="settings-setup">
+		<div id="settingsForm">
+			<!-- Player 2 Name -->
+			<div>
+				<label class="header" for="player2Name">ADD SECOND PLAYER NAME</label>
+				<input type="text" id="player2Name" name="player2Name">
+			</div>
+
+			<!-- Player 1 Color -->
+			<div>
+				<div class="header">CHANGE COLOR FOR<br> <span id="player1-name"></span></div>
+				<div class="color-options">
+					<div class="color-box" id="player1ColorBox1" data-color="#ff00ff" style="background-color: #ff00ff;"></div>
+					<div class="color-box" id="player1ColorBox1" data-color="#ff4500" style="background-color: #ff4500;"></div>
+					<div class="color-box" id="player1ColorBox2" data-color="#ff6347" style="background-color: #ff6347;"></div>
+					<div class="color-box" id="player1ColorBox2" data-color="#dc143c" style="background-color: #dc143c;"></div>
+					<div class="color-box" id="player1ColorBox2" data-color="#800000" style="background-color: #800000;"></div>
+				</div>
+			</div>
+
+			<!-- Player 2 Color -->
+			<div>
+				<div class="header">CHANGE COLOR FOR<br> <span id="player2-name"></span></div>
+				<div class="color-options">
+					<div class="color-box" id="player2ColorBox1" data-color="#00dcff" style="background-color: #00dcff;"></div>
+					<div class="color-box" id="player2ColorBox1" data-color="#ee82ee" style="background-color: #ee82ee;"></div>
+					<div class="color-box" id="player2ColorBox2" data-color="#6a5acd" style="background-color: #6a5acd;"></div>
+					<div class="color-box" id="player2ColorBox2" data-color="#d8bfd8" style="background-color: #d8bfd8;"></div>
+					<div class="color-box" id="player2ColorBox2" data-color="#008b8b" style="background-color: #008b8b;"></div>
+				</div>
+			</div>
+
+			<button id="submitButton">SUBMIT</button>
+		</div>
+	</div>
+
+	<div class="cell template">
+		<div class="ring" data-ring="0"></div>
+		<div class="ring" data-ring="1"></div>
+		<div class="ring" data-ring="2"></div>
+	</div>
+
+	<div class="board" id="board">
+		<div class="side" data-color="0">
+		</div>
+		<div class="grid" data-color="gray"></div>
+		<div class="side" data-color="1">
+		</div>
+	</div>
+
+	<div class="game-end-message" id="gameEndMessage">
+		<div game-end-message-text></div>
+	</div>
+
+	<div class="how-to-play" id="instructions">
+		<div how-to-play-text></div>
+	</div>
+
+	<div class="button-container">
+		<button id="howToPlayButton">HOW TO PLAY</button>
+		<button id="settingsButton">SETTINGS</button>
+		<button id="restartButton">RESTART</button>
+		<button id="quitButton">QUIT</button>
+	</div>
+
+	<script>
+		const roomName = '{{ room_name }}';
+		const player1 = '{{ player1 }}';
+		const player2 = '{{ player2 }}';
+	</script>
+</body>
+</html>
