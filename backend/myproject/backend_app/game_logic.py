@@ -71,6 +71,7 @@ class GameLogic:
             self.player_names[2] = self.player_names[3]
         elif player2_name:
             self.player_names[2] = player2_name
+        print("HANDLE PLAYER CALL")
         print(f"Player 1: {self.player_names[1]}, Player 2: {self.player_names[2]}")
 
     async def handle_player_disconnect(self, player_channel):

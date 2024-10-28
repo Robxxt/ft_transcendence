@@ -15,8 +15,8 @@ export async function gameRoomView(roomId) {
         ]);
 
         gameRoomData = data;
-        console.log("Data from the gameRoomView", data);
         renderGameRoom(app, templateHtml, roomId, data);
+        console.log('Game Room View Call than one Time!!!');
         setupGame(roomId, data);
         setupChatWebSocket(roomId, data);
         updateRoomState(data.state);
@@ -26,14 +26,12 @@ export async function gameRoomView(roomId) {
 }
 
 async function fetchTemplate(url) {
-    console.log("Your URL:", url);
     const response = await fetch(url);
     if (!response.ok) throw new Error('Failed to load template');
     return response.text();
 }
 
 async function fetchGameRoomData(roomId) {
-    console.log("API REQUEST ===>", `${API_BASE_URL}game-room/${roomId}/`)
     const response = await apiRequest(`/api/game-room/${roomId}/`, 'GET'); // NO Idea y but I had to hardcode it even if in cosole log looks correct
     if (!response.ok) throw new Error('Failed to fetch game room data');
     return response.json();
@@ -42,8 +40,6 @@ async function fetchGameRoomData(roomId) {
 function renderGameRoom(app, templateHtml, roomId, data) {
     app.innerHTML = templateHtml;
     document.getElementById('room-id').textContent = roomId;
-    console.log("=====HELLO====");
-    console.log(document.getElementById('username'));
     document.getElementById('username').textContent = data.current_user?.username || 'Unknown Player';
 }
 
@@ -221,7 +217,6 @@ function updateStartGameButton(gameState, playerNumber, player1Ready, player2Rea
 
 // Chat WebSocket setup
 function setupChatWebSocket(roomId, data) {
-    console.log("WEB SOCKET", `${WEBSOCKET_BASE_URL}/ws/game-room/${roomId}/`)
     const chatSocket = new WebSocket(`${WEBSOCKET_BASE_URL}/ws/game-room/${roomId}/`);
     const chatMessages = document.getElementById('chat-messages');
     const chatInput = document.getElementById('chat-input');

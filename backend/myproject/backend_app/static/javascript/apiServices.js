@@ -6,7 +6,6 @@ export async function apiRequest(url, method, body = null, headers = {}) {
     headers['Content-Type'] = 'application/json';
     const storedUser = JSON.parse(localStorage.getItem('user'));
     const token = localStorage.getItem("token");
-    console.log("YOUR URL===>", url);
     if (token) {
         headers['Authorization'] = `Token ${token}`;
     }
@@ -88,10 +87,8 @@ export async function logout() {
 
 export async function joinGameRoom(aiPlay) {
     //const aiPlay = true; // debug
-    console.log(aiPlay);
     const storedUser = JSON.parse(localStorage.getItem('user'));
     const username = storedUser.name;
-    console.log("MY user:", username);
     let requestBody = {"aiPlay": aiPlay,
                         "username": username
     };

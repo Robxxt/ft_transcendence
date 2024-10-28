@@ -3,8 +3,6 @@ from backend_app.api import views
 
 def index_view(request):
     return render(request, 'index.html') # Main page
-def game_room(request):
-    return render(request, 'gameRoom.html')
 # def login_view(request):
 #     return render(request, 'login.html') # login
 # def register_view(request):
