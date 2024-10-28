@@ -1,5 +1,5 @@
 
-class TicTacToeModel {
+export class TicTacToeModel {
 	// handle logic of a game
 	// provide methods to place rings, switch players, and check for a win
 
@@ -190,7 +190,7 @@ class TicTacToeModel {
 	}
 }
 
-class TicTacToeView {
+export class TicTacToeView {
 	// display the game board and rings
 	// handle user interactions (e.g., clicking on cells to place rings)
 
@@ -339,7 +339,7 @@ function getCssVariable(variableName) {
 }
 
 
-class TicTacToeController {
+export class TicTacToeController {
 	// capture user actions (like clicks), update the model, and tell the view to refresh
 	// model and view should communicate via controller
 
@@ -561,7 +561,7 @@ class TicTacToeController {
 	}
 }
 
-const game = new TicTacToeController(new TicTacToeModel(), new TicTacToeView());
+// const game = new TicTacToeController(new TicTacToeModel(), new TicTacToeView());
 
 // /*
 // Flow:

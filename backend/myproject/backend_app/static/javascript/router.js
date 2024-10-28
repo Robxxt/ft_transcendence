@@ -7,7 +7,7 @@ const routes = {
     '/start': () => import('/static/javascript/start.js').then(module => module.loadPage(document.getElementById('app'))),
     '/profile': () => import('/static/javascript/profile.js').then(module => module.loadPage(document.getElementById('app'))),
     '/pong': () => import('/static/javascript/homeView.js').then(module => module.homeView()),
-    '/tictactoe': () => import('/static/javascript/tictactoe.js').then(module => module.tictactoe()),
+    '/tictactoe': () => import('/static/javascript/tictactoe_start.js').then(module => module.loadPage(document.getElementById('app')))
 };
 
 export function navigateTo(url) {
