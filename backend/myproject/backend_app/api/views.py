@@ -3,7 +3,14 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.authtoken.models import Token
 from backend_app.models import User, TableMatch, UserMetric, GameRoom
-from backend_app.api.serializer import RegisterSerializer, TableMatchSerializer, UserMetricSerializer, UserSerializer, GameRoomSerializer
+from backend_app.api.serializer import (
+    RegisterSerializer,
+    TableMatchSerializer,
+    UserMetricSerializer,
+    UserSerializer,
+    GameRoomSerializer,
+    ChangePasswordSerializer
+)
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
 from rest_framework.views import APIView
@@ -92,3 +99,11 @@ class GameRoomView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except GameRoom.DoesNotExist:
             return Response({'error': 'Game room not found'}, status=status.HTTP_404_NOT_FOUND)
+
+class ChangePasswordViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
+    def put(self, request, pk=None):
+        queryset = UserMetric.objects.all()
+        serializer_class = ChangePasswordSerializer
+        return Response(serializer_class.data, status=status.HTTP_200_OK)

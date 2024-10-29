@@ -111,8 +111,8 @@ function handleChangePasswordDiv(app, username) {
         };
 
         // send new password to server
-        fetch("/changePassword", {
-            method: "POST",
+        fetch("/api/changePassword/", {
+            method: "PUT",
             headers: {
                 "Content-Type": "application/json",
                 "X-CSRFToken": csrftoken
@@ -161,7 +161,7 @@ function handleChangeAvatarDiv(app, username) {
         formData.append('username', username);
 
         fetch("/changeAvatar", {
-            method: "POST",
+            method: "PUT",
             body: formData,
             headers: {"X-CSRFToken": csrftoken}
         })
@@ -385,7 +385,7 @@ function addFriend(username, friend, isFriend) {
       // if friend is not friend, we add them
       if (! isFriend) {
         fetch("/addFriend", {
-            method: "POST",
+            method: "PUT",
             headers: {
                 "Content-Type": "application/json",
                 "X-CSRFToken": csrftoken
@@ -408,7 +408,7 @@ function addFriend(username, friend, isFriend) {
       // if friend is friend, we remove them
       else {
         fetch("/removeFriend", {
-            method: "POST",
+            method: "PUT",
             headers: {
                 "Content-Type": "application/json",
                 "X-CSRFToken": csrftoken

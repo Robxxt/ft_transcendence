@@ -14,4 +14,6 @@ urlpatterns = [
     path('join-game-room/', views.GameRoomView.as_view(), name='game_room'),
     path('game-room/<int:room_id>/', views.GameRoomView.as_view(), name='get_game_room'),
     path('', include(router.urls)),
+    path('changePassword/<int:pk>/', views.ChangePasswordViewSet.as_view(), name='change_password'),
+
 ]

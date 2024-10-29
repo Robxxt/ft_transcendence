@@ -68,3 +68,13 @@ class GameRoomSerializer(serializers.ModelSerializer):
             elif obj.player2 == user_profile:
                 return 2
         return None
+
+class ChangePasswordSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = User
+        print(f"=====ALLLLE\n {model} \n=====")
+        fields = ['user', 'currentPassword', 'newPassword']
+    
+
+        
