@@ -32,6 +32,12 @@ def login(request):
     print(f"User exist: {user}, ID: {user.id}")  
     return Response({"token": token.key, "user": serializer.data})
 
+@api_view(['PUT'])
+def changePassword(request):
+    user = get_object_or_404(User, username=request.data['user'])
+    if not user.check_password(request.data['currentPassword']):
+		return Response({"detail": "Not Found!"}, status=status.HTPP_401_UNAUTHORIZED)
+
 class UserListCreate(generics.ListCreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer  # Corrected attribute name

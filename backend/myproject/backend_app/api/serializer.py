@@ -25,7 +25,9 @@ class RegisterSerializer(serializers.ModelSerializer):
         user.password = make_password(validated_data['password'])
         user.save()
         return user
-    
+
+def changePasswordSerializer()
+
 class TableMatchSerializer(serializers.ModelSerializer):
     class Meta:
         model = TableMatch
@@ -68,3 +70,4 @@ class GameRoomSerializer(serializers.ModelSerializer):
             elif obj.player2 == user_profile:
                 return 2
         return None
+

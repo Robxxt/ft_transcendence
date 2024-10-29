@@ -111,8 +111,8 @@ function handleChangePasswordDiv(app, username) {
         };
 
         // send new password to server
-        fetch("/changePassword", {
-            method: "POST",
+        fetch("/api/changePassword", {
+            method: "PUT",
             headers: {
                 "Content-Type": "application/json",
                 "X-CSRFToken": csrftoken
