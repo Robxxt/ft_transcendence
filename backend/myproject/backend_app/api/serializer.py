@@ -43,3 +43,28 @@ class GameRoomSerializer(serializers.ModelSerializer):
     class Meta:
         model = GameRoom
         fields = ['id', 'player1', 'player2', 'state', 'current_user', 'player_number']
+
+    def get_current_user(self, obj):
+        print(f"self.context: {self.context}")
+        request = self.context.get('request')
+        if request and hasattr(request, 'user'):
+            player_number = self.get_player_number(obj)
+            return {
+                'id': request.user.id,
+                'username': request.user.username,
+                'player_number': player_number
+            }
+        return None
+
+    def get_player_number(self, obj):
+        request = self.context.get('request')
+        if request and hasattr(request, 'user'):
+            user_profile = request.user
+            if obj.player1 == user_profile:
+                if obj.isAiPlay:
+                    return 3
+                else:
+                    return 1
+            elif obj.player2 == user_profile:
+                return 2
+        return None

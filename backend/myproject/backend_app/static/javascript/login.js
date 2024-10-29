@@ -38,35 +38,32 @@ function handleFormSubmit(event) {
     
     event.preventDefault();
 
-    // Fetching username and password from form inputs
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
 
     fetch("/api/login/", {
         method: "POST",
         headers: {
-            "Content-Type": "application/json", // specifying that we're sending JSON
+            "Content-Type": "application/json",
             "X-CSRFToken": csrftoken
         },
-        body: JSON.stringify({ username, password }) // converting the data to JSON
+        body: JSON.stringify({ username, password })
     })
-    .then(response => {
-        // If user/password is wrong
-        if (response.status === 401) {
-            errorMessage.textContent = "Login failed: Username / Password combination wrong.";
-            errorMessage.style.color = "red";
-        } else if (!response.ok) {
-            throw new Error(response.statusText);
-        } else {
-            // Reset error message
-            errorMessage.textContent = "";
-
-            // Put user object into storage
-            const userObject = {};
-            userObject.isLoggedIn = true;
-            userObject.name = username;
+    .then(response => response.json())
+    .then(data => {
+        if (data.token) {  // Check if token is present
+            // Store the token and user info in localStorage
+            const userObject = {
+                isLoggedIn: true,
+                name: username,
+                token: data.token
+            };
+            localStorage.setItem("token", data.token);  // Store the actual token from response
             localStorage.setItem("user", JSON.stringify(userObject));
             navigateTo("/start");
+        } else {
+            errorMessage.textContent = "Login failed: Username / Password combination wrong.";
+            errorMessage.style.color = "red";
         }
     })
     .catch(error => {

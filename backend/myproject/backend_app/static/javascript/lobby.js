@@ -3,12 +3,12 @@ import { authView } from './authView.js';
 import { gameRoomView } from './gameRoomView.js';
 
 // Define routes with dynamic params
-const routes = {
-    '/': homeView,
-    // '/login': () => authView('login'),
-    // '/register': () => authView('register'),
-    '/game-room/:id': gameRoomView,
-};
+// const routes = {
+//     '/': homeView,
+//     // '/login': () => authView('login'),
+//     // '/register': () => authView('register'),
+//     '/game-room/:id': gameRoomView,
+// };
 
 export function router() {
     const path = window.location.hash.slice(1) || '/';

@@ -57,8 +57,8 @@ class GameLogic:
     @database_sync_to_async
     def _get_player_names(self):
         self.pong_game.refresh_from_db()
-        player1_name = self.pong_game.room.player1.user.username if self.pong_game.room.player1 else ""
-        player2_name = self.pong_game.room.player2.user.username if self.pong_game.room.player2 else ""
+        player1_name = self.pong_game.room.player1.username if self.pong_game.room.player1 else ""
+        player2_name = self.pong_game.room.player2.username if self.pong_game.room.player2 else ""
         return player1_name, player2_name
 
     async def handle_player_connect(self, player_channel):
@@ -71,6 +71,7 @@ class GameLogic:
             self.player_names[2] = self.player_names[3]
         elif player2_name:
             self.player_names[2] = player2_name
+        print("HANDLE PLAYER CALL")
         print(f"Player 1: {self.player_names[1]}, Player 2: {self.player_names[2]}")
 
     async def handle_player_disconnect(self, player_channel):
@@ -109,14 +110,6 @@ class GameLogic:
 
             player1 = self.pong_game.room.player1
             player2 = self.pong_game.room.player2
-
-            player1.games_played += 1
-            player2.games_played += 1
-
-            if self.pong_game.winner == 'Player 1':
-                player1.games_won += 1
-            elif self.pong_game.winner == 'Player 2':
-                player2.games_won += 1
 
             player1.save()
             player2.save()

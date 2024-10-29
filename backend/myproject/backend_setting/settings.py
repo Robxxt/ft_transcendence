@@ -24,13 +24,14 @@ SECRET_KEY = 'django-insecure-zb5$j3wdwu1l*p*y50=hnoty_g7n(qc-pibyrb3h6s9l3o+n%=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['transcendence.com', '0.0.0.0', "localhost", "django"]
+ALLOWED_HOSTS = ['transcendence.com', '0.0.0.0','192.168.65.1', "localhost", "django"]
 
 AUTH_USER_MODEL = 'backend_app.User'
 
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -78,13 +79,13 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'backend_setting.wsgi.application'
-ASGI_APPLICATION = "backebd_setting.asgi.application"
+ASGI_APPLICATION = "backend_setting.asgi.application"
 
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            "hosts": [("127.0.0.1", 6379)],
+            "hosts": [('redis', 6379)],
         },
     },
 }

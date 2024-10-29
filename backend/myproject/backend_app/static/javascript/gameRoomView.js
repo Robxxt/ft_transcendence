@@ -1,6 +1,6 @@
 import { apiRequest, API_BASE_URL } from './apiServices.js';
 
-const WEBSOCKET_BASE_URL = `ws://${window.location.host}/ws`;
+const WEBSOCKET_BASE_URL = `ws://${window.location.host}`;
 
 let gameRoomData = null;
 
@@ -8,13 +8,15 @@ export async function gameRoomView(roomId) {
     const app = document.getElementById('app');
 
     try {
+        console.log("trying to acces!")
         const [templateHtml, data] = await Promise.all([
-            fetchTemplate('/static/templates/gameRoom.html'),
+            fetchTemplate('/static/html/gameRoom.html'), // This made an Issue
             fetchGameRoomData(roomId)
         ]);
 
         gameRoomData = data;
         renderGameRoom(app, templateHtml, roomId, data);
+        console.log('Game Room View Call than one Time!!!');
         setupGame(roomId, data);
         setupChatWebSocket(roomId, data);
         updateRoomState(data.state);
@@ -30,7 +32,7 @@ async function fetchTemplate(url) {
 }
 
 async function fetchGameRoomData(roomId) {
-    const response = await apiRequest(`${API_BASE_URL}game-room/${roomId}/`, 'GET');
+    const response = await apiRequest(`/api/game-room/${roomId}/`, 'GET'); // NO Idea y but I had to hardcode it even if in cosole log looks correct
     if (!response.ok) throw new Error('Failed to fetch game room data');
     return response.json();
 }
@@ -57,7 +59,7 @@ function handleError(app, error) {
 }
 
 function setupGame(roomId, data) {
-    const gameSocket = new WebSocket(`${WEBSOCKET_BASE_URL}/game/${roomId}/`);
+    const gameSocket = new WebSocket(`${WEBSOCKET_BASE_URL}/ws/game/${roomId}/`);
     const canvas = document.getElementById('pong-canvas');
     const ctx = canvas.getContext('2d');
 
@@ -215,7 +217,7 @@ function updateStartGameButton(gameState, playerNumber, player1Ready, player2Rea
 
 // Chat WebSocket setup
 function setupChatWebSocket(roomId, data) {
-    const chatSocket = new WebSocket(`${WEBSOCKET_BASE_URL}/game-room/${roomId}/`);
+    const chatSocket = new WebSocket(`${WEBSOCKET_BASE_URL}/ws/game-room/${roomId}/`);
     const chatMessages = document.getElementById('chat-messages');
     const chatInput = document.getElementById('chat-input');
     const sendMessageBtn = document.getElementById('send-message-btn');

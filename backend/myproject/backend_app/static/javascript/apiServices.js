@@ -4,7 +4,8 @@ export const API_BASE_URL = 'api/';
 
 export async function apiRequest(url, method, body = null, headers = {}) {
     headers['Content-Type'] = 'application/json';
-    const token = localStorage.getItem('token');
+    const storedUser = JSON.parse(localStorage.getItem('user'));
+    const token = localStorage.getItem("token");
     if (token) {
         headers['Authorization'] = `Token ${token}`;
     }
@@ -18,8 +19,9 @@ export async function apiRequest(url, method, body = null, headers = {}) {
 }
 
 export async function login() {
-    const username = document.getElementById('login-username').value;
-    const password = document.getElementById('login-password').value;
+    const storedUser = JSON.parse(localStorage.getItem('user'));
+    const username = storedUser.username
+    const password = storedUser.password
 
     try {
         const response = await apiRequest(API_BASE_URL + 'login/', 'POST', { username, password });
@@ -85,16 +87,18 @@ export async function logout() {
 
 export async function joinGameRoom(aiPlay) {
     //const aiPlay = true; // debug
-    console.log(aiPlay);
-    let requstBody = {"aiPlay": aiPlay};
+    const storedUser = JSON.parse(localStorage.getItem('user'));
+    const username = storedUser.name;
+    let requestBody = {"aiPlay": aiPlay,
+                        "username": username
+    };
 
     // if (aiPlay == true)
-    //     requstBody = {"aiPlay": true};
+    //     requestBody = {"aiPlay": true};
     // else 
-    //     requstBody = {"aiPlay": false};
+    //     requestBody = {"aiPlay": false};
     try {
-        const response = await apiRequest(API_BASE_URL + 'join-game-room/', 'POST', requstBody);
-        console.log(response);
+        const response = await apiRequest(API_BASE_URL + 'join-game-room/', 'POST', requestBody);
         if (response.ok) {
             const data = await response.json();
             return data;
