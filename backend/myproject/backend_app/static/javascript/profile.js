@@ -217,17 +217,17 @@ function handleSetDisplayName(app, username) {
         }
 
         // send new display name to endpoint
-        fetch("/setDisplayName", {
-            method: "PATCH",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": csrftoken
-            },
-            body: JSON.stringify({
-                username: username,
-                newDisplayName: displayName.value
+            fetch("/setDisplayName", {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": csrftoken
+                },
+                body: JSON.stringify({
+                    username: username,
+                    newDisplayName: displayName.value
+                })
             })
-          })
           .then(response => {
             if (response.ok) {
                 status.innerHTML = "Updated the display name to " + displayName.value;
@@ -252,22 +252,44 @@ function handleSetDisplayName(app, username) {
 }
 
 function handleWinLossRecordDiv(app) {
+    const csrftoken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     const username = localStorage.getItem("user");
     const winLossRecordDiv = document.getElementById("winLossRecord");
 
-    // get win loss record from endpoint
-    fetch(`/winLossRecord?username=${username}`)
-        .then(response => response.json())
-        .then(data => {
-            const winLossHTML = `
-                <h1 class="display-l" style="color: magenta;">${data.wins} : ${data.losses}</h1>
-            `;
-            winLossRecordDiv.innerHTML += winLossHTML;
-        })
-        .catch(error => {
-            console.error(error);
-        });
+    // Optional: Log the username to ensure it's correct
+    console.log("Fetching win-loss record for username:", username);
+
+    // Get win-loss record from endpoint
+    fetch(`/winLossRecord?username=${encodeURIComponent(username)}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrftoken
+        },
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        // Log the received data for debugging
+        console.log("Received win-loss data:", data);
+
+        // Access the correct keys: 'won' and 'lost'
+        const winLossHTML = `
+            <h1 class="display-l" style="color: magenta;">${data.won} : ${data.lost}</h1>
+        `;
+        winLossRecordDiv.innerHTML += winLossHTML;
+    })
+    .catch(error => {
+        console.error("Error fetching win-loss record:", error);
+        winLossRecordDiv.innerHTML += `<p style="color: red;">Failed to load win-loss record.</p>`;
+    });
 }
+
+
 
 function handleGameHistoryDiv(app) {
     const username = localStorage.getItem("user");
