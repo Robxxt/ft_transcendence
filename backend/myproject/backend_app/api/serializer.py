@@ -2,6 +2,11 @@ from rest_framework import serializers
 from django.contrib.auth.hashers import make_password
 from backend_app.models import User, TableMatch, UserMetric, GameRoom
 
+class WinLossSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['won', 'lost']
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User

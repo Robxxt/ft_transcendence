@@ -3,13 +3,28 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.authtoken.models import Token
 from backend_app.models import User, TableMatch, UserMetric, GameRoom
-from backend_app.api.serializer import RegisterSerializer, TableMatchSerializer, UserMetricSerializer, UserSerializer, GameRoomSerializer
+from backend_app.api.serializer import RegisterSerializer, TableMatchSerializer, UserMetricSerializer, UserSerializer, GameRoomSerializer, WinLossSerializer
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
+from rest_framework import status
 
+@api_view(['GET'])
+def win_loss_record(request):
+    username = request.query_params.get('username', None)
+    
+    if not username:
+        return Response({"error": "Username query parameter is required."}, status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        return Response({"error": "User does not exist."}, status=status.HTTP_404_NOT_FOUND)
+    
+    serializer = WinLossSerializer(user)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 @api_view(['POST'])
 def register(request):
