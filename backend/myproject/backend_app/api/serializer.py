@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from django.contrib.auth.hashers import make_password
+from django.contrib.auth.hashers import make_password, check_password
 from backend_app.models import User, TableMatch, UserMetric, GameRoom
 
 class UserSerializer(serializers.ModelSerializer):
@@ -25,6 +25,22 @@ class RegisterSerializer(serializers.ModelSerializer):
         user.password = make_password(validated_data['password'])
         user.save()
         return user
+
+class ChangePasswordSerializer(serializers.Serializer):
+    currentPassword = serializers.CharField(required=True)
+    newPassword = serializers.CharField(required=True, min_length=8, max_length=20)
+
+    def validate(self, attrs):
+        user = self.context['request'].user
+        currentPassword = attrs['currentPassword']
+        if not check_password(currentPassword, user.password):
+            raise serializers.ValidationError({'message': 'your new password is the same', })
+        return attrs
+    
+    def save(self):
+        user = self.context['request'].user
+        user.password = make_password(self.validated_data['newPassword'])
+        user.save()
     
 class TableMatchSerializer(serializers.ModelSerializer):
     class Meta:
@@ -68,3 +84,4 @@ class GameRoomSerializer(serializers.ModelSerializer):
             elif obj.player2 == user_profile:
                 return 2
         return None
+
