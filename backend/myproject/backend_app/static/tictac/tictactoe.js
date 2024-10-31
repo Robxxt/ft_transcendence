@@ -349,15 +349,6 @@ class TicTacToeView {
 			});
 		}
 	}
-
-	updateColors(players) {
-		localStorage.setItem("player1Color", players.player1Color);
-		localStorage.setItem("player2Color", players.player2Color);
-		document.documentElement.style.setProperty('--player1-color', players.player1Color);
-		document.documentElement.style.setProperty('--player2-color', players.player2Color);
-		document.documentElement.style.setProperty('--shadow1', players.player1Color + '80');
-		document.documentElement.style.setProperty('--shadow2', players.player2Color + '80');
-	}
 }
 
 function getCssVariable(variableName) {
@@ -374,11 +365,15 @@ class TicTacToeController {
 		this.winner = null;
 		this.first = null;
 
-		this.players = {
-			player1Name: player1,
-			player2Name: player2,
-			player1Color: localStorage.getItem("player1Color"),
-			player2Color: localStorage.getItem("player2Color"),
+		this.player1 = player1;
+		this.player2 = player2;
+		this.player1Color = localStorage.getItem("player1Color");
+		if (!this.player1Color) {
+			this.player1Color = getCssVariable('--player1-color');
+		}
+		this.player2Color = localStorage.getItem("player2Color");
+		if (!this.player2Color) {
+			this.player2Color = getCssVariable('--player2-color');
 		}
 
 		this.restartButton = document.getElementById('restartButton');
@@ -404,21 +399,21 @@ class TicTacToeController {
 				const selectedColor = box.getAttribute('data-color');
 				const playerNameSpan = box.closest('.color-options').previousElementSibling.querySelector('span');
 				if (playerNameSpan.id === 'player1-name') {
-					this.players.player1Color = selectedColor;
+					this.player1Color = selectedColor;
 				} else if (playerNameSpan.id === 'player2-name') {
-					this.players.player2Color = selectedColor;
+					this.player2Color = selectedColor;
 				}
-				this.view.updateColors(this.players);
+				this.updateColors(this.player1Color, this.player2Color);
 			});
 		});
 
 		// Dynamically update the names
-		document.getElementById("player1-name").textContent = this.players.player1Name;
-		document.getElementById("player2-name").textContent = this.players.player2Name;
-
+		document.getElementById("player1-name").textContent = this.player1;
+		document.getElementById("player2-name").textContent = this.player2;2
 		this.view.bindSideClick(this.handleSideClick);
 		this.view.bindBoardClick(this.handleBoardClick);
 
+		this.updateColors(this.player1Color, this.player2Color);
 		this.startGame();
 
 		// Escape
@@ -436,7 +431,7 @@ class TicTacToeController {
 
 	settings(show) {
 		this.settingsSetup.classList.toggle('show', show);
-		this.view.updateColors(this.players);
+		this.updateColors(this.player1Color, this.player2Color);
 	}
 
 	// Function to check for saved colors in local storage on page load
@@ -454,14 +449,16 @@ class TicTacToeController {
 		}
 	}
 
+	updateColors(color1, color2) {
+		localStorage.setItem("player1Color", color1);
+		localStorage.setItem("player2Color", color2);
+		document.documentElement.style.setProperty('--player1-color', color1);
+		document.documentElement.style.setProperty('--player2-color', color2);
+		document.documentElement.style.setProperty('--shadow1', color1 + '80');
+		document.documentElement.style.setProperty('--shadow2', color2 + '80');
+	}
+
 	startGame() {
-		if (!this.player1Color) {
-			this.player1Color = getCssVariable('--player1-color');
-		}
-		if (!this.player2Color) {
-			this.player2Color = getCssVariable('--player2-color');
-		}
-		this.view.updateColors(this.players);
 		this.gameEndMessage.classList.remove('show', 'left-wins', 'right-wins');
 		this.model.upd.turn = 2;
 		this.model.upd.cell = null;
@@ -510,10 +507,10 @@ class TicTacToeController {
 			this.gameEndMessage.classList.add('draw');
 		} else {
 			this.view.renderBoard(this.model.board);
-			this.gameEndMessage.innerText = `${this.model.upd.turn ? this.players.player2Name : this.players.player1Name}\nWINS`;
+			this.gameEndMessage.innerText = `${this.model.upd.turn ? this.player2 : this.player1}\nWINS`;
 			this.gameEndMessage.classList.add(`${this.model.upd.turn ? "right" : "left"}-wins`);
-			this.winner = this.model.upd.turn ? this.players.player2Name : this.players.player1Name;
-			console.log(`${this.model.upd.turn ? this.players.player2Name : this.players.player1Name} wins`);
+			this.winner = this.model.upd.turn ? this.player2 : this.player1;
+			console.log(`${this.model.upd.turn ? this.player2 : this.player1} wins`);
 		}
 		this.gameEndMessage.classList.add('show');
 		// this.saveGameResult(roomName, this.winner, this.model.upd.draw)
