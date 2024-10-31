@@ -14,4 +14,6 @@ urlpatterns = [
     path('join-game-room/', views.GameRoomView.as_view(), name='game_room'),
     path('game-room/<int:room_id>/', views.GameRoomView.as_view(), name='get_game_room'),
     path('', include(router.urls)),
+    # path('create-tictac-room/', views.TicTacRoomView.as_view(), name='create_tictac_room'),
+	# path('<str:tictac_room_name>/', views.run_tictac_game, name='run_tictac_game'),
 ]

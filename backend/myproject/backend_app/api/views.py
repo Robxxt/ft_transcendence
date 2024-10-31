@@ -2,7 +2,7 @@ from rest_framework import generics, status, viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.authtoken.models import Token
-from backend_app.models import User, TableMatch, UserMetric, GameRoom
+from backend_app.models import User, TableMatch, UserMetric, GameRoom, TicTacRoom
 from backend_app.api.serializer import RegisterSerializer, TableMatchSerializer, UserMetricSerializer, UserSerializer, GameRoomSerializer
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
@@ -17,7 +17,7 @@ def register(request):
         serializer = RegisterSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
-            print(f"User created: {user}, ID: {user.id}")  
+            print(f"User created: {user}, ID: {user.id}")
             token = Token.objects.create(user=user)
             return Response({'token': 0, 'token': token.key}, status=status.HTTP_201_CREATED)
         return Response({'error': 2, 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
@@ -29,7 +29,7 @@ def login(request):
         return Response({"detail": "Not Found!"}, status=status.HTTP_401_UNAUTHORIZED)
     token, created = Token.objects.get_or_create(user=user)
     serializer = UserSerializer(instance=user)
-    print(f"User exist: {user}, ID: {user.id}")  
+    print(f"User exist: {user}, ID: {user.id}")
     return Response({"token": token.key, "user": serializer.data})
 
 class UserListCreate(generics.ListCreateAPIView):
@@ -38,7 +38,7 @@ class UserListCreate(generics.ListCreateAPIView):
 
 class UserDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
-    serializer_class = UserSerializer 
+    serializer_class = UserSerializer
 
 class TableMatchViewSet(viewsets.ModelViewSet):
     queryset = TableMatch.objects.all()
@@ -92,3 +92,22 @@ class GameRoomView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except GameRoom.DoesNotExist:
             return Response({'error': 'Game room not found'}, status=status.HTTP_404_NOT_FOUND)
+
+
+# class TicTacRoomView(APIView):
+
+#     def post(self, request):
+#         try:
+#             username = get_object_or_404(User, username=request.data['username'])
+#             name = f'room-{TicTacRoom.objects.count() + 1}'
+#             room = TicTacRoom.objects.create(name=name, player1=username)
+#             return Response({'status': 'joined tictac', 'name': room.name})
+#         except Exception as e:
+#             return Response({'status': 'Error', 'message': str(e)}, status=500)
+
+#     def get(self, request, room_name):
+#         try:
+#             room = TicTacRoom.objects.get(name=room_name)
+#             return Response(room)
+#         except TicTacRoom.DoesNotExist:
+#             return Response({'error': 'tictac room not found'}, status=status.HTTP_404_NOT_FOUND)
