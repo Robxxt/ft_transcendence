@@ -6,7 +6,7 @@
 	:root {
 		--background-color: #282828;
 		--draw-color: #dcdcdc;
-		color: white;
+		--color: white ;
 	}
 }
 
@@ -14,7 +14,7 @@
 	:root {
 		--background-color: white;
 		--draw-color: #000000;
-		color: #000000;
+		--color: #000000 ;
 	}
 }
 
@@ -35,7 +35,7 @@ body {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	align-content: center;
+	/* align-content: center; */
 	flex-wrap: wrap;
 	height: 100vh;
 	margin: 0;
@@ -276,6 +276,7 @@ body {
 	background-color: var(--background-color);
 	cursor: default;
 	user-select: none;
+	color: var(--color) !important;
 }
 
 .left-wins {
@@ -309,6 +310,7 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
 	z-index: 1000;
+	color: var(--color);
 }
 
 /* Input and Select Fields Styling */
