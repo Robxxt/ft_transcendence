@@ -50,7 +50,7 @@ body {
 	justify-content: center;
 }
 
-.row{
+.tictacrow{
 	display: flex;
 	flex-direction: row;
 	row-gap: 1em;
