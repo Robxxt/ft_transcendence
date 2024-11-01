@@ -11,7 +11,7 @@ export function createNavBar() {
         navBar.innerHTML = "Something went wrong";
     }
     else
-        username = "testuser";
+        username = JSON.parse(localStorage.getItem("user")).name;
 
     // create html
     navBar.innerHTML = `
@@ -54,6 +54,7 @@ export function createNavBar() {
             if (!response.ok) {
                 throw new Error(response.statusText);
             }
+            navigateTo("/login")
         })
         .catch(error => {
             console.error(error);

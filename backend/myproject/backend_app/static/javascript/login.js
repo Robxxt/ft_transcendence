@@ -2,12 +2,11 @@ import { navigateTo } from "./router.js";
 
 export function loadPage(app) {
     // If user is already logged in we redirect to /start
-    // const user = localStorage.getItem("user");
-    // console.log(user);console.log(JSON.parse(user).isLoggedIn);
-    // if (user && JSON.parse(user).isLoggedIn) {
-    //     navigateTo("/start/"); // Line giving infinite request
-    //     return;
-    // }
+    const userObject = JSON.parse(localStorage.getItem("user"));
+    if (userObject && userObject.isLoggedIn) {
+        navigateTo("/start");
+        return;
+    }
 
     // Load login page
     fetch("/static/html/login.html")
