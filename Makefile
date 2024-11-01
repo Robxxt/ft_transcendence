@@ -10,8 +10,9 @@ fclean:
 	docker rmi	prom/node-exporter \
 				prom/prometheus \
 				grafana/grafana \
-				ft_transcendence_alertmanager \
+				ft_transcendence-alertmanager \
 				postgres \
-				ft_transcendence_django \
+				ft_transcendence-django \
+				redis \
 
 re: fclean all
