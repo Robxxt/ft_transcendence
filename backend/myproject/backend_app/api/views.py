@@ -1,6 +1,6 @@
 from rest_framework import generics, status, viewsets
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.authtoken.models import Token
 from backend_app.models import User, TableMatch, UserMetric, GameRoom, TicTacRoom
 from backend_app.api.serializer import RegisterSerializer, TableMatchSerializer, UserMetricSerializer, UserSerializer, GameRoomSerializer
@@ -32,6 +32,31 @@ def login(request):
     print(f"User exist: {user}, ID: {user.id}")
     return Response({"token": token.key, "user": serializer.data})
 
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+@authentication_classes([TokenAuthentication])
+def changePassword(request):
+    serializer = ChangePasswordSerializer(data=request.data, context={'request' : request})
+    if serializer.is_valid():
+        serializer.save()
+        return Response({'message' : 'Password has been changed'}, status=status.HTTP_200_OK)
+    print("Validation errors:", serializer.errors)
+    return Response({'error': 2, 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+@authentication_classes([TokenAuthentication])
+def changeAvatar(request):
+    user = request.user
+    serializer = ChangeAvatarSerialzer(data=request.data)
+    if serializer.is_valid():
+        serializer.update(user, serializer.validated_data)
+        return Response({'message:' 'Avatar Updated'}, status=status.HTTP_200_OK)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
 class UserListCreate(generics.ListCreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer  # Corrected attribute name
@@ -51,7 +76,6 @@ class UserMetricViewSet(viewsets.ModelViewSet):
 class GameRoomView(APIView):
     permission_classes = [IsAuthenticated]
     authentication_classes = [TokenAuthentication]
-
     def post(self, request):
         try:
             aiPlay = request.data["aiPlay"]
