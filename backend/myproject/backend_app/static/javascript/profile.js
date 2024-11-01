@@ -141,7 +141,8 @@ function handleChangePasswordDiv(app, username) {
 }
 
 function handleChangeAvatarDiv(app, username) {
-    const csrftoken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    const token = localStorage.getItem('token');
+    console.log("Auth Token:", token);
     const avatarForm = document.getElementById("avatarForm");
     const avatarInput = document.getElementById("avatarInput");
     const avatarUploadStatus = document.getElementById("avatarUploadStatus");
@@ -158,12 +159,13 @@ function handleChangeAvatarDiv(app, username) {
         }
 
         formData.append("avatar", file);
-        formData.append('username', username);
 
-        fetch("/changeAvatar", {
-            method: "POST",
+        fetch("/api/changeAvatar/", {
+            method: "PUT",
+            headers: {
+                "Authorization": `Token ${token}`, // This line must remain as is for proper header inclusion
+            },
             body: formData,
-            headers: {"X-CSRFToken": csrftoken}
         })
         .then(response => {
             if (response.status == 200) {
