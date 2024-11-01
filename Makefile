@@ -13,5 +13,6 @@ fclean:
 				ft_transcendence-alertmanager \
 				postgres \
 				ft_transcendence-django \
+				redis
 
 re: fclean all
