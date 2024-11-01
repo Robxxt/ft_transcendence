@@ -1,12 +1,12 @@
 import { navigateTo } from "./router.js";
 
 export function loadPage(app) {
-    // if user is already logged in we redirect to /start
-    // const user = localStorage.getItem("user");
-    // if (user && JSON.parse(user).isLoggedIn) {
-    //     navigateTo("/start");
-    //     return;
-    // }
+    // If user is already logged in we redirect to /start
+    const userObject = JSON.parse(localStorage.getItem("user"));
+    if (userObject && userObject.isLoggedIn) {
+        navigateTo("/start");
+        return;
+    }
             
     // load registration page
     fetch("/static/html/registration.html")
@@ -61,7 +61,7 @@ function handleFormSubmit(event) {
         body: JSON.stringify(data)
     })
     .then(response => {
-        if (response.status === 200) {
+        if (response.status === 201) {
             return {"error": 0};
         }
         else if (response.status == 400) {
