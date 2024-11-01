@@ -1,6 +1,6 @@
 from rest_framework import generics, status, viewsets
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.authtoken.models import Token
 from backend_app.models import User, TableMatch, UserMetric, GameRoom
 from backend_app.api.serializer import RegisterSerializer, TableMatchSerializer, UserMetricSerializer, UserSerializer, GameRoomSerializer, WinLossSerializer
@@ -12,6 +12,8 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework import status
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
+@authentication_classes([TokenAuthentication])
 def win_loss_record(request):
     username = request.query_params.get('username', None)
     

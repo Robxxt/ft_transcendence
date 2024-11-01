@@ -252,7 +252,8 @@ function handleSetDisplayName(app, username) {
 }
 
 function handleWinLossRecordDiv(app) {
-    const csrftoken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    const token = localStorage.getItem('token');
+    console.log("Auth Token:", token);
     const username = localStorage.getItem("user");
     const winLossRecordDiv = document.getElementById("winLossRecord");
 
@@ -260,11 +261,11 @@ function handleWinLossRecordDiv(app) {
     console.log("Fetching win-loss record for username:", username);
 
     // Get win-loss record from endpoint
-    fetch(`/winLossRecord?username=${encodeURIComponent(username)}`, {
+    fetch(`/api/winLossRecord?username=${encodeURIComponent(username)}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
-            "X-CSRFToken": csrftoken
+            "Authorization": `Token ${token}`
         },
     })
     .then(response => {
