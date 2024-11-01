@@ -42,6 +42,13 @@ class ChangePasswordSerializer(serializers.Serializer):
         user.password = make_password(self.validated_data['newPassword'])
         user.save()
     
+class ChangeAvatarSerialzer(serializers.Serializer):
+    avatar = serializers.ImageField(required=True)
+
+    def update(self, instance, validated_data):
+        instance.avatar = validated_data.get('avatar', instance.avatar)
+        instance.save()
+        return instance
 class TableMatchSerializer(serializers.ModelSerializer):
     class Meta:
         model = TableMatch

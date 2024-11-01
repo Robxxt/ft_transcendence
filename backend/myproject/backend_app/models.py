@@ -25,6 +25,7 @@ class User(AbstractBaseUser):
     username = models.CharField(max_length=50, unique=True)
     password = models.CharField(max_length=150)
     email = models.CharField(max_length=50)
+    avatar = models.ImageField(upload_to='avatar/', default='/avatar/default.png', null=True, blank=True)
     won = models.IntegerField(default=0)
     lost = models.IntegerField(default=0)
     is_staff = models.BooleanField(default=False)

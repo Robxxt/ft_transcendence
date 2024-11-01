@@ -8,7 +8,8 @@ from backend_app.api.serializer import (RegisterSerializer,
                                         UserMetricSerializer, 
                                         UserSerializer, 
                                         GameRoomSerializer, 
-                                        ChangePasswordSerializer)
+                                        ChangePasswordSerializer,
+                                        ChangeAvatarSerialzer)
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
 from rest_framework.views import APIView
@@ -47,6 +48,20 @@ def changePassword(request):
         return Response({'message' : 'Password has been changed'}, status=status.HTTP_200_OK)
     print("Validation errors:", serializer.errors)
     return Response({'error': 2, 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+@authentication_classes([TokenAuthentication])
+def changeAvatar(request):
+    user = request.user
+    serializer = ChangeAvatarSerialzer(data=request.data)
+    if serializer.is_valid():
+        serializer.update(user, serializer.validated_data)
+        return Response({'message:' 'Avatar Updated'}, status=status.HTTP_200_OK)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 
 class UserListCreate(generics.ListCreateAPIView):
     queryset = User.objects.all()
