@@ -1,5 +1,6 @@
 #!/bin/sh
 
+sleep 2
 echo "Running migrations..."
 python myproject/manage.py migrate --noinput
 echo "Creating superuser..."
