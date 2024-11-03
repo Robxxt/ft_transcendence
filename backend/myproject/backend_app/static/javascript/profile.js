@@ -3,19 +3,22 @@ import { loadAvatar } from "./navBar.js";
 
 export function loadPage(app) {
     // check if user is logged in
-    // const user = localStorage.getItem("user");
-    // if (!user || !JSON.parse(user).isLoggedIn) {
-    //     navigateTo("/login");
-    //     return;
-    // }
+    const userObject = localStorage.getItem("user");
+    if (!userObject || !JSON.parse(userObject).isLoggedIn) {
+        navigateTo("/login");
+        return;
+    }
 
-    // // check if user name is present
-    // if (!JSON.parse(user).name) {
-    //     localStorage.removeItem("user");
-    //     navigateTo("/login");
-    //     return;
-    // }
-    const username = "testuser";    // debug
+    // check if user name is present
+    let username;
+    if (!userObject || !JSON.parse(userObject).name) {
+        localStorage.removeItem("user");
+        navigateTo("/login");
+        return;
+    }
+    else {
+        username = JSON.parse(userObject).name;
+    }
 
     // fetch basic html
     fetch("/static/html/profile.html")
@@ -379,6 +382,7 @@ function handleAddFriendsDiv(app, username) {
 
 function addFriend(username, friend, isFriend) {
     const csrftoken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    const token = localStorage.getItem('token');
     const data = {
         user: username,
         friend: friend
@@ -387,10 +391,11 @@ function addFriend(username, friend, isFriend) {
       // if friend is not friend, we add them
       if (! isFriend) {
         fetch("/addFriend", {
-            method: "POST",
+            method: "PUT",
             headers: {
                 "Content-Type": "application/json",
-                "X-CSRFToken": csrftoken
+                "X-CSRFToken": csrftoken,
+                "Authorization": `Token ${token}`
             },
             body: JSON.stringify(data)
         })
@@ -410,10 +415,11 @@ function addFriend(username, friend, isFriend) {
       // if friend is friend, we remove them
       else {
         fetch("/removeFriend", {
-            method: "POST",
+            method: "REMOVE",
             headers: {
                 "Content-Type": "application/json",
-                "X-CSRFToken": csrftoken
+                "X-CSRFToken": csrftoken,
+                "Authorization": `Token ${token}`
             },
             body: JSON.stringify(data)
         })

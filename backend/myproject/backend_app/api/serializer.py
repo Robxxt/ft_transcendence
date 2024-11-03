@@ -49,6 +49,12 @@ class ChangeAvatarSerialzer(serializers.Serializer):
         instance.avatar = validated_data.get('avatar', instance.avatar)
         instance.save()
         return instance
+    
+class GetAvatarSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['avatar']
+
 class TableMatchSerializer(serializers.ModelSerializer):
     class Meta:
         model = TableMatch

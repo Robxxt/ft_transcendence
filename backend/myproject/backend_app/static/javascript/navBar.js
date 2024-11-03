@@ -11,7 +11,7 @@ export function createNavBar() {
         navBar.innerHTML = "Something went wrong";
     }
     else
-        username = "testuser";
+        username = JSON.parse(localStorage.getItem('user')).name;
 
     // create html
     navBar.innerHTML = `
@@ -62,10 +62,13 @@ export function createNavBar() {
 }
 
 export async function loadAvatar(username) {
-    return;
+    const token = localStorage.getItem("token");
     try {
-        const response = await fetch(`/getAvatar?user=${username}&t` +  new Date().getTime(), {
-            cache: 'no-store' // Ensure the request bypasses the cache
+        const response = await fetch(`/api/getAvatar?user=${username}&t` +  new Date().getTime(), {
+            cache: 'no-store', // Ensure the request bypasses the cache
+            headers: {
+                'Authorization': `Token ${token}`
+            }
         });
         if (response.ok) {
             let blob = await response.blob();

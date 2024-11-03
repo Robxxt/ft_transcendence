@@ -15,5 +15,6 @@ urlpatterns = [
     path('game-room/<int:room_id>/', views.GameRoomView.as_view(), name='get_game_room'),
     path('changePassword/', views.changePassword, name='changePassword'),
     path('changeAvatar/', views.changeAvatar, name='changeAvatar'),
+    path('getAvatar/',views.getAvatar, name='getAvatar'),
     path('', include(router.urls)),
 ]

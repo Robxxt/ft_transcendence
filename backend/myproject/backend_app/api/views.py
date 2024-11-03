@@ -9,7 +9,8 @@ from backend_app.api.serializer import (RegisterSerializer,
                                         UserSerializer, 
                                         GameRoomSerializer, 
                                         ChangePasswordSerializer,
-                                        ChangeAvatarSerialzer)
+                                        ChangeAvatarSerialzer,
+                                        GetAvatarSerializer)
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
 from rest_framework.views import APIView
@@ -61,7 +62,14 @@ def changeAvatar(request):
         return Response({'message:' 'Avatar Updated'}, status=status.HTTP_200_OK)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+@authentication_classes([TokenAuthentication])
+def getAvatar(request):
+    username = request.query_params.get('user')
+    user = get_object_or_404(User, username=username)
+    serializer = GetAvatarSerializer(user)
+    return Response(serializer.data, status=200)
 
 class UserListCreate(generics.ListCreateAPIView):
     queryset = User.objects.all()
