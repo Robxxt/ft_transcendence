@@ -31,7 +31,7 @@ export function loadPage(app) {
         .then(html => {
             // load html
             app.innerHTML = html;
-
+            console.log("here");
             // JS for changePassword div
             handleChangePasswordDiv(app, username);
 
@@ -42,7 +42,7 @@ export function loadPage(app) {
             handleSetDisplayName(app, username);
 
             // JS for winLossRecord div
-            handleWinLossRecordDiv(app);
+            handleWinLossRecordDiv(app, username);
 
             // JS for gameHistoryLink div
             handleGameHistoryDiv(app);
@@ -256,12 +256,17 @@ function handleSetDisplayName(app, username) {
     })
 }
 
-function handleWinLossRecordDiv(app) {
-    const username = localStorage.getItem("user");
+function handleWinLossRecordDiv(app, username) {
+    const token = localStorage.getItem('token');
     const winLossRecordDiv = document.getElementById("winLossRecord");
 
     // get win loss record from endpoint
-    fetch(`/winLossRecord?username=${username}`)
+    fetch(`/api/winLossRecord/?user=${username}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Token ${token}`
+        }})
         .then(response => response.json())
         .then(data => {
             const winLossHTML = `
@@ -382,6 +387,7 @@ function handleAddFriendsDiv(app, username) {
 
 function addFriend(username, friend, isFriend) {
     const csrftoken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    const token = localStorage.getItem('token');
     const data = {
         user: username,
         friend: friend
@@ -390,10 +396,11 @@ function addFriend(username, friend, isFriend) {
       // if friend is not friend, we add them
       if (! isFriend) {
         fetch("/addFriend", {
-            method: "POST",
+            method: "PUT",
             headers: {
                 "Content-Type": "application/json",
-                "X-CSRFToken": csrftoken
+                "X-CSRFToken": csrftoken,
+                "Authorization": `Token ${token}`
             },
             body: JSON.stringify(data)
         })
@@ -413,10 +420,11 @@ function addFriend(username, friend, isFriend) {
       // if friend is friend, we remove them
       else {
         fetch("/removeFriend", {
-            method: "POST",
+            method: "REMOVE",
             headers: {
                 "Content-Type": "application/json",
-                "X-CSRFToken": csrftoken
+                "X-CSRFToken": csrftoken,
+                "Authorization": `Token ${token}`
             },
             body: JSON.stringify(data)
         })

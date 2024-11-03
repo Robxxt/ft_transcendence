@@ -41,6 +41,18 @@ class ChangePasswordSerializer(serializers.Serializer):
         user = self.context['request'].user
         user.password = make_password(self.validated_data['newPassword'])
         user.save()
+    
+class WinLossSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['won', 'lost']
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        return {
+            "wins": representation["won"],
+            "losses": representation["lost"]
+        }
 
 class ChangeAvatarSerialzer(serializers.Serializer):
     avatar = serializers.ImageField(required=True)
