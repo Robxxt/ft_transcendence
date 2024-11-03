@@ -11,12 +11,13 @@ from backend_app.api.serializer import (RegisterSerializer,
                                         ChangePasswordSerializer,
                                         ChangeAvatarSerialzer,
                                         WinLossSerializer)
+
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
-
+import json
 
 @api_view(['POST'])
 def register(request):
@@ -24,7 +25,7 @@ def register(request):
         serializer = RegisterSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
-            print(f"User created: {user}, ID: {user.id}")  
+            print(f"User created: {user}, ID: {user.id}")
             token = Token.objects.create(user=user)
             return Response({'token': 0, 'token': token.key}, status=status.HTTP_201_CREATED)
         return Response({'error': 2, 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
@@ -36,7 +37,7 @@ def login(request):
         return Response({"detail": "Not Found!"}, status=status.HTTP_401_UNAUTHORIZED)
     token, created = Token.objects.get_or_create(user=user)
     serializer = UserSerializer(instance=user)
-    print(f"User exist: {user}, ID: {user.id}")  
+    print(f"User exist: {user}, ID: {user.id}")
     return Response({"token": token.key, "user": serializer.data})
 
 @api_view(['PUT'])
@@ -78,7 +79,7 @@ class UserListCreate(generics.ListCreateAPIView):
 
 class UserDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
-    serializer_class = UserSerializer 
+    serializer_class = UserSerializer
 
 class TableMatchViewSet(viewsets.ModelViewSet):
     queryset = TableMatch.objects.all()
@@ -131,3 +132,37 @@ class GameRoomView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except GameRoom.DoesNotExist:
             return Response({'error': 'Game room not found'}, status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+@authentication_classes([TokenAuthentication])
+def save_tictac_result(request):
+
+    try:
+        data = json.loads(request.body)
+
+        player1 = data.get('player1')
+        print("player1 in tictac: ", player1)
+        player2 = data.get('player2')
+        winner = data.get('winner')
+        is_draw = data.get('is_draw')
+
+        user = get_object_or_404(User, username=player1)
+        print("user in tictac: ", user)
+
+        game = TictacGame.objects.create(player1=user)
+
+        if is_draw:
+            game.is_draw = is_draw
+        else:
+            game.winner = winner
+            if player2:
+                game.player2 = player2
+        game.save()
+        game_serializer = TictacGameSerializer(game)
+        return Response({'status': 'success', 'data': game_serializer.data}, status=status.HTTP_200_OK)
+
+    except json.JSONDecodeError:
+        return Response({'status': 'error', 'message': 'Invalid JSON format'}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({'status': 'error', 'message': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

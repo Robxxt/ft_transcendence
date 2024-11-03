@@ -37,7 +37,7 @@ export async function loadPage(app) {
 
             button = app.querySelector("#playTictactoe");
             button.addEventListener("click", () => {
-                navigateTo("/pong"); // here we have to change it to tictactoe!
+                navigateTo("/tictac"); // here we have to change it to tictactoe!
                 return;
             });
         })

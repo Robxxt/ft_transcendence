@@ -3,7 +3,7 @@ import { logout, joinGameRoom } from './apiServices.js';
 export function homeView() {
     const app = document.getElementById('app');
     const username = JSON.parse(localStorage.getItem('user')).name;
-    
+
     if (!username) {
         console.log("no name")
         // navigate('/login');

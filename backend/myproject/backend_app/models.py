@@ -35,7 +35,7 @@ class User(AbstractBaseUser):
     REQUIRED_FIELDS = ['password']
     def __str__(self):
         return self.username
-    
+
     def has_perm(self, perm, obj=None):
         return self.is_superuser
 
@@ -59,19 +59,19 @@ class UserMetric(models.Model):
     allPoints = models.IntegerField(default=0)
     longestStreak = models.IntegerField(default=0)
     allPoints = models.IntegerField(default=0)
-    
+
     def __str__(self) -> str:
         return f'this is {self.user.nickname} Profile'
-	
+
 def validate_players_different(instance, value):
-	if instance.player1 == value:
-		raise ValidationError("Player 2 cannot be the same as Player 1.")
+    if instance.player1 == value:
+        raise ValidationError("Player 2 cannot be the same as Player 1.")
 
 class GameRoom(models.Model):
     class State(models.TextChoices):
         WAITING = 'WA', 'Waiting'
         FULL = 'FL', 'Full'
-    
+
     player1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='player1')
     player2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='player2', null=True, blank=True, validators=[validate_players_different])
     state = models.CharField(max_length=2, choices=State.choices, default=State.WAITING)
@@ -115,3 +115,13 @@ class PongGame(models.Model):
         self.score2 = 0
         self.winner = None
         self.save()
+
+class TictacGame(models.Model):
+	player1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='player1_tictac')
+	player2 = models.CharField(max_length=50, blank=True, null=True)
+	winner = models.CharField(max_length=50, blank=True, null=True)
+	is_draw = models.BooleanField(default=False)
+	created_at = models.DateTimeField(auto_now_add=True)
+
+	def __str__(self):
+		return str(self.id)

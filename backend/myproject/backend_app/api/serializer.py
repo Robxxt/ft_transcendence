@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.hashers import make_password, check_password
-from backend_app.models import User, TableMatch, UserMetric, GameRoom
+from backend_app.models import User, TableMatch, UserMetric, GameRoom, TictacGame
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -9,11 +9,11 @@ class UserSerializer(serializers.ModelSerializer):
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, min_length=8, max_length=20)
-    
+
     class Meta:
         model = User
         fields = ['username', 'password', 'won', 'lost']
-        
+
     def create(self, validated_data):
         won = validated_data.get('won', 0)
         lost = validated_data.get('lost', 0)
@@ -36,7 +36,7 @@ class ChangePasswordSerializer(serializers.Serializer):
         if not check_password(currentPassword, user.password):
             raise serializers.ValidationError({'message': 'your new password is the same', })
         return attrs
-    
+
     def save(self):
         user = self.context['request'].user
         user.password = make_password(self.validated_data['newPassword'])
@@ -104,3 +104,8 @@ class GameRoomSerializer(serializers.ModelSerializer):
                 return 2
         return None
 
+class TictacGameSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = TictacGame
+        fields = '__all__'
