@@ -2,20 +2,23 @@
 export function tictacView() {
 	const appDiv = document.getElementById('app');
 
+	const username = JSON.parse(localStorage.getItem('user')).name;
+	console.log('player1 name from json.parse: ', username);
+	if (!username) {
+		console.error('No user name');
+		return;
+	}
+
 	fetch('/static/tictac/index_tictac.html')
 	.then(response => response.text())
 	.then(html => {
 		appDiv.innerHTML = html;
 
-		const player1 = "Default1"; // Or fetch from server dynamically if needed
-		const player2 = "Default2"; // Could depend on user input or other logic
+		const player1 = username;
+		console.log('passing username in tictac.js: ', player1);
+		const player2 = "Default2";
 		const game = new TicTacToeController(new TicTacToeModel(), new TicTacToeView(), player1, player2);
 
-		// const scripts = appDiv.querySelectorAll("script");
-		// scripts.forEach(script => {
-		// 	eval(script.textContent);
-		// });
-		// const game = new TicTacToeController(new TicTacToeModel(), new TicTacToeView());
 	})
 	.catch(error => {
 		console.error('Error loading Tic-Tac-Toe HTML:', error);
@@ -513,7 +516,7 @@ class TicTacToeController {
 			console.log(`${this.model.upd.turn ? this.player2 : this.player1} wins`);
 		}
 		this.gameEndMessage.classList.add('show');
-		// this.saveGameResult(roomName, this.winner, this.model.upd.draw)
+		// this.saveGameResult(this.player1, this.player2, this.winner, this.model.upd.draw)
 
 		setTimeout(() => {
 			this.gameEndMessage.classList.remove('show');
@@ -535,16 +538,19 @@ class TicTacToeController {
 		this.instuctions.classList.toggle('show', show);
 	}
 
-	saveGameResult(roomName, winner, draw) {
+	saveGameResult(player1, player2, winner, draw) {
+		// console.log('save');
 		// console.log(`/tictac/${roomName}/save-result/`);
 		// console.log(`player1 ${player1}`);
-		fetch(`/tictac/${roomName}/save-result/`, {
+		fetch(`/tictac/save-result/`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
 				'X-CSRFToken': '{{ csrf_token }}',
 			},
 			body: JSON.stringify({
+				player1: player1,
+				player2: player2,
 				winner: winner,
 				is_draw: draw,
 			})

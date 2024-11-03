@@ -2,8 +2,8 @@ from rest_framework import generics, status, viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.authtoken.models import Token
-from backend_app.models import User, TableMatch, UserMetric, GameRoom, TicTacRoom
-from backend_app.api.serializer import RegisterSerializer, TableMatchSerializer, UserMetricSerializer, UserSerializer, GameRoomSerializer
+from backend_app.models import User, TableMatch, UserMetric, GameRoom, TictacGame
+from backend_app.api.serializer import RegisterSerializer, TableMatchSerializer, UserMetricSerializer, UserSerializer, GameRoomSerializer, TictacGameSerializer
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
 from rest_framework.views import APIView
@@ -117,21 +117,28 @@ class GameRoomView(APIView):
         except GameRoom.DoesNotExist:
             return Response({'error': 'Game room not found'}, status=status.HTTP_404_NOT_FOUND)
 
+# @api_view(['POST'])
+# def save_tictac_result(request):
+#     permission_classes = [IsAuthenticated]
+#     authentication_classes = [TokenAuthentication]
+#     try:
+#         data = json.loads(request.body)
+#         winner = data.get('winner')
+#         player2 = data.get('player2')
+#         is_draw = data.get('is_draw')
+#         user_profile_id = request.session.get('user_profile_id') or data.get('user_profile_id')
+#         user_profile = UserProfile.objects.get(id=user_profile_id)
 
-# class TicTacRoomView(APIView):
+#         game = TictacGame.objects.create(player1=user_profile)
 
-#     def post(self, request):
-#         try:
-#             username = get_object_or_404(User, username=request.data['username'])
-#             name = f'room-{TicTacRoom.objects.count() + 1}'
-#             room = TicTacRoom.objects.create(name=name, player1=username)
-#             return Response({'status': 'joined tictac', 'name': room.name})
-#         except Exception as e:
-#             return Response({'status': 'Error', 'message': str(e)}, status=500)
+#         if is_draw:
+#             game.is_draw = is_draw
+#         else:
+#             game.winner = winner
+#             if player2:
+#                 game.player2 = player2
+#         game.save()
+#         return JsonResponse({'status': 'success', 'message': 'TictacGame result saved'})
 
-#     def get(self, request, room_name):
-#         try:
-#             room = TicTacRoom.objects.get(name=room_name)
-#             return Response(room)
-#         except TicTacRoom.DoesNotExist:
-#             return Response({'error': 'tictac room not found'}, status=status.HTTP_404_NOT_FOUND)
+#     except Exception as e:
+#         return Response({'status': 'error', 'message': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

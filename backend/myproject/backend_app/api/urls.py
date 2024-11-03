@@ -16,6 +16,5 @@ urlpatterns = [
     path('changePassword/', views.changePassword, name='changePassword'),
     path('changeAvatar/', views.changeAvatar, name='changeAvatar'),
     path('', include(router.urls)),
-    # path('create-tictac-room/', views.TicTacRoomView.as_view(), name='create_tictac_room'),
-	# path('<str:tictac_room_name>/', views.run_tictac_game, name='run_tictac_game'),
+	# path('tictac/save-result/', views.save_tictac_result, name='save_tictac_result')
 ]
