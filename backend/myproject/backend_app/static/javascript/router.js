@@ -22,7 +22,16 @@ function router() {
     const pong = path.match(/\/pong/);
 
     // get logged in status
-    const isLoggedIn = true; // debug
+    const userObject = JSON.parse(localStorage.getItem("user"));
+    if (!userObject) {
+        const userObject = {
+            isLoggedIn: false
+        };
+        localStorage.setItem("user", JSON.stringify(userObject));
+    }
+
+    // get logged in status
+    let isLoggedIn = JSON.parse(localStorage.getItem("user")).isLoggedIn;
 
     if (gameroom) {
         // Handle game-room route with dynamic id
