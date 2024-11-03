@@ -5,7 +5,14 @@ export function tictacView() {
 	const username = JSON.parse(localStorage.getItem('user')).name;
 	console.log('player1 name from json.parse: ', username);
 	if (!username) {
-		console.error('No user name');
+		console.error('Tictac error: No user name');
+		return;
+	}
+
+	const usertoken = localStorage.getItem('token');
+    console.log("Auth Token:", usertoken);
+	if (!usertoken) {
+		console.error('Tictac error: No token');
 		return;
 	}
 
@@ -14,10 +21,9 @@ export function tictacView() {
 	.then(html => {
 		appDiv.innerHTML = html;
 
-		const player1 = username;
-		console.log('passing username in tictac.js: ', player1);
+		const player1 = username; // leave just 1 variable
 		const player2 = "Default2";
-		const game = new TicTacToeController(new TicTacToeModel(), new TicTacToeView(), player1, player2);
+		const game = new TicTacToeController(new TicTacToeModel(), new TicTacToeView(), player1, player2, usertoken);
 
 	})
 	.catch(error => {
@@ -362,7 +368,7 @@ class TicTacToeController {
 	// capture user actions (like clicks), update the model, and tell the view to refresh
 	// model and view should communicate via controller
 
-	constructor(model, view, player1, player2) {
+	constructor(model, view, player1, player2, token) {
 		this.model = model;
 		this.view = view;
 		this.winner = null;
@@ -370,6 +376,7 @@ class TicTacToeController {
 
 		this.player1 = player1;
 		this.player2 = player2;
+		this.token = token;
 		this.player1Color = localStorage.getItem("player1Color");
 		if (!this.player1Color) {
 			this.player1Color = getCssVariable('--player1-color');
@@ -483,7 +490,6 @@ class TicTacToeController {
 		}
 		if (this.first === null) {
 			this.first = this.model.upd.turn;
-			console.log('first move from player ', this.first);
 		}
 		this.view.renderSides(this.model.sides);
 	}
@@ -516,7 +522,7 @@ class TicTacToeController {
 			console.log(`${this.model.upd.turn ? this.player2 : this.player1} wins`);
 		}
 		this.gameEndMessage.classList.add('show');
-		// this.saveGameResult(this.player1, this.player2, this.winner, this.model.upd.draw)
+		this.saveGameResult(this.token, this.player1, this.player2, this.winner, this.model.upd.draw)
 
 		setTimeout(() => {
 			this.gameEndMessage.classList.remove('show');
@@ -538,15 +544,14 @@ class TicTacToeController {
 		this.instuctions.classList.toggle('show', show);
 	}
 
-	saveGameResult(player1, player2, winner, draw) {
-		// console.log('save');
-		// console.log(`/tictac/${roomName}/save-result/`);
-		// console.log(`player1 ${player1}`);
-		fetch(`/tictac/save-result/`, {
+	saveGameResult(token, player1, player2, winner, draw) {
+		// console.log('token in save function: ', token);
+		console.log(`player1 ${player1}, player2 ${player2}, winner ${winner}, is_draw ${draw}`);
+		fetch(`/api/tictac/save-result/`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
-				'X-CSRFToken': '{{ csrf_token }}',
+				"Authorization": `Token ${token}`
 			},
 			body: JSON.stringify({
 				player1: player1,

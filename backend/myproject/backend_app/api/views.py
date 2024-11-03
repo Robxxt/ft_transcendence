@@ -9,7 +9,7 @@ from django.core.exceptions import ValidationError
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
-
+import json
 
 @api_view(['POST'])
 def register(request):
@@ -117,28 +117,36 @@ class GameRoomView(APIView):
         except GameRoom.DoesNotExist:
             return Response({'error': 'Game room not found'}, status=status.HTTP_404_NOT_FOUND)
 
-# @api_view(['POST'])
-# def save_tictac_result(request):
-#     permission_classes = [IsAuthenticated]
-#     authentication_classes = [TokenAuthentication]
-#     try:
-#         data = json.loads(request.body)
-#         winner = data.get('winner')
-#         player2 = data.get('player2')
-#         is_draw = data.get('is_draw')
-#         user_profile_id = request.session.get('user_profile_id') or data.get('user_profile_id')
-#         user_profile = UserProfile.objects.get(id=user_profile_id)
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+@authentication_classes([TokenAuthentication])
+def save_tictac_result(request):
 
-#         game = TictacGame.objects.create(player1=user_profile)
+    try:
+        data = json.loads(request.body)
 
-#         if is_draw:
-#             game.is_draw = is_draw
-#         else:
-#             game.winner = winner
-#             if player2:
-#                 game.player2 = player2
-#         game.save()
-#         return JsonResponse({'status': 'success', 'message': 'TictacGame result saved'})
+        player1 = data.get('player1')
+        print("player1 in tictac: ", player1)
+        player2 = data.get('player2')
+        winner = data.get('winner')
+        is_draw = data.get('is_draw')
 
-#     except Exception as e:
-#         return Response({'status': 'error', 'message': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        user = get_object_or_404(User, username=player1)
+        print("user in tictac: ", user)
+
+        game = TictacGame.objects.create(player1=user)
+
+        if is_draw:
+            game.is_draw = is_draw
+        else:
+            game.winner = winner
+            if player2:
+                game.player2 = player2
+        game.save()
+        game_serializer = TictacGameSerializer(game)
+        return Response({'status': 'success', 'data': game_serializer.data}, status=status.HTTP_200_OK)
+
+    except json.JSONDecodeError:
+        return Response({'status': 'error', 'message': 'Invalid JSON format'}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({'status': 'error', 'message': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

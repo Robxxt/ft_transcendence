@@ -16,5 +16,5 @@ urlpatterns = [
     path('changePassword/', views.changePassword, name='changePassword'),
     path('changeAvatar/', views.changeAvatar, name='changeAvatar'),
     path('', include(router.urls)),
-	# path('tictac/save-result/', views.save_tictac_result, name='save_tictac_result')
+	path('tictac/save-result/', views.save_tictac_result, name='save_tictac_result')
 ]
