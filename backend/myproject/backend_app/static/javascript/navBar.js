@@ -39,14 +39,16 @@ export function createNavBar() {
 
     // send logout to server
     document.getElementById("logoutButton").addEventListener("click", () => {
-        // remove user from storage
-        localStorage.removeItem("user");
+        const token = localStorage.getItem('token');
+        const csrftoken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
         // logout at server
-        fetch("/logout", {
+        fetch("/api/logout/", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "Authorization": `Token ${token}`,
+                "X-CSRFToken": csrftoken
             },
             body: JSON.stringify({user : username})
         })
@@ -54,6 +56,9 @@ export function createNavBar() {
             if (!response.ok) {
                 throw new Error(response.statusText);
             }
+            localStorage.removeItem('user');
+            localStorage.removeItem('token');
+            localStorage.removeItem('username');
             navigateTo("/login")
         })
         .catch(error => {
