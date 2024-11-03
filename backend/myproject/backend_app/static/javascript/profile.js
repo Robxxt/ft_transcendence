@@ -382,6 +382,7 @@ function handleAddFriendsDiv(app, username) {
 
 function addFriend(username, friend, isFriend) {
     const csrftoken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    const token = localStorage.getItem('token');
     const data = {
         user: username,
         friend: friend
@@ -390,10 +391,11 @@ function addFriend(username, friend, isFriend) {
       // if friend is not friend, we add them
       if (! isFriend) {
         fetch("/addFriend", {
-            method: "POST",
+            method: "PUT",
             headers: {
                 "Content-Type": "application/json",
-                "X-CSRFToken": csrftoken
+                "X-CSRFToken": csrftoken,
+                "Authorization": `Token ${token}`
             },
             body: JSON.stringify(data)
         })
@@ -413,10 +415,11 @@ function addFriend(username, friend, isFriend) {
       // if friend is friend, we remove them
       else {
         fetch("/removeFriend", {
-            method: "POST",
+            method: "REMOVE",
             headers: {
                 "Content-Type": "application/json",
-                "X-CSRFToken": csrftoken
+                "X-CSRFToken": csrftoken,
+                "Authorization": `Token ${token}`
             },
             body: JSON.stringify(data)
         })
