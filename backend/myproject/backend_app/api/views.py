@@ -1,6 +1,7 @@
 from rest_framework import generics, status, viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework.authtoken.models import Token
 from backend_app.models import User, TableMatch, UserMetric, GameRoom
 from backend_app.api.serializer import (RegisterSerializer, 
@@ -38,6 +39,19 @@ def login(request):
     serializer = UserSerializer(instance=user)
     print(f"User exist: {user}, ID: {user.id}")  
     return Response({"token": token.key, "user": serializer.data})
+
+@csrf_exempt
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+@authentication_classes([TokenAuthentication])
+def logout(request):
+    try:
+        token = Token.objects.get(user=request.user)
+        print(request.user, token)
+        token.delete()
+        return Response({"detail": "Successfully logged out."}, status=status.HTTP_200_OK)
+    except Token.DoesNotExist:
+        return Response({"detail": "Token not found."}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
