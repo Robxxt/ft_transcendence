@@ -31,7 +31,7 @@ export function loadPage(app) {
         .then(html => {
             // load html
             app.innerHTML = html;
-
+            console.log("here");
             // JS for changePassword div
             handleChangePasswordDiv(app, username);
 
@@ -42,7 +42,7 @@ export function loadPage(app) {
             handleSetDisplayName(app, username);
 
             // JS for winLossRecord div
-            handleWinLossRecordDiv(app);
+            handleWinLossRecordDiv(app, username);
 
             // JS for gameHistoryLink div
             handleGameHistoryDiv(app);
@@ -256,12 +256,17 @@ function handleSetDisplayName(app, username) {
     })
 }
 
-function handleWinLossRecordDiv(app) {
-    const username = localStorage.getItem("user");
+function handleWinLossRecordDiv(app, username) {
+    const token = localStorage.getItem('token');
     const winLossRecordDiv = document.getElementById("winLossRecord");
 
     // get win loss record from endpoint
-    fetch(`/winLossRecord?username=${username}`)
+    fetch(`/api/winLossRecord/?user=${username}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Token ${token}`
+        }})
         .then(response => response.json())
         .then(data => {
             const winLossHTML = `
