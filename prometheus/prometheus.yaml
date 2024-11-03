@@ -27,6 +27,7 @@ scrape_configs:
       - targets: 
         - node_exporter:9100
   - job_name: django_exporter
+    metrics_path: /metrics/metrics
     static_configs:
       - targets: 
         - django:8000
