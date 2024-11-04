@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.authtoken.models import Token
-from backend_app.models import User, TableMatch, UserMetric, GameRoom, TictacGame
+from backend_app.models import User, TableMatch, UserMetric, GameRoom, TictacGame, PongGame
 from backend_app.api.serializer import (RegisterSerializer, 
                                         TableMatchSerializer, 
                                         UserMetricSerializer, 
@@ -12,7 +12,8 @@ from backend_app.api.serializer import (RegisterSerializer,
                                         ChangePasswordSerializer,
                                         ChangeAvatarSerialzer,
                                         WinLossSerializer,
-                                        TictacGameSerializer)
+                                        TictacGameSerializer,
+                                        PongGameSerializer)
 
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
@@ -87,6 +88,15 @@ def winLossRecord(request):
     serializer = WinLossSerializer(user)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+@authentication_classes([TokenAuthentication])
+def gameList(request):
+    user = request.user
+    queryset = PongGame.objects.all()
+    serializer = PongGameSerializer(queryset, many=True)
+    print(serializer.data)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 class UserListCreate(generics.ListCreateAPIView):
     queryset = User.objects.all()

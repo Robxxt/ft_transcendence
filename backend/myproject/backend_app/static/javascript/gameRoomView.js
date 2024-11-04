@@ -134,7 +134,7 @@ function updateGameState(gameState, ctx, canvas) {
             ctx.fillText('SPEED BOOST!', canvas.width / 2 - 60, 20);
         }
         // Check if game is finished
-        console.log('Game state from the updategamestate function', gameState);
+        // console.log('Game state from the updategamestate function', gameState);
         if (gameState.game_state === 'FINISHED') {
             ctx.fillStyle = 'red';
             ctx.font = '48px Arial';
