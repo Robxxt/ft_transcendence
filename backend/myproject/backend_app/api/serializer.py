@@ -1,11 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth.hashers import make_password, check_password
-<<<<<<< HEAD
-from backend_app.models import User, TableMatch, UserMetric, GameRoom, TictacGame
 from rest_framework.authtoken.models import Token
-=======
 from backend_app.models import User, TableMatch, UserMetric, GameRoom, TictacGame, PongGame
->>>>>>> Implemented the endpoint for gameHistory div
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
