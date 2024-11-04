@@ -136,9 +136,8 @@ def removeFriend(request):
     return Response(data, status=status.HTTP_200_OK)
 def gameList(request):
     user = request.user
-    queryset = PongGame.objects.all()
+    queryset = PongGame.objects.filter(room__player1=user) | PongGame.objects.filter(room__player2=user)
     serializer = PongGameSerializer(queryset, many=True)
-    print(serializer.data)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 class UserListCreate(generics.ListCreateAPIView):
