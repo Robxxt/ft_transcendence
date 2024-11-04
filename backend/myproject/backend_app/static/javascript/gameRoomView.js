@@ -1,4 +1,6 @@
 import { apiRequest, API_BASE_URL } from './apiServices.js';
+import { navigateTo } from './router.js';
+
 
 const WEBSOCKET_BASE_URL = `ws://${window.location.host}`;
 
@@ -73,6 +75,19 @@ function setupGame(roomId, data) {
     gameSocket.onclose = () => console.log("Game WebSocket connection closed.");
 }
 
+function showDisconnectedOverlay() {
+    const disconnectedOverlay = document.getElementById('disconnected-overlay');
+    disconnectedOverlay.classList.remove('d-none');
+    
+    // Add click event to return home button
+    const returnHomeBtn = document.getElementById('return-home-btn');
+    returnHomeBtn.addEventListener('click', () => {
+        navigateTo('/start');  // Use the navigateTo function to handle routing
+    });
+}
+
+
+
 function handleGameMessage(event, ctx, canvas) {
     const data = JSON.parse(event.data);
     console.log("Game WebSocket message received:", data);
@@ -86,6 +101,9 @@ function handleGameMessage(event, ctx, canvas) {
             data.game_state.player2_ready,
             data.game_state.player_names
         );
+        if (data.game_state.disconnected) {
+            showDisconnectedOverlay();
+        }
     } else if (data.action === 'room_state_update') {
         updateRoomState(data.state);
     }
