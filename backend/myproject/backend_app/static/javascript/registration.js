@@ -61,10 +61,7 @@ function handleFormSubmit(event) {
         body: JSON.stringify(data)
     })
     .then(response => {
-        if (response.status === 201) {
-            return {"error": 0};
-        }
-        else if (response.status == 400) {
+        if (response.status === 201 || response.status == 400) {
             return response.json();
         }
         else
@@ -75,6 +72,7 @@ function handleFormSubmit(event) {
             if (data.error == 0) {
                 const userObject = {"name" : username, "isLoggedIn" : true};
                 localStorage.setItem("user", JSON.stringify(userObject));
+                localStorage.setItem("token", data.token);
                 navigateTo("/start");
             }
             else if (data.error == 1)

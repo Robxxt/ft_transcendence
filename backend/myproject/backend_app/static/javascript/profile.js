@@ -188,13 +188,17 @@ function handleChangeAvatarDiv(app, username) {
 }
 
 function handleSetDisplayName(app, username) {
+    const token = localStorage.getItem('token');
     const form = document.getElementById("setDisplayName");
     const displayName = document.getElementById("displayName");
     const status = document.getElementById("displayNameStatus");
 
     // get current display name
-    fetch(`/getDisplayName?username=${encodeURIComponent(username)}`, {
+    fetch("/api/getDisplayName/", {
         method: "GET",
+        headers: {
+            "Authorization": `Token ${token}`
+        }
     })
     .then(response => {
         if (!response.ok) {
@@ -203,7 +207,7 @@ function handleSetDisplayName(app, username) {
         return response.json();
     })
     .then(data => {
-        displayName.placeholder = `Currently ${data.displayName}`;
+        displayName.placeholder = `Currently ${data.display_name}`;
     })
     .catch(error => {
         console.error(error);
@@ -222,14 +226,14 @@ function handleSetDisplayName(app, username) {
         }
 
         // send new display name to endpoint
-        fetch("/setDisplayName", {
-            method: "PATCH",
+        fetch("/api/setDisplayName/", {
+            method: "PUT",
             headers: {
                 "Content-Type": "application/json",
-                "X-CSRFToken": csrftoken
+                "X-CSRFToken": csrftoken,
+                "Authorization": `Token ${token}`
             },
             body: JSON.stringify({
-                username: username,
                 newDisplayName: displayName.value
             })
           })

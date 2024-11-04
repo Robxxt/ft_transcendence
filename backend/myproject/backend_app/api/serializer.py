@@ -18,6 +18,18 @@ class UserNameSerializer(serializers.ModelSerializer):
     def get_isLoggedIn(self, obj):
         return Token.objects.filter(user=obj).exists()
 
+class UserDisplayNameGetSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["display_name"]
+
+class UserDisplayNameSetSerializer(serializers.ModelSerializer):
+    newDisplayName = serializers.CharField(write_only=True, source='display_name')
+
+    class Meta:
+        model = User
+        fields = ["newDisplayName"]
+
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, min_length=8, max_length=20)
 
