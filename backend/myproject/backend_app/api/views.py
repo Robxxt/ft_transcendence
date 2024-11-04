@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.authtoken.models import Token
+from django.contrib.auth import logout
 from backend_app.models import User, TableMatch, UserMetric, GameRoom, TictacGame
 from backend_app.api.serializer import (RegisterSerializer, 
                                         TableMatchSerializer, 
@@ -12,7 +13,8 @@ from backend_app.api.serializer import (RegisterSerializer,
                                         ChangePasswordSerializer,
                                         ChangeAvatarSerialzer,
                                         WinLossSerializer,
-                                        TictacGameSerializer)
+                                        TictacGameSerializer,
+                                        UserNameSerializer)
 
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
@@ -42,15 +44,14 @@ def login(request):
     print(f"User exist: {user}, ID: {user.id}")
     return Response({"token": token.key, "user": serializer.data})
 
-@csrf_exempt
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 @authentication_classes([TokenAuthentication])
-def logout(request):
+def logout_user(request):
     try:
         token = Token.objects.get(user=request.user)
-        print(request.user, token)
         token.delete()
+        logout(request)
         return Response({"detail": "Successfully logged out."}, status=status.HTTP_200_OK)
     except Token.DoesNotExist:
         return Response({"detail": "Token not found."}, status=status.HTTP_400_BAD_REQUEST)
@@ -78,7 +79,6 @@ def changeAvatar(request):
         return Response({'message:' 'Avatar Updated'}, status=status.HTTP_200_OK)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 @authentication_classes([TokenAuthentication])
@@ -87,6 +87,52 @@ def winLossRecord(request):
     serializer = WinLossSerializer(user)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+@authentication_classes([TokenAuthentication])
+def userList(request):
+    users = User.objects.filter(is_staff=False, is_superuser=False)
+    serializer = UserNameSerializer(users, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+@authentication_classes([TokenAuthentication])
+def friendList(request):
+    user = request.user
+    friends = user.friends.all()
+    serializer = UserNameSerializer(friends, many=True)
+    print("in friendList")
+    for f in serializer.data:
+        print(f)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+@authentication_classes([TokenAuthentication])
+def addFriend(request):
+    user1 = request.user
+    friend = request.data.get("friend")
+    try:
+        user2 = User.objects.get(username=friend)
+    except User.DoesNotExist:
+        return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+    user1.friends.add(user2)
+    return Response({"detail": "test"}, status=status.HTTP_200_OK)
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+@authentication_classes([TokenAuthentication])
+def removeFriend(request):
+    user = request.user
+    friend = request.data.get("friend")
+    try:
+        user_friend = User.objects.get(username=friend)
+        user.friends.remove(user_friend)
+    except User.DoesNotExist:
+        return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+    data = {"detail": "test"}
+    return Response(data, status=status.HTTP_200_OK)
 
 class UserListCreate(generics.ListCreateAPIView):
     queryset = User.objects.all()

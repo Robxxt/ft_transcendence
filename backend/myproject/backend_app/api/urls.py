@@ -10,12 +10,17 @@ urlpatterns = [
     path('users/', views.UserListCreate.as_view(), name='userListCreate'),
     path('users/<int:pk>/', views.UserDetail.as_view(), name='userDetail'),
 	path('login/', views.login, name="login"),
+	path('logout_user/', views.logout_user, name="logout_user"),
     path('register/', views.register, name='register'),
     path('join-game-room/', views.GameRoomView.as_view(), name='game_room'),
     path('game-room/<int:room_id>/', views.GameRoomView.as_view(), name='get_game_room'),
     path('changePassword/', views.changePassword, name='changePassword'),
     path('changeAvatar/', views.changeAvatar, name='changeAvatar'),
     path('winLossRecord/', views.winLossRecord, name='winLossRecord'),
+    path('userList/', views.userList, name='userList'),
+    path('friendList/', views.friendList, name='friendList'),
+    path('addFriend/', views.addFriend, name='addFriend'),
+    path('removeFriend/', views.removeFriend, name='removeFriend'),
     path('', include(router.urls)),
 	path('tictac/save-result/', views.save_tictac_result, name='save_tictac_result')
 ]

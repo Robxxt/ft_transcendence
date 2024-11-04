@@ -31,7 +31,7 @@ export function loadPage(app) {
         .then(html => {
             // load html
             app.innerHTML = html;
-            console.log("here");
+
             // JS for changePassword div
             handleChangePasswordDiv(app, username);
 
@@ -309,23 +309,28 @@ function handleGameHistoryDiv(app) {
 }
 
 function handleFriendsDiv(app) {
+    const token = localStorage.getItem('token');
     const username = localStorage.getItem("user");
-    const gameList = document.getElementById("friendList");
+    const friendList = document.getElementById("friendList");
 
     // get list of friends from the endpoint. Set online/offline label afterwards.
-    fetch(`/friendList?username=${username}`)
+    fetch("/api/friendList/", {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Token ${token}`
+        }})
     .then(response => response.json())
     .then(data => {
         for (const friend of data) {
             const listItem = document.createElement("li");
-
-            if (friend.online)
+            if (friend.isLoggedIn)
                 listItem.innerHTML = `<span class="badge bg-success">online</span>`;
             else 
                 listItem.innerHTML = `<span class="badge bg-dark">offline</span>`;
-            listItem.innerHTML += ` ${friend.friend}`;
+            listItem.innerHTML += ` ${friend.username}`;
             listItem.classList.add("list-group-item");
-            gameList.appendChild(listItem);
+            friendList.appendChild(listItem);
         }    
     })
     .catch(error => {
@@ -334,12 +339,23 @@ function handleFriendsDiv(app) {
 }
 
 function handleAddFriendsDiv(app, username) {
+    const token = localStorage.getItem('token');
     const userList = document.getElementById("userList");
 
     // get 2 datasets from endpoint: friends and users. Set friend label, if user is a friend.
     Promise.all([
-            fetch(`/friendList?${username}`),
-            fetch("/userList")
+            fetch(`/api/friendList/`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Token ${token}`
+                }}),
+            fetch("/api/userList/", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Token ${token}`
+                }})
         ])
         .then(responses => {
             return Promise.all(responses.map(response => response.json()));
@@ -349,10 +365,10 @@ function handleAddFriendsDiv(app, username) {
             const users = [];
 
             for (const item of data[0]) {
-                friends.push(item.friend);
+                friends.push(item.username);
             }
             for (const item of data[1]) {
-                users.push(item);
+                users.push(item.username);
             }
             
             for (const user of users) {
@@ -395,7 +411,7 @@ function addFriend(username, friend, isFriend) {
       
       // if friend is not friend, we add them
       if (! isFriend) {
-        fetch("/addFriend", {
+        fetch("/api/addFriend/", {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -419,8 +435,8 @@ function addFriend(username, friend, isFriend) {
       }
       // if friend is friend, we remove them
       else {
-        fetch("/removeFriend", {
-            method: "REMOVE",
+        fetch("/api/removeFriend/", {
+            method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
                 "X-CSRFToken": csrftoken,
