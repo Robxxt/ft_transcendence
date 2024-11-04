@@ -280,11 +280,16 @@ function handleWinLossRecordDiv(app, username) {
 }
 
 function handleGameHistoryDiv(app) {
-    const username = localStorage.getItem("user");
+    const token = localStorage.getItem('token');
     const gamesTable = document.getElementById("gamesTable");
 
     // get list of game statistics from backend
-    fetch(`/gameList?username=${username}`)
+    fetch("/api/gameList/", {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Token ${token}`
+        }})
     .then(response => response.json())
     .then(data => {
         for (const item of data) {

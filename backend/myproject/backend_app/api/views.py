@@ -4,7 +4,7 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import logout
-from backend_app.models import User, TableMatch, UserMetric, GameRoom, TictacGame
+from backend_app.models import User, TableMatch, UserMetric, GameRoom, TictacGame, PongGame
 from backend_app.api.serializer import (RegisterSerializer, 
                                         TableMatchSerializer, 
                                         UserMetricSerializer, 
@@ -14,7 +14,8 @@ from backend_app.api.serializer import (RegisterSerializer,
                                         ChangeAvatarSerialzer,
                                         WinLossSerializer,
                                         TictacGameSerializer,
-                                        UserNameSerializer)
+                                        UserNameSerializer,
+                                        PongGameSerializer)
 
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
@@ -133,6 +134,12 @@ def removeFriend(request):
         return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
     data = {"detail": "test"}
     return Response(data, status=status.HTTP_200_OK)
+def gameList(request):
+    user = request.user
+    queryset = PongGame.objects.all()
+    serializer = PongGameSerializer(queryset, many=True)
+    print(serializer.data)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 class UserListCreate(generics.ListCreateAPIView):
     queryset = User.objects.all()
