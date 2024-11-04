@@ -1,11 +1,22 @@
 from rest_framework import serializers
 from django.contrib.auth.hashers import make_password, check_password
 from backend_app.models import User, TableMatch, UserMetric, GameRoom, TictacGame
+from rest_framework.authtoken.models import Token
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = '__all__'
+
+class UserNameSerializer(serializers.ModelSerializer):
+    isLoggedIn = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ["username", "isLoggedIn"]
+    
+    def get_isLoggedIn(self, obj):
+        return Token.objects.filter(user=obj).exists()
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, min_length=8, max_length=20)

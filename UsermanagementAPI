@@ -73,7 +73,7 @@ Description: fetches all game stats of a user (profile.js)
 - /friendList?username=... GET
 backend action: Send list of objects {friend: ..., online: boolean}
 response: 200 or 404
-404 if user does not exist.
+404 if friend does not exist.
 Description: fetches the friends of a user (profile.js)
 
 - /userList GET
