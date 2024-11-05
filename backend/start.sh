@@ -5,6 +5,8 @@ echo "Running migrations..."
 python myproject/manage.py migrate --noinput
 echo "Creating superuser..."
 python myproject/manage.py createsuperuser --noinput
+echo "Create AI user"
+python myproject/manage.py shell -c "from django.contrib.auth.models import User; User.objects.create_user(username='game_ai', email='game_ai@game_ai.game_ai', password='game_ai') if not User.objects.filter(username='game_ai').exists() else None"
 echo "Starting server..."
 python myproject/manage.py runserver 0.0.0.0:8000
 #daphne -b 0.0.0.0 -p 8000 backend_setting.asgi:application
