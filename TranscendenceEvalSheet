@@ -1,0 +1,103 @@
+Mandatory Part
+
+
+
+Preliminary tests
+
+Any credentials, API keys, environment variables must be set inside a .env file during the evaluation. In case any credentials, API keys are available in the git repository and outside of the .env file created during the evaluation, the evaluation stop and the mark is 0.
+
+Ensure the docker compose file is at the root of the repository.
+
+Run the "docker-compose up --build" command.
+
+Since the rating of this project is more flexible, do not stop the evaluation process unless you encounter a 500 error, a crash, or anything that actually doesn't work within the project scope.
+
+
+
+
+Basic checks
+
+The website is available.
+
+The user can subscribe on the website.
+
+Registered users can log in.
+
+The website is a Single Page Application. The user can use the "Back" and "Forward" buttons of the web browser.
+
+You can browse the website using the latest version of Chrome.
+
+
+
+
+Security concerns
+
+Ensure that the website is secured.
+
+Be carefull about TLS. If there is a backend or any other features, it must be available.
+
+Check if there is a database the passwords must be hashed.
+
+Check the server for server-side validation/sanitization on forms and any user input.
+
+Ensure the security measures are properly implemented and thoroughly tested.
+
+If there is any error, the evaluation ends now.
+
+
+
+
+Local game
+
+You should be able to use this game locally on the same computer using the keyboard.
+
+Each player should be able to utilize a section of the keyboard.
+
+You must also be able to initiate a tournament, and the tournament should offer a matchmaking system to connect local players.
+
+
+
+
+Gameplay
+
+The game itself must be playable and respect the original Pong game.
+
+The controls must be intuitive or correctly explained (with some rules or manual). When a game is over, either a kind of end-game screen is displayed or the game page just exits.
+Lags & disconnects
+
+Unexpected disconnections and lags have to be handled. The game and the website must not crash when a user is experiencing lags or is disconnected. Handling such issues in an efficient way is appreciated but not mandatory:
+
+Pause the game for a defined duration.
+
+Disconnected users can reconnect.
+
+Lagging users can catch up to the match.
+
+And so forth. Any solution is acceptable. The only requirement is: the game should not crash.
+Modules
+
+For this section, it is crucial to thoroughly read the PDF document detailing the requirements for each module, and provide clear and precise explanations for each choice made. In case of any doubt, do not hesitate to stop.
+
+
+
+*Major module 01*
+
+You must now verify the chosen module(s) with each group participant.
+
+You must comprehensively understand everything that will be explained, with the subject PDF as your reference. The obligations for each module are clearly stated in the subject's PDF.
+
+Do not hesitate to ask any questions and request a demonstration of the proper functioning of these module(s).
+
+As a reminder, one major module is equivalent to 2 minor modules, as specified in the subject.
+
+A module is considered valid under the following criteria:
+
+There are no issues with the proper functioning of the presented module(s).
+
+We understand how it works and why it was chosen.
+
+No errors are visible
+
+A comprehensive explanation allows for a detailed understanding of these module(s).
+
+We would like to remind you that this is an important project, and that it is essential to carry out this evaluation properly.
