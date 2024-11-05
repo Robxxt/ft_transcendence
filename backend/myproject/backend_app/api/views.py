@@ -4,7 +4,11 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import logout
-from backend_app.models import User, TableMatch, UserMetric, GameRoom, TictacGame, PongGame
+from backend_app.models import (User, 
+                                TableMatch, 
+                                UserMetric, 
+                                GameRoom, 
+                                TictacGame, PongGame)
 from backend_app.api.serializer import (RegisterSerializer, 
                                         TableMatchSerializer, 
                                         UserMetricSerializer, 
@@ -25,6 +29,9 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 import json
+from django.http import FileResponse, Http404
+import os
+from django.conf import settings
 
 @api_view(['POST'])
 def register(request):
@@ -69,7 +76,6 @@ def changePassword(request):
         return Response({'message' : 'Password has been changed'}, status=status.HTTP_200_OK)
     print("Validation errors:", serializer.errors)
     return Response({'error': 2, 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-
 
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
@@ -256,3 +262,22 @@ def save_tictac_result(request):
         return Response({'status': 'error', 'message': 'Invalid JSON format'}, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
         return Response({'status': 'error', 'message': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@csrf_exempt
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+@authentication_classes([TokenAuthentication])                                       
+def getPng(request):
+    user_id = request.user.id  # Adjust according to how the user ID is retrieved
+    avatar_path = os.path.join(settings.MEDIA_ROOT, "avatar", f"{user_id}.png")
+    default_avatar_path = os.path.join(settings.MEDIA_ROOT, "avatar", "default.png")
+
+    if os.path.exists(avatar_path):
+        file_path = avatar_path
+    elif os.path.exists(default_avatar_path):
+        file_path = default_avatar_path
+    else:
+        raise Http404("Avatar not found")
+    # Use FileResponse to serve the image
+    return FileResponse(open(file_path, 'rb'), content_type='image/png')

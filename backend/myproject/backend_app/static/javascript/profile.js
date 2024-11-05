@@ -83,9 +83,7 @@ function confirmPassword() {
 }
 
 function handleChangePasswordDiv(app, username) {
-    //const csrftoken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     const token = localStorage.getItem('token');
-    console.log("Auth Token:", token);
     const passwordForm = document.getElementById("passwordForm");
     const currentPasswordInput = document.getElementById("currentPassword");
     const newPasswordInput = document.getElementById("newPassword");
