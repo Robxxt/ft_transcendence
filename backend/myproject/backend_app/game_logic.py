@@ -126,6 +126,12 @@ class GameLogic:
             player1 = self.pong_game.room.player1
             player2 = self.pong_game.room.player2
 
+            if self.pong_game.winner == player1.username:
+                player1.won += 1
+                player2.lost += 1
+            elif self.pong_game.winner == player2.username:
+                player2.won += 1
+                player1.lost += 1
             player1.save()
             player2.save()
 
