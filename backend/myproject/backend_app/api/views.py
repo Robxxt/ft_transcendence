@@ -88,6 +88,26 @@ def changeAvatar(request):
         return Response({'message:' 'Avatar Updated'}, status=status.HTTP_200_OK)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+@authentication_classes([TokenAuthentication])
+def getDisplayName(request):
+    user = request.user
+    serializer = UserDisplayNameGetSerializer(user)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+@authentication_classes([TokenAuthentication])
+def setDisplayName(request):
+    user = request.user
+    print(request.data)
+    serializer = UserDisplayNameSetSerializer(instance=user, data=request.data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(status=status.HTTP_200_OK)
+    else:
+        return Response(status.HTTP_409_CONFLICT)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
