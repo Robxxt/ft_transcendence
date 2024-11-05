@@ -125,6 +125,25 @@ class PongGame(models.Model):
         self.winner = None
         self.save()
 
+class Tournament(models.Model):
+    class State(models.TextChoices):
+        WAITING = 'WA', 'Waiting'
+        FULL = 'FL', 'Full'
+        FINISHED = 'FI', 'Finished'
+    tournament_name = models.CharField(max_length=50)
+    player1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='player1_tournament')
+    player2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='player2_tournament')
+    player3 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='player3_tournament')
+    player4 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='player4_tournament')
+    game1 = models.ForeignKey(GameRoom, on_delete=models.SET_NULL, related_name='game1_tournament', null=True, blank=True)
+    game2 = models.ForeignKey(GameRoom, on_delete=models.SET_NULL, related_name='game2_tournament', null=True, blank=True)
+    game3 = models.ForeignKey(GameRoom, on_delete=models.SET_NULL, related_name='game3_tournament', null=True, blank=True)
+    tournament_winner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tournament_winner', null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.tournament_name
+
 class TictacGame(models.Model):
 	player1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='player1_tictac')
 	player2 = models.CharField(max_length=50, blank=True, null=True)
