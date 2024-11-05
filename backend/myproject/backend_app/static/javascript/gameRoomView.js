@@ -156,7 +156,7 @@ function updateGameState(gameState, ctx, canvas) {
         if (gameState.game_state === 'FINISHED') {
             ctx.fillStyle = 'red';
             ctx.font = '48px Arial';
-            ctx.fillText(`${gameState.winner} wins!`, canvas.width / 2 - 100, canvas.height / 2);
+            ctx.fillText(`${gameState.winner_display_name} wins!`, canvas.width / 2 - 100, canvas.height / 2);
         }
     }
 
