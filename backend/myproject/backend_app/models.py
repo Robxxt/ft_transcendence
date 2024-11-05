@@ -132,14 +132,20 @@ class Tournament(models.Model):
         FINISHED = 'FI', 'Finished'
     tournament_name = models.CharField(max_length=50)
     player1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='player1_tournament')
-    player2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='player2_tournament')
-    player3 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='player3_tournament')
-    player4 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='player4_tournament')
+    player2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='player2_tournament', null=True, blank=True)
+    player3 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='player3_tournament', null=True, blank=True)
+    player4 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='player4_tournament', null=True, blank=True)
     game1 = models.ForeignKey(GameRoom, on_delete=models.SET_NULL, related_name='game1_tournament', null=True, blank=True)
     game2 = models.ForeignKey(GameRoom, on_delete=models.SET_NULL, related_name='game2_tournament', null=True, blank=True)
     game3 = models.ForeignKey(GameRoom, on_delete=models.SET_NULL, related_name='game3_tournament', null=True, blank=True)
     tournament_winner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tournament_winner', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    state = models.CharField(max_length=2, choices=State.choices, default=State.WAITING)
+
+    def save(self, *args, **kwargs):
+        if self.player1 and self.player2 and self.player3 and self.player4:
+            self.state = Tournament.State.FULL
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.tournament_name
