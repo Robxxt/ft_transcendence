@@ -31,6 +31,7 @@ export function loadPage(app) {
         .then(html => {
             // load html
             app.innerHTML = html;
+
             // JS for changePassword div
             handleChangePasswordDiv(app, username);
 
@@ -185,13 +186,17 @@ function handleChangeAvatarDiv(app, username) {
 }
 
 function handleSetDisplayName(app, username) {
+    const token = localStorage.getItem('token');
     const form = document.getElementById("setDisplayName");
     const displayName = document.getElementById("displayName");
     const status = document.getElementById("displayNameStatus");
 
     // get current display name
-    fetch(`/getDisplayName?username=${encodeURIComponent(username)}`, {
+    fetch("/api/getDisplayName/", {
         method: "GET",
+        headers: {
+            "Authorization": `Token ${token}`
+        }
     })
     .then(response => {
         if (!response.ok) {
@@ -200,7 +205,7 @@ function handleSetDisplayName(app, username) {
         return response.json();
     })
     .then(data => {
-        displayName.placeholder = `Currently ${data.displayName}`;
+        displayName.placeholder = `Currently ${data.display_name}`;
     })
     .catch(error => {
         console.error(error);
@@ -219,14 +224,14 @@ function handleSetDisplayName(app, username) {
         }
 
         // send new display name to endpoint
-        fetch("/setDisplayName", {
-            method: "PATCH",
+        fetch("/api/setDisplayName/", {
+            method: "PUT",
             headers: {
                 "Content-Type": "application/json",
-                "X-CSRFToken": csrftoken
+                "X-CSRFToken": csrftoken,
+                "Authorization": `Token ${token}`
             },
             body: JSON.stringify({
-                username: username,
                 newDisplayName: displayName.value
             })
           })
@@ -277,11 +282,16 @@ function handleWinLossRecordDiv(app, username) {
 }
 
 function handleGameHistoryDiv(app) {
-    const username = localStorage.getItem("user");
+    const token = localStorage.getItem('token');
     const gamesTable = document.getElementById("gamesTable");
 
     // get list of game statistics from backend
-    fetch(`/gameList?username=${username}`)
+    fetch("/api/gameList/", {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Token ${token}`
+        }})
     .then(response => response.json())
     .then(data => {
         for (const item of data) {
@@ -306,23 +316,28 @@ function handleGameHistoryDiv(app) {
 }
 
 function handleFriendsDiv(app) {
+    const token = localStorage.getItem('token');
     const username = localStorage.getItem("user");
-    const gameList = document.getElementById("friendList");
+    const friendList = document.getElementById("friendList");
 
     // get list of friends from the endpoint. Set online/offline label afterwards.
-    fetch(`/friendList?username=${username}`)
+    fetch("/api/friendList/", {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Token ${token}`
+        }})
     .then(response => response.json())
     .then(data => {
         for (const friend of data) {
             const listItem = document.createElement("li");
-
-            if (friend.online)
+            if (friend.isLoggedIn)
                 listItem.innerHTML = `<span class="badge bg-success">online</span>`;
             else 
                 listItem.innerHTML = `<span class="badge bg-dark">offline</span>`;
-            listItem.innerHTML += ` ${friend.friend}`;
+            listItem.innerHTML += ` ${friend.username}`;
             listItem.classList.add("list-group-item");
-            gameList.appendChild(listItem);
+            friendList.appendChild(listItem);
         }    
     })
     .catch(error => {
@@ -331,12 +346,23 @@ function handleFriendsDiv(app) {
 }
 
 function handleAddFriendsDiv(app, username) {
+    const token = localStorage.getItem('token');
     const userList = document.getElementById("userList");
 
     // get 2 datasets from endpoint: friends and users. Set friend label, if user is a friend.
     Promise.all([
-            fetch(`/friendList?${username}`),
-            fetch("/userList")
+            fetch(`/api/friendList/`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Token ${token}`
+                }}),
+            fetch("/api/userList/", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Token ${token}`
+                }})
         ])
         .then(responses => {
             return Promise.all(responses.map(response => response.json()));
@@ -346,10 +372,10 @@ function handleAddFriendsDiv(app, username) {
             const users = [];
 
             for (const item of data[0]) {
-                friends.push(item.friend);
+                friends.push(item.username);
             }
             for (const item of data[1]) {
-                users.push(item);
+                users.push(item.username);
             }
             
             for (const user of users) {
@@ -392,7 +418,7 @@ function addFriend(username, friend, isFriend) {
       
       // if friend is not friend, we add them
       if (! isFriend) {
-        fetch("/addFriend", {
+        fetch("/api/addFriend/", {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -416,8 +442,8 @@ function addFriend(username, friend, isFriend) {
       }
       // if friend is friend, we remove them
       else {
-        fetch("/removeFriend", {
-            method: "REMOVE",
+        fetch("/api/removeFriend/", {
+            method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
                 "X-CSRFToken": csrftoken,

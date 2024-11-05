@@ -61,10 +61,7 @@ function handleFormSubmit(event) {
         body: JSON.stringify(data)
     })
     .then(response => {
-        if (response.status === 201) {
-            return {"error": 0};
-        }
-        else if (response.status == 400) {
+        if (response.status === 201 || response.status == 400) {
             return response.json();
         }
         else

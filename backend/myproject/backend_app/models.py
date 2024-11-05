@@ -26,13 +26,17 @@ class User(AbstractBaseUser):
     password = models.CharField(max_length=150)
     email = models.CharField(max_length=50)
     avatar = models.ImageField(upload_to='avatar/', default='/avatar/default.png', null=True, blank=True)
+    display_name = models.CharField(max_length=50, unique=True, null=True, blank=True)
     won = models.IntegerField(default=0)
     lost = models.IntegerField(default=0)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
+    friends = models.ManyToManyField("self", blank=True, symmetrical=True)
     objects = UserManager()
+
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['password']
+
     def __str__(self):
         return self.username
 
@@ -41,6 +45,11 @@ class User(AbstractBaseUser):
 
     def has_module_perms(self, app_label):
         return self.is_superuser
+
+    def save(self, *args, **kwargs):
+        if not self.display_name:
+            self.display_name = self.username
+        super().save(*args, **kwargs)
 
 class TableMatch(models.Model):
     player1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='player1_matches')

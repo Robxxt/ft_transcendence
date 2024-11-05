@@ -43,7 +43,7 @@ export function createNavBar() {
         const csrftoken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
         // logout at server
-        fetch("/api/logout/", {
+        fetch("/api/logout_user/", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
