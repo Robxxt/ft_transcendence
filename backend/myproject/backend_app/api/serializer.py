@@ -2,6 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth.hashers import make_password, check_password
 from rest_framework.authtoken.models import Token
 from backend_app.models import User, TableMatch, UserMetric, GameRoom, TictacGame, PongGame
+import os
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -97,9 +98,20 @@ class PongGameSerializer(serializers.ModelSerializer):
 
 class ChangeAvatarSerialzer(serializers.Serializer):
     avatar = serializers.ImageField(required=True)
-
+    
     def update(self, instance, validated_data):
-        instance.avatar = validated_data.get('avatar', instance.avatar)
+        avatar = validated_data.get('avatar')
+        if avatar:
+            # Define the path where the avatar will be saved
+            avatar_path = os.path.join('avatars', f'{instance.id}.png')
+
+            # Check if the file already exists and delete it if it does
+            if os.path.exists(instance.avatar.path):
+                os.remove(instance.avatar.path)
+
+            # Save the new avatar
+            instance.avatar.save(f'{instance.id}.png', avatar.file, save=False)
+        
         instance.save()
         return instance
 

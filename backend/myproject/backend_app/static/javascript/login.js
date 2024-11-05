@@ -3,6 +3,7 @@ import { navigateTo } from "./router.js";
 export function loadPage(app) {
     // If user is already logged in we redirect to /start
     const userObject = JSON.parse(localStorage.getItem("user"));
+    //localStorage.removeItem('user'); USE THIS LINE IF U GET STUCK ON THE START PAGE!
     if (userObject && userObject.isLoggedIn) {
         navigateTo("/start");
         return;

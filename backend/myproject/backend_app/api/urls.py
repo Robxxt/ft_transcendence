@@ -19,6 +19,7 @@ urlpatterns = [
     path('game-room/<int:room_id>/', views.GameRoomView.as_view(), name='get_game_room'),
     path('changePassword/', views.changePassword, name='changePassword'),
     path('changeAvatar/', views.changeAvatar, name='changeAvatar'),
+    path('getPng/', views.getPng, name='getPng'),
     path('winLossRecord/', views.winLossRecord, name='winLossRecord'),
     path('userList/', views.userList, name='userList'),
     path('friendList/', views.friendList, name='friendList'),

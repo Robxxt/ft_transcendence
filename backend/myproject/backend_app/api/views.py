@@ -270,8 +270,8 @@ def save_tictac_result(request):
 @authentication_classes([TokenAuthentication])                                       
 def getPng(request):
     user_id = request.user.id  # Adjust according to how the user ID is retrieved
-    avatar_path = os.path.join(settings.MEDIA_ROOT, "avatars", f"{user_id}.png")
-    default_avatar_path = os.path.join(settings.MEDIA_ROOT, "avatars", "default.png")
+    avatar_path = os.path.join(settings.MEDIA_ROOT, "avatar", f"{user_id}.png")
+    default_avatar_path = os.path.join(settings.MEDIA_ROOT, "avatar", "default.png")
 
     if os.path.exists(avatar_path):
         file_path = avatar_path
