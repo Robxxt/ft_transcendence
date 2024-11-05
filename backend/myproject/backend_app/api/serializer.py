@@ -141,7 +141,8 @@ class GameRoomSerializer(serializers.ModelSerializer):
             return {
                 'id': request.user.id,
                 'username': request.user.username,
-                'player_number': player_number
+                'player_number': player_number,
+                'display_name': request.user.display_name,
             }
         return None
 

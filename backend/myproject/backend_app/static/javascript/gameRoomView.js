@@ -42,7 +42,7 @@ async function fetchGameRoomData(roomId) {
 function renderGameRoom(app, templateHtml, roomId, data) {
     app.innerHTML = templateHtml;
     document.getElementById('room-id').textContent = roomId;
-    document.getElementById('username').textContent = data.current_user?.username || 'Unknown Player';
+    document.getElementById('username').textContent = data.current_user?.display_name || 'Unknown Player';
 }
 
 function updateRoomState(state) {
@@ -276,7 +276,7 @@ function sendMessage(chatSocket, chatInput, data) {
     const message = chatInput.value.trim();
     if (message) {
         chatSocket.send(JSON.stringify({
-            'username': data.current_user.username,
+            'username': data.current_user.display_name,
             'message': message,
             'timestamp': new Date().toLocaleTimeString()
         }));
