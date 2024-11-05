@@ -75,6 +75,7 @@ function handleFormSubmit(event) {
             if (data.error == 0) {
                 const userObject = {"name" : username, "isLoggedIn" : true};
                 localStorage.setItem("user", JSON.stringify(userObject));
+                localStorage.setItem("token", data.token);
                 navigateTo("/start");
             }
             else if (data.error == 1)
