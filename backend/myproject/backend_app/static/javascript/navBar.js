@@ -68,16 +68,36 @@ export function createNavBar() {
 }
 
 export async function loadAvatar(username) {
-    return;
+    const token = localStorage.getItem('token');
+    const csrftoken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    console.log('Token for Avatar', token);
+    
     try {
-        const response = await fetch(`/getAvatar?user=${username}&t` +  new Date().getTime(), {
-            cache: 'no-store' // Ensure the request bypasses the cache
+        const response = await fetch(`/api/getPng/`, {
+            method: 'GET',
+            cache: 'no-store',
+            headers: {
+                "X-CSRFToken": csrftoken,
+                'Authorization': `Token ${token}`,
+            }
         });
+        console.log('Fetch response:', response);
+
         if (response.ok) {
             let blob = await response.blob();
+            console.log("Blob:", blob);
             const imageUrl = URL.createObjectURL(blob);
             const imgElement = document.getElementById("avatar");
-            imgElement.src = imageUrl;          
+            
+            if (imgElement) {
+                imgElement.src = imageUrl;  // Sets the actual image URL
+                console.log("Avatar image loaded");
+            } else {
+                console.error("Avatar image element not found");
+            }
+            
+            console.log('PNG STORED');
+            console.log('URL--->', imageUrl);
         } else {
             throw new Error(response.statusText);
         }
