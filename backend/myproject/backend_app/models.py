@@ -166,13 +166,15 @@ class Tournament(models.Model):
             self.game1 = GameRoom.objects.create(
                 player1=self.player1,
                 player2=self.player2,
-                tournament=self
+                tournament=self,
+                state=GameRoom.State.FULL
             )
         if not self.game2:
             self.game2 = GameRoom.objects.create(
                 player1=self.player3,
                 player2=self.player4,
-                tournament=self
+                tournament=self,
+                state=GameRoom.State.FULL
             )
         # Prevent recursion during save
         self._created_games = True

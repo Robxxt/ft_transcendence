@@ -177,7 +177,7 @@ class TournamentListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Tournament
-        fields = ['tournament_name', 'player1_name', 'player2_name', 'player3_name', 'player4_name', 'id']
+        fields = ['tournament_name', 'player1_name', 'player2_name', 'player3_name', 'player4_name', 'id', 'game1', 'game2']
 
 class PlayerAddSerializer(serializers.Serializer):
     player_name = serializers.CharField(max_length=150)
