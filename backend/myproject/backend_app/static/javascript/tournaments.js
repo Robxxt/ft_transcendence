@@ -1,4 +1,5 @@
 import { apiRequest } from './apiServices.js';
+import { navigateTo } from './router.js';
 const API_URL = 'api/tournaments/';
 const REFRESH_INTERVAL = 5000;
 
@@ -101,6 +102,12 @@ function createTournamentCard(tournament) {
                         <button 
                             class="btn ${buttonClass} ${buttonDisplay}"
                             data-tournament-id="${tournament.id}"
+                            data-game1="${tournament.game1}"
+                            data-game2="${tournament.game2}"
+                            data-player1="${tournament.player1_name}"
+                            data-player2="${tournament.player2_name}"
+                            data-player3="${tournament.player3_name}"
+                            data-player4="${tournament.player4_name}"
                             data-action="${buttonText}"
                             ${playerCount >= 4 ? 'data-ready="true"' : ''}
                         >
@@ -114,8 +121,16 @@ function createTournamentCard(tournament) {
 }
 
 // Add this function to handle button clicks
-async function handleTournamentAction(tournamentId, action) {
+async function handleTournamentAction(target) {
     try {
+        const tournamentId = target.getAttribute('data-tournament-id');
+        const game1 = target.getAttribute('data-game1');
+        const game2 = target.getAttribute('data-game2');
+        const player1 = target.getAttribute('data-player1');
+        const player2 = target.getAttribute('data-player2');
+        const player3 = target.getAttribute('data-player3');
+        const player4 = target.getAttribute('data-player4');
+        const action = target.getAttribute('data-action');
         const storedUser = JSON.parse(localStorage.getItem('user'));
         const username = storedUser.name;
 
@@ -126,7 +141,10 @@ async function handleTournamentAction(tournamentId, action) {
             });
         } else if (action === 'Play') {
             // Redirect to the game page or handle game start
-            window.location.href = `/game/${tournamentId}`;
+            if (username === player1 || username === player2)
+                navigateTo(`/game-room/${game1}`);
+            else if (username === player3 || username === player4)
+                navigateTo(`/game-room/${game2}`);
         }
 
         // Refresh the tournaments list
@@ -169,9 +187,9 @@ async function updateTournaments() {
         document.addEventListener('click', async (event) => {
             const target = event.target;
             if (target.matches('.btn[data-tournament-id]')) {
-                const tournamentId = target.getAttribute('data-tournament-id');
-                const action = target.getAttribute('data-action');
-                await handleTournamentAction(tournamentId, action);
+                // const tournamentId = target.getAttribute('data-tournament-id');
+                // const action = target.getAttribute('data-action');
+                await handleTournamentAction(target);
             }
         });
         
