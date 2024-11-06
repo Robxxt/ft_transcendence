@@ -33,7 +33,7 @@ backend action: check if user / currentPassword is correct,
 check if newPassword is alphanumeric and at least 8-20 chars long,
 change password on success.
 response: 200 or 400 or 401 or 404. 
-404 if user does not exist, 401 if currentPassword is wrong for the user name, 400 if newPassword is not rule conform.
+401 if currentPassword is wrong for the user name, 400 if newPassword is not rule conform.
 Description: changes the password (profile.js)
 
 - /changeAvatar POST
