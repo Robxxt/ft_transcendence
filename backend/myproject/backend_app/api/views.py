@@ -353,3 +353,10 @@ class TournamentAddPlayerView(generics.GenericAPIView):
 
         return Response({"detail": f"Player {user.username} has been added to the tournament '{tournament.tournament_name}'."},
                         status=status.HTTP_200_OK)
+
+class PongGameDetailView(generics.RetrieveAPIView):
+    serializer_class = PongGameSerializer
+
+    def get_object(self):
+        room_id = self.kwargs.get('room_id')
+        return get_object_or_404(PongGame, room__id=room_id)

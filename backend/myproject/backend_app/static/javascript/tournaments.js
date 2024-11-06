@@ -59,6 +59,20 @@ function createTournamentsHTML() {
 }
 
 
+async function fetchGameResults(gameId) {
+    try {
+        const response = await apiRequest(`api/pong-game/${gameId}/`, 'GET');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const games = await response.json();
+        return games;
+    } catch (error) {
+        console.error('Error fetching game results:', error);
+        throw error;
+    }
+}
+
 async function fetchTournaments() {
     try {
         const response = await apiRequest(API_URL, 'GET');
@@ -73,7 +87,7 @@ async function fetchTournaments() {
     }
 }
 
-function createTournamentCard(tournament) {
+function createTournamentCard(tournament, game1Results = '', game2Results = '') {
     // Count the number of players
     const playerCount = ['player1_name', 'player2_name', 'player3_name', 'player4_name']
         .filter(key => tournament[key])
@@ -83,6 +97,7 @@ function createTournamentCard(tournament) {
     const buttonText = playerCount === 4 ? 'Play' : 'Join';
     const buttonClass = playerCount === 4 ? 'btn-success' : 'btn-success';
     const buttonDisplay = playerCount > 4 ? 'd-none' : ''; // Hide if more than 4 players
+
     
     return `
         <div class="col-md-6 col-lg-4">
@@ -96,14 +111,16 @@ function createTournamentCard(tournament) {
                             ${tournament.player2_name ? `<li>Player 2: ${escapeHtml(tournament.player2_name)}</li>` : ''}
                             ${tournament.player3_name ? `<li>Player 3: ${escapeHtml(tournament.player3_name)}</li>` : ''}
                             ${tournament.player4_name ? `<li>Player 4: ${escapeHtml(tournament.player4_name)}</li>` : ''}
-                            </ul>
+                        </ul>
                         <!-- Add horizontal divider -->
                         <hr class="my-4">
 
                         <!-- List of games -->
                         <ul class="list-unstyled">
                             ${tournament.game1 ? `<li>Game 1: ${escapeHtml(tournament.player1_name)} vs. ${escapeHtml(tournament.player2_name)}</li>` : ''}
+                            ${game1Results ? `<li>${game1Results}</li>` : ''}
                             ${tournament.game2 ? `<li>Game 2: ${escapeHtml(tournament.player3_name)} vs. ${escapeHtml(tournament.player4_name)}</li>` : ''}
+                            ${game2Results ? `<li>${game2Results}</li>` : ''}
                         </ul>
                     </div>
                     <div class="mt-3 text-center">
@@ -188,9 +205,40 @@ async function updateTournaments() {
                 </div>
             `;
         } else {
-            tournamentsContainer.innerHTML = tournaments
-                .map(tournament => createTournamentCard(tournament))
-                .join('');
+            const tournamentCards = await Promise.all(
+                tournaments.map(async (tournament) => {
+                    // Fetch game results for each tournament
+                    let game1Results = '';
+                    let game2Results = '';
+
+                    if (tournament.game1) {
+                        try {
+                            const game1ResultsResponse = await fetchGameResults(tournament.game1);
+                            if (game1ResultsResponse.winner) {
+                                game1Results = `${game1ResultsResponse.winner} won (${game1ResultsResponse.result})`;
+                            }
+                        } catch (error) {
+                            console.error('Error fetching game 1 results:', error);
+                        }
+                    }
+
+                    if (tournament.game2) {
+                        try {
+                            const game2ResultsResponse = await fetchGameResults(tournament.game2);
+                            if (game2ResultsResponse.winner) {
+                                game2Results = `${game2ResultsResponse.winner} won (${game2ResultsResponse.result})`;
+                            }
+                        } catch (error) {
+                            console.error('Error fetching game 2 results:', error);
+                        }
+                    }
+
+                    // Pass game results to createTournamentCard
+                    return createTournamentCard(tournament, game1Results, game2Results);
+                })
+            );
+
+            tournamentsContainer.innerHTML = tournamentCards.join('');
         }
         document.addEventListener('click', async (event) => {
             const target = event.target;
