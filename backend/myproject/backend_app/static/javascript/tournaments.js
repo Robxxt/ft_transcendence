@@ -100,7 +100,8 @@ function createTournamentCard(tournament) {
                     <div class="mt-3 text-center">
                         <button 
                             class="btn ${buttonClass} ${buttonDisplay}"
-                            onclick="handleTournamentAction('${tournament.id}', '${buttonText}')"
+                            data-tournament-id="${tournament.id}"
+                            data-action="${buttonText}"
                             ${playerCount >= 4 ? 'data-ready="true"' : ''}
                         >
                             ${buttonText}
@@ -117,8 +118,9 @@ async function handleTournamentAction(tournamentId, action) {
     try {
         const storedUser = JSON.parse(localStorage.getItem('user'));
         const username = storedUser.name;
-        
+
         if (action === 'Join') {
+            // Make the API call to join the tournament
             await apiRequest(`api/tournaments/${tournamentId}/join/`, 'POST', {
                 player_name: username
             });
@@ -126,7 +128,7 @@ async function handleTournamentAction(tournamentId, action) {
             // Redirect to the game page or handle game start
             window.location.href = `/game/${tournamentId}`;
         }
-        
+
         // Refresh the tournaments list
         updateTournaments();
     } catch (error) {
@@ -164,6 +166,15 @@ async function updateTournaments() {
                 .map(tournament => createTournamentCard(tournament))
                 .join('');
         }
+        document.addEventListener('click', async (event) => {
+            const target = event.target;
+            if (target.matches('.btn[data-tournament-id]')) {
+                const tournamentId = target.getAttribute('data-tournament-id');
+                const action = target.getAttribute('data-action');
+                await handleTournamentAction(tournamentId, action);
+            }
+        });
+        
     } catch (error) {
         console.error('Update error:', error);
         errorAlert.classList.remove('d-none');

@@ -28,5 +28,6 @@ urlpatterns = [
 	path('tictac/save-result/', views.save_tictac_result, name='save_tictac_result'),
     path('tournaments/', views.TournamentListView.as_view(), name='tournament-list'),
     path('tournaments/add/', views.TournamentCreateView.as_view(), name='tournament-add'),
+    path('tournaments/<int:tournament_id>/join/', views.TournamentAddPlayerView.as_view(), name='tournament-join'),
     path('', include(router.urls))
 ]

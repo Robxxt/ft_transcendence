@@ -177,4 +177,18 @@ class TournamentListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Tournament
-        fields = ['tournament_name', 'player1_name', 'player2_name', 'player3_name', 'player4_name']
+        fields = ['tournament_name', 'player1_name', 'player2_name', 'player3_name', 'player4_name', 'id']
+
+class PlayerAddSerializer(serializers.Serializer):
+    player_name = serializers.CharField(max_length=150)
+
+    def validate(self, data):
+        player_name = data.get('player_name')
+
+        try:
+            user = User.objects.get(username=player_name)
+        except User.DoesNotExist:
+            raise serializers.ValidationError({"detail": "User not found."})
+
+        data['user'] = user
+        return data

@@ -23,7 +23,8 @@ from backend_app.api.serializer import (RegisterSerializer,
                                         UserDisplayNameGetSerializer,
                                         UserDisplayNameSetSerializer,
                                         TournamentCreateSerializer,
-                                        TournamentListSerializer)
+                                        TournamentListSerializer,
+                                        PlayerAddSerializer)
 
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
@@ -320,3 +321,35 @@ class TournamentListView(generics.ListAPIView):
     print("TournamentListView")
     queryset = Tournament.objects.exclude(state=Tournament.State.FINISHED)
     serializer_class = TournamentListSerializer
+
+class TournamentAddPlayerView(generics.GenericAPIView):
+    serializer_class = PlayerAddSerializer
+
+    def post(self, request, tournament_id, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+
+        try:
+            tournament = Tournament.objects.get(id=tournament_id, state=Tournament.State.WAITING)
+        except Tournament.DoesNotExist:
+            raise ValidationError({"detail": "Tournament not found or it is not in a waiting state."})
+
+        # Check if the user is already part of the tournament
+        if user == tournament.player1 or user == tournament.player2 or user == tournament.player3 or user == tournament.player4:
+            raise ValidationError({"detail": "Player is already part of the tournament."})
+
+        # Add player to the tournament
+        if not tournament.player2:
+            tournament.player2 = user
+        elif not tournament.player3:
+            tournament.player3 = user
+        elif not tournament.player4:
+            tournament.player4 = user
+        else:
+            raise ValidationError({"detail": "Tournament is already full."})
+
+        tournament.save()
+
+        return Response({"detail": f"Player {user.username} has been added to the tournament '{tournament.tournament_name}'."},
+                        status=status.HTTP_200_OK)
