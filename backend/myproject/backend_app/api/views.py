@@ -195,7 +195,6 @@ class GameRoomView(APIView):
     def post(self, request):
         try:
             aiPlay = request.data["aiPlay"]
-            # username = request.data["username"]
             username = get_object_or_404(User, username=request.data['username'])
             if username is None:
                 return Response({"error": "Username is required"}, status=status.HTTP_400_BAD_REQUEST)

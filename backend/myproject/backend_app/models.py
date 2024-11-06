@@ -87,6 +87,7 @@ class GameRoom(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     started_at = models.DateTimeField(null=True, blank=True)
     finished_at = models.DateTimeField(null=True, blank=True)
+    tournament = models.ForeignKey('Tournament', on_delete=models.CASCADE, related_name='game_rooms', null=True, blank=True)
 
     # debug
     isAiPlay = models.BooleanField(default=False)
@@ -142,10 +143,41 @@ class Tournament(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     state = models.CharField(max_length=2, choices=State.choices, default=State.WAITING)
 
+    _created_games = False
+
     def save(self, *args, **kwargs):
+        # If all players are set, set the state to FULL
         if self.player1 and self.player2 and self.player3 and self.player4:
             self.state = Tournament.State.FULL
+        else:
+            self.state = Tournament.State.WAITING
+
+        # Save the tournament instance
         super().save(*args, **kwargs)
+
+        # Create game1 and game2 if the tournament is full and games have not yet been created
+        if self.state == Tournament.State.FULL and not self._created_games:
+            self.create_initial_games()
+
+    def create_initial_games(self):
+        """Create game1 and game2 if players are set and the games are not yet created."""
+        # Ensure that game1 and game2 are created only once
+        if not self.game1:
+            self.game1 = GameRoom.objects.create(
+                player1=self.player1,
+                player2=self.player2,
+                tournament=self
+            )
+        if not self.game2:
+            self.game2 = GameRoom.objects.create(
+                player1=self.player3,
+                player2=self.player4,
+                tournament=self
+            )
+        # Prevent recursion during save
+        self._created_games = True
+        # Save again to associate the game1 and game2 to the tournament
+        self.save()
 
     def __str__(self):
         return self.tournament_name
