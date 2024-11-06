@@ -34,6 +34,7 @@ import json
 from django.http import FileResponse, Http404
 import os
 from django.conf import settings
+from django.utils.decorators import method_decorator
 
 @api_view(['POST'])
 def register(request):
@@ -286,15 +287,22 @@ def getPng(request):
 class TournamentCreateView(generics.CreateAPIView):
     queryset = Tournament.objects.all()
     serializer_class = TournamentCreateSerializer
-    permission_classes = [IsAuthenticated]
 
-    def perform_create(self, serializer):
-        serializer.save(player1=self.request.user)
 
     def create(self, request, *args, **kwargs):
+        player_name = request.data.get('player_name')
+        if not player_name:
+            raise ValidationError({"detail": "Player name is required to create a tournament."})
+
+        try:
+            user = User.objects.get(username=player_name)
+        except User.DoesNotExist:
+            raise ValidationError({"detail": "User not found."})
+
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
+        serializer.save(player1=user)
+
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 

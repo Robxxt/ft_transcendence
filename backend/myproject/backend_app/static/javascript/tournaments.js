@@ -179,8 +179,11 @@ export function loadPage(appDiv) {
 // Function to create a new tournament via the API
 async function createNewTournament(tournamentName) {
     try {
-        const response = await apiRequest('/tournaments/add/', 'POST', {
-            tournament_name: tournamentName
+        const storedUser = JSON.parse(localStorage.getItem('user'));
+        const username = storedUser.name;
+        const response = await apiRequest('api/tournaments/add/', 'POST', {
+            tournament_name: tournamentName,
+            player_name: username
         });
         const responseText = await response.text(); // Get the raw response as text
 

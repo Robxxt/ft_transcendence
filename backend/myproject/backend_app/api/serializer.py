@@ -169,11 +169,6 @@ class TournamentCreateSerializer(serializers.ModelSerializer):
         model = Tournament
         fields = ['tournament_name']
 
-    def create(self, validated_data):
-        user = self.context['request'].user
-        validated_data['player1'] = user
-        return super().create(validated_data)
-
 class TournamentListSerializer(serializers.ModelSerializer):
     player1_name = serializers.CharField(source='player1.username', read_only=True)
     player2_name = serializers.CharField(source='player2.username', read_only=True)
