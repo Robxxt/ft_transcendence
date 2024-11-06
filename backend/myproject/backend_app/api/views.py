@@ -318,9 +318,10 @@ class TournamentCreateView(generics.CreateAPIView):
 
 
 class TournamentListView(generics.ListAPIView):
-    print("TournamentListView")
-    queryset = Tournament.objects.exclude(state=Tournament.State.FINISHED)
+    queryset = Tournament.objects.exclude(state=Tournament.State.FINISHED).order_by('-created_at')
     serializer_class = TournamentListSerializer
+
+
 
 class TournamentAddPlayerView(generics.GenericAPIView):
     serializer_class = PlayerAddSerializer
