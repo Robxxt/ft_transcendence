@@ -298,6 +298,15 @@ class TournamentCreateView(generics.CreateAPIView):
             user = User.objects.get(username=player_name)
         except User.DoesNotExist:
             raise ValidationError({"detail": "User not found."})
+        
+        tournament_name = request.data.get('tournament_name')
+        if Tournament.objects.filter(
+                tournament_name=tournament_name,
+                state__in=[Tournament.State.WAITING, Tournament.State.FULL]
+            ).exists():
+            # Return a custom error message and a 409 Conflict status
+            return Response({"detail": "A tournament with this name already exists and is not finished."}, status=status.HTTP_409_CONFLICT)
+
 
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)

@@ -165,7 +165,7 @@ export function loadPage(appDiv) {
             updateTournaments();
         } catch (error) {
             console.error('Error creating tournament:', error);
-            alert('Failed to create a new tournament. Please try again.');
+            alert('Failed to create a new tournament: ' + error.message);
         }
     });
 
