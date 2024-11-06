@@ -73,6 +73,16 @@ async function fetchTournaments() {
 }
 
 function createTournamentCard(tournament) {
+    // Count the number of players
+    const playerCount = ['player1_name', 'player2_name', 'player3_name', 'player4_name']
+        .filter(key => tournament[key])
+        .length;
+    
+    // Determine button properties
+    const buttonText = playerCount === 4 ? 'Play' : 'Join';
+    const buttonClass = playerCount === 4 ? 'btn-success' : 'btn-success';
+    const buttonDisplay = playerCount > 4 ? 'd-none' : ''; // Hide if more than 4 players
+    
     return `
         <div class="col-md-6 col-lg-4">
             <div class="card h-100">
@@ -87,10 +97,42 @@ function createTournamentCard(tournament) {
                             ${tournament.player4_name ? `<li>Player 4: ${escapeHtml(tournament.player4_name)}</li>` : ''}
                         </ul>
                     </div>
+                    <div class="mt-3 text-center">
+                        <button 
+                            class="btn ${buttonClass} ${buttonDisplay}"
+                            onclick="handleTournamentAction('${tournament.id}', '${buttonText}')"
+                            ${playerCount >= 4 ? 'data-ready="true"' : ''}
+                        >
+                            ${buttonText}
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     `;
+}
+
+// Add this function to handle button clicks
+async function handleTournamentAction(tournamentId, action) {
+    try {
+        const storedUser = JSON.parse(localStorage.getItem('user'));
+        const username = storedUser.name;
+        
+        if (action === 'Join') {
+            await apiRequest(`api/tournaments/${tournamentId}/join/`, 'POST', {
+                player_name: username
+            });
+        } else if (action === 'Play') {
+            // Redirect to the game page or handle game start
+            window.location.href = `/game/${tournamentId}`;
+        }
+        
+        // Refresh the tournaments list
+        updateTournaments();
+    } catch (error) {
+        console.error('Error handling tournament action:', error);
+        alert('Failed to perform action: ' + error.message);
+    }
 }
 
 function escapeHtml(str) {
