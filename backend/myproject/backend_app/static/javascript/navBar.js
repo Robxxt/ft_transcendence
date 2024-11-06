@@ -53,9 +53,6 @@ export function createNavBar() {
             body: JSON.stringify({user : username})
         })
         .then(response => {
-            if (!response.ok) {
-                throw new Error(response.statusText);
-            }
             localStorage.removeItem('user');
             localStorage.removeItem('token');
             localStorage.removeItem('username');
