@@ -1,12 +1,11 @@
 import { navigateTo } from './router.js';
-import { logout, joinGameRoom } from './apiServices.js';
+import { joinGameRoom } from './apiServices.js';
 export function homeView() {
     const app = document.getElementById('app');
     const username = JSON.parse(localStorage.getItem('user')).name;
 
     if (!username) {
         console.log("no name")
-        // navigate('/login');
         return;
     }
 
@@ -15,10 +14,12 @@ export function homeView() {
         <div class="text-center">
             <button id="join-game-btn" class="btn btn-primary mb-2">Join Game Room</button>
             <button id="set-ai-play-btn" data-clicked="false" class="btn btn-primary mb-2">Set AI play</button>
-            <button id="logout-btn" class="btn btn-danger">Logout</button>
+            <button id="tournament-btn" class="btn btn-primary mb-2r">Tournament</button>
         </div>
     `;
-    document.getElementById('logout-btn').addEventListener('click', logout);
+    document.getElementById('tournament-btn').addEventListener('click', () => {
+        navigateTo('/tournaments');
+    });
     document.getElementById('join-game-btn').addEventListener('click', async () => {
         const isClickedStr = document.getElementById('set-ai-play-btn').getAttribute('data-clicked');
         const isClicked = isClickedStr == "false" ? false : true;

@@ -8,7 +8,7 @@ from backend_app.models import (User,
                                 TableMatch, 
                                 UserMetric, 
                                 GameRoom, 
-                                TictacGame, PongGame)
+                                TictacGame, PongGame, Tournament)
 from backend_app.api.serializer import (RegisterSerializer, 
                                         TableMatchSerializer, 
                                         UserMetricSerializer, 
@@ -21,7 +21,9 @@ from backend_app.api.serializer import (RegisterSerializer,
                                         UserNameSerializer,
                                         PongGameSerializer,
                                         UserDisplayNameGetSerializer,
-                                        UserDisplayNameSetSerializer)
+                                        UserDisplayNameSetSerializer,
+                                        TournamentSerializer,
+                                        TournamentListSerializer)
 
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
@@ -279,5 +281,13 @@ def getPng(request):
         file_path = default_avatar_path
     else:
         raise Http404("Avatar not found")
-    # Use FileResponse to serve the image
     return FileResponse(open(file_path, 'rb'), content_type='image/png')
+
+class TournamentCreateView(generics.CreateAPIView):
+    queryset = Tournament.objects.all()
+    serializer_class = TournamentSerializer
+
+class TournamentListView(generics.ListAPIView):
+    print("TournamentListView")
+    queryset = Tournament.objects.exclude(state=Tournament.State.FINISHED)
+    serializer_class = TournamentListSerializer

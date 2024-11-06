@@ -8,7 +8,8 @@ const routes = {
     '/profile': () => import('/static/javascript/profile.js').then(module => module.loadPage(document.getElementById('app'))),
     '/pong': () => import('/static/javascript/homeView.js').then(module => module.homeView()),
     '/game-room/:id': (id) => import('/static/javascript/gameRoomView.js').then(module => module.gameRoomView(id)),
-    '/tictac': () => import('/static/tictac/tictactoe.js').then(module => module.tictacView())
+    '/tictac': () => import('/static/tictac/tictactoe.js').then(module => module.tictacView()),
+    '/tournaments': () => import('/static/javascript/tournaments.js').then(module => module.loadPage(document.getElementById('app'))),
 };
 
 export function navigateTo(url) {

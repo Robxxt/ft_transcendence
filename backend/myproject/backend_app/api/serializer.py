@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth.hashers import make_password, check_password
 from rest_framework.authtoken.models import Token
-from backend_app.models import User, TableMatch, UserMetric, GameRoom, TictacGame, PongGame
+from backend_app.models import User, TableMatch, UserMetric, GameRoom, TictacGame, PongGame, Tournament
 import os
 
 class UserSerializer(serializers.ModelSerializer):
@@ -163,3 +163,18 @@ class TictacGameSerializer(serializers.ModelSerializer):
     class Meta:
         model = TictacGame
         fields = '__all__'
+
+class TournamentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tournament
+        fields = ['tournament_name', 'player1']
+
+class TournamentListSerializer(serializers.ModelSerializer):
+    player1_name = serializers.CharField(source='player1.username', read_only=True)
+    player2_name = serializers.CharField(source='player2.username', read_only=True)
+    player3_name = serializers.CharField(source='player3.username', read_only=True)
+    player4_name = serializers.CharField(source='player4.username', read_only=True)
+
+    class Meta:
+        model = Tournament
+        fields = ['tournament_name', 'player1_name', 'player2_name', 'player3_name', 'player4_name']
