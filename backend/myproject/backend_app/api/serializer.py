@@ -164,10 +164,15 @@ class TictacGameSerializer(serializers.ModelSerializer):
         model = TictacGame
         fields = '__all__'
 
-class TournamentSerializer(serializers.ModelSerializer):
+class TournamentCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tournament
-        fields = ['tournament_name', 'player1']
+        fields = ['tournament_name']
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+        validated_data['player1'] = user
+        return super().create(validated_data)
 
 class TournamentListSerializer(serializers.ModelSerializer):
     player1_name = serializers.CharField(source='player1.username', read_only=True)

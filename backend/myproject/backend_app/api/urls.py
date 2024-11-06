@@ -27,5 +27,6 @@ urlpatterns = [
     path('removeFriend/', views.removeFriend, name='removeFriend'),
 	path('tictac/save-result/', views.save_tictac_result, name='save_tictac_result'),
     path('tournaments/', views.TournamentListView.as_view(), name='tournament-list'),
+    path('tournaments/add/', views.TournamentCreateView.as_view(), name='tournament-add'),
     path('', include(router.urls))
 ]

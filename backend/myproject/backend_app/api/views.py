@@ -22,7 +22,7 @@ from backend_app.api.serializer import (RegisterSerializer,
                                         PongGameSerializer,
                                         UserDisplayNameGetSerializer,
                                         UserDisplayNameSetSerializer,
-                                        TournamentSerializer,
+                                        TournamentCreateSerializer,
                                         TournamentListSerializer)
 
 from django.shortcuts import get_object_or_404
@@ -285,7 +285,19 @@ def getPng(request):
 
 class TournamentCreateView(generics.CreateAPIView):
     queryset = Tournament.objects.all()
-    serializer_class = TournamentSerializer
+    serializer_class = TournamentCreateSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(player1=self.request.user)
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
 
 class TournamentListView(generics.ListAPIView):
     print("TournamentListView")
