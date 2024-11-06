@@ -125,17 +125,18 @@ function handleChangePasswordDiv(app, username) {
                 passwordChangeStatus.textContent = "Password changed successfully.";
             else {
                 if (response.status === 400) {
-                    passwordChangeStatus.textContent = "New password was not rule conform.";
+                    return response.json()
                 }
-                else if (response.status === 401) {
-                    passwordChangeStatus.textContent = "Old password was wrong.";
-                } 
                 else
                     throw new Error(response.statusText);
             }
         })
+        .then(data => {
+            console.log(data);
+            for (let key in data)
+                passwordChangeStatus.textContent = data[key];
+        })
         .catch(error => {
-            passwordChangeStatus.textContent = "Something went wrong while trying to change the password.";
             console.error(error);
         });
     });
@@ -272,7 +273,9 @@ function handleWinLossRecordDiv(app, username) {
         .then(response => response.json())
         .then(data => {
             const winLossHTML = `
-                <h1 class="display-l" style="color: magenta;">${data.wins} : ${data.losses}</h1>
+                <div class="text-center">
+                <h1 style="color: magenta;">${data.wins} : ${data.losses}</h1>
+                </div>
             `;
             winLossRecordDiv.innerHTML += winLossHTML;
         })
@@ -455,9 +458,6 @@ function addFriend(username, friend, isFriend) {
             if (!response.ok) {
                 throw new Error("Network response was not ok");
             }
-            return response.json();
-        })
-        .then(data => {
             location.reload();
         })
         .catch(error => {

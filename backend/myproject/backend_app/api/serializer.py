@@ -57,8 +57,11 @@ class ChangePasswordSerializer(serializers.Serializer):
     def validate(self, attrs):
         user = self.context['request'].user
         currentPassword = attrs['currentPassword']
+        newPassword = attrs["newPassword"]
         if not check_password(currentPassword, user.password):
-            raise serializers.ValidationError({'message': 'your new password is the same', })
+            raise serializers.ValidationError("Old password for authentication is wrong")
+        if not newPassword.isalnum():
+            raise serializers.ValidationError("New password is not alpha-numerical")
         return attrs
 
     def save(self):

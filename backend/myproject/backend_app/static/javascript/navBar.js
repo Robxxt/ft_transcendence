@@ -15,7 +15,7 @@ export function createNavBar() {
 
     // create html
     navBar.innerHTML = `
-        <ul class="nav nav justify-content-end bg-white">
+        <ul class="nav nav justify-content-end bg-dark">
             <li class="nav-item">
                 <a class="nav-link" href="/start" data-link>Start</a>
             </li>
@@ -25,8 +25,8 @@ export function createNavBar() {
             <li>
                 <a href="#" id="logoutButton" class="nav-link">Logout</a>
             </li>
-            <li class="navbar-text"">
-                ${username}
+            <li class="navbar-text text-white">
+                ${username}&nbsp;&nbsp;&nbsp;
             </li>
             <li>
                 <img id="avatar" src="" alt="Avatar" width=50 height=50 class="rounded-circle"/>
