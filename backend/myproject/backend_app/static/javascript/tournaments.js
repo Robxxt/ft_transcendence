@@ -96,6 +96,14 @@ function createTournamentCard(tournament) {
                             ${tournament.player2_name ? `<li>Player 2: ${escapeHtml(tournament.player2_name)}</li>` : ''}
                             ${tournament.player3_name ? `<li>Player 3: ${escapeHtml(tournament.player3_name)}</li>` : ''}
                             ${tournament.player4_name ? `<li>Player 4: ${escapeHtml(tournament.player4_name)}</li>` : ''}
+                            </ul>
+                        <!-- Add horizontal divider -->
+                        <hr class="my-4">
+
+                        <!-- List of games -->
+                        <ul class="list-unstyled">
+                            ${tournament.game1 ? `<li>Game 1: ${escapeHtml(tournament.player1_name)} vs. ${escapeHtml(tournament.player2_name)}</li>` : ''}
+                            ${tournament.game2 ? `<li>Game 2: ${escapeHtml(tournament.player3_name)} vs. ${escapeHtml(tournament.player4_name)}</li>` : ''}
                         </ul>
                     </div>
                     <div class="mt-3 text-center">
