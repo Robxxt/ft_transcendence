@@ -31,6 +31,17 @@ class UserDisplayNameSetSerializer(serializers.ModelSerializer):
         model = User
         fields = ["newDisplayName"]
 
+    def validate_newDisplayName(self, value):
+        if User.objects.filter(username=value).exists() or User.objects.filter(display_name=value).exists():
+            raise serializers.ValidationError("The display name cannot be the same as an existing username.")
+        return value
+
+    def save(self, **kwargs):
+        user = self.context["request"].user
+        user.display_name = self.validated_data["display_name"]
+        user.save()
+        return user
+
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, min_length=8, max_length=20)
 
@@ -64,7 +75,7 @@ class ChangePasswordSerializer(serializers.Serializer):
             raise serializers.ValidationError("New password is not alpha-numerical")
         return attrs
 
-    def save(self):
+    def save(self, **kwargs):
         user = self.context['request'].user
         user.password = make_password(self.validated_data['newPassword'])
         user.save()

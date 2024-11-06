@@ -100,13 +100,14 @@ def getDisplayName(request):
 @authentication_classes([TokenAuthentication])
 def setDisplayName(request):
     user = request.user
-    print(request.data)
-    serializer = UserDisplayNameSetSerializer(instance=user, data=request.data, partial=True)
+    if request.data["newDisplayName"] == user.username:
+        return Response(status=status.HTTP_200_OK)
+    serializer = UserDisplayNameSetSerializer(instance=user, data=request.data, partial=True, context={'request' : request})
     if serializer.is_valid():
         serializer.save()
         return Response(status=status.HTTP_200_OK)
     else:
-        return Response(status.HTTP_409_CONFLICT)
+        return Response(status=status.HTTP_409_CONFLICT)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
