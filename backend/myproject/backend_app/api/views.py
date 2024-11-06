@@ -21,7 +21,8 @@ from backend_app.api.serializer import (RegisterSerializer,
                                         UserNameSerializer,
                                         PongGameSerializer,
                                         UserDisplayNameGetSerializer,
-                                        UserDisplayNameSetSerializer)
+                                        UserDisplayNameSetSerializer,
+                                        TictacGameResultSerializer)
 
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
@@ -165,9 +166,11 @@ def removeFriend(request):
 @authentication_classes([TokenAuthentication])
 def gameList(request):
     user = request.user
-    queryset = PongGame.objects.filter(room__player1=user) | PongGame.objects.filter(room__player2=user)
-    serializer = PongGameSerializer(queryset, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
+    queryset_pong = PongGame.objects.filter(room__player1=user) | PongGame.objects.filter(room__player2=user)
+    serializer_pong = PongGameSerializer(queryset_pong, many=True)
+    queryset_tictactoe = TictacGame.objects.filter(player1=user)
+    serializer_tictactoe = TictacGameResultSerializer(queryset_tictactoe, many=True)
+    return Response(serializer_pong.data + serializer_tictactoe.data, status=status.HTTP_200_OK)
 
 class UserListCreate(generics.ListCreateAPIView):
     queryset = User.objects.all()

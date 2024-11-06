@@ -136,7 +136,6 @@ function handleChangePasswordDiv(app, username) {
             }
         })
         .then(data => {
-            console.log(data);
             for (let key in data)
                 passwordChangeStatus.textContent = data[key];
         })

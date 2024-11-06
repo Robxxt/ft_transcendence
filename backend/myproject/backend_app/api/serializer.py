@@ -110,6 +110,25 @@ class PongGameSerializer(serializers.ModelSerializer):
         data.pop('room')
         return data
 
+class TictacGameResultSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TictacGame
+        fields = ["player1", "player2", "winner", "is_draw", "created_at"]
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data["date"] = instance.created_at.date().isoformat()
+        data["time"] = instance.created_at.time().strftime('%H:%M')
+        data.pop("created_at")
+        if instance.is_draw:
+            data["result"] = "0:0"
+        elif instance.winner == instance.player1:
+            data["result"] = "1:0"
+        else:
+            data["result"] = "0:1"
+        data.pop("is_draw")
+        return data
+
 class ChangeAvatarSerialzer(serializers.Serializer):
     avatar = serializers.ImageField(required=True)
     
