@@ -21,9 +21,7 @@ export function tictacView() {
 	.then(html => {
 		appDiv.innerHTML = html;
 
-		const player1 = username; // leave just 1 variable
-		const player2 = "Default2";
-		const game = new TicTacToeController(new TicTacToeModel(), new TicTacToeView(), player1, player2, usertoken);
+		const game = new TicTacToeController(new TicTacToeModel(), new TicTacToeView(), username, 'Prof. Procrastinator', usertoken);
 
 	})
 	.catch(error => {
@@ -67,9 +65,7 @@ class TicTacToeModel {
 	}
 
 	isEnd() {
-		if (this.isWin()) {
-			return true;
-		}
+		if (this.isWin()) return true;
 		if (!this.canPlaceRing()) {
 			this.upd.draw = true;
 			return true;
@@ -81,7 +77,6 @@ class TicTacToeModel {
 		for (let i = 0; i !=3; i++) {
 			if(cell[i] == null)
 				continue;
-
 			return cell[i] == this.upd.turn;
 		}
 		return false;
@@ -117,25 +112,17 @@ class TicTacToeModel {
 		let redRing = this.board[boardCell].indexOf(0);
 		let blueRing = this.board[boardCell].indexOf(1);
 		let rings = [redRing, blueRing].filter(ring => ring !== -1);
-		if (rings.length === 0) {
-			return true;
-		}
-		if (Math.min(...rings) > ringSize) {
-			return true;
-		}
+		if (rings.length === 0) return true;
+		if (Math.min(...rings) > ringSize) return true;
 		return false;
 	}
 
 	canPlaceRing() {
 		for (let cell = 0; cell != 2; cell++) {
 			let unusedRing = this.sides[this.upd.turn ^ 1][cell].indexOf(null);
-			if (unusedRing == -1) {
-				continue;
-			}
+			if (unusedRing == -1) continue;
 			for (let boardCell = 0; boardCell != 9; boardCell++) {
-				if (this.isRingFits(boardCell, unusedRing)) {
-					return true;
-				}
+				if (this.isRingFits(boardCell, unusedRing)) return true;
 			}
 		}
 		return false;
@@ -161,9 +148,7 @@ class TicTacToeModel {
 		}
 
 		for (let ring = 0; ring != 3; ring++) {
-			if (this.sides[index[0]][index[1]][ring] == 'used') {
-				continue;
-			}
+			if (this.sides[index[0]][index[1]][ring] == 'used') continue;
 			if (this.sides[index[0]][index[1]][ring] == 'selected') {
 				this.sides[index[0]][index[1]][ring] = null;
 				this.upd.isSelected = false;
@@ -183,20 +168,14 @@ class TicTacToeModel {
 	}
 
 	placeRing(index) {
-		if (isNaN(index)) {
-			return false;
-		}
+		if (isNaN(index)) return false;
 		let isEmpty = this.board[index].indexOf(null);
-		if (isEmpty == -1) {
-			return false;
-		}
+		if (isEmpty == -1) return false;
 		if (this.upd.isSelected == false)
 		return false;
 		for (let ring = 0; ring != 3; ring++) {
 			if (this.board[index][ring] != null) {
-				if (this.upd.ringSize > ring) {
-					return false;
-				}
+				if (this.upd.ringSize > ring) return false;
 			}
 			if (this.upd.ringSize == ring) {
 				if (this.board[index][ring] == null) {
@@ -217,9 +196,7 @@ class TicTacToeModel {
 
 	containsNan(index) {
 		for (let i = 0; i != index.length; i++) {
-			if (isNaN(index[i])) {
-				return true;
-			}
+			if (isNaN(index[i])) return true;
 		}
 		return false;
 	}
@@ -372,38 +349,41 @@ class TicTacToeController {
 		this.model = model;
 		this.view = view;
 		this.winner = null;
-		this.first = null;
 
 		this.player1 = player1;
 		this.player2 = player2;
 		this.token = token;
-		this.player1Color = localStorage.getItem("player1Color");
-		if (!this.player1Color) {
-			this.player1Color = getCssVariable('--player1-color');
-		}
-		this.player2Color = localStorage.getItem("player2Color");
-		if (!this.player2Color) {
-			this.player2Color = getCssVariable('--player2-color');
-		}
 
-		this.restartButton = document.getElementById('restartButton');
+		this.player1Color = localStorage.getItem("player1Color") || getCssVariable('--player1-color');
+		this.player2Color = localStorage.getItem("player2Color") || getCssVariable('--player2-color');
+
 		this.howToPlayButton = document.getElementById('howToPlayButton');
-		this.settingsButton = document.getElementById('settingsButton');
-		this.submitButton = document.getElementById('submitButton');
-
-		this.settingsForm = document.getElementById('settingsForm');
-
-		this.gameEndMessage = document.getElementById('gameEndMessage');
+		this.settingsSetup = document.getElementById('settings');	// ?
+		this.restartButton = document.getElementById('restartButton');
 		this.instuctions = document.getElementById('instructions');
-		this.settingsSetup = document.getElementById('settings');
+		this.settingsButton = document.getElementById('settingsButton');	// ?
+		this.submitButton = document.getElementById('submitButton');
+		this.settingsForm = document.getElementById('settingsForm');
+		this.gameEndMessage = document.getElementById('gameEndMessage');
+		this.colorBoxes = document.querySelectorAll('.color-box');
 
-		this.restartButton.addEventListener('click', () => this.startGame());
 		this.howToPlayButton.addEventListener('click', () => this.showInstructions(true));
 		this.instuctions.addEventListener('click', () => this.showInstructions(false));
 		this.settingsButton.addEventListener('click', () => this.settings(true));
-		this.submitButton.addEventListener('click', () => this.settings(false));
+		this.submitButton.addEventListener('click', () => {
+			const player2Name = document.getElementById('player2NameInput').value;
+			if (player2Name) {
+				document.getElementById("player2-name").textContent = player2Name;
+				document.getElementById("player2Name").textContent = player2Name;
+				this.player2 = player2Name;
+			}
+			this.settings(false);
+		});
 
-		this.colorBoxes = document.querySelectorAll('.color-box');
+		this.restartButton.addEventListener('click', () => this.startGame());
+
+		window.addEventListener("DOMContentLoaded", this.loadPlayerColors);
+
 		this.colorBoxes.forEach(box => {
 			box.addEventListener('click', () => {
 				const selectedColor = box.getAttribute('data-color');
@@ -417,26 +397,22 @@ class TicTacToeController {
 			});
 		});
 
-		// Dynamically update the names
-		document.getElementById("player1-name").textContent = this.player1;
-		document.getElementById("player2-name").textContent = this.player2;2
-		this.view.bindSideClick(this.handleSideClick);
-		this.view.bindBoardClick(this.handleBoardClick);
+		window.addEventListener('keydown', (event) => {
+			if (event.key === 'Escape' && this.settingsSetup.classList.contains('show')) this.settings(false);
+			if (event.key === 'Escape' && this.instuctions.classList.contains('show')) this.showInstructions(false);
+		});
 
+		window.addEventListener('keyup', (event) => {
+			if (event.key === 'Enter' && this.settingsSetup.classList.contains('show')) this.submitButton.click();
+			if (event.key === 'Enter' && this.instuctions.classList.contains('show')) this.showInstructions(false);
+		});
+
+		this.updatePlayerNames();
 		this.updateColors(this.player1Color, this.player2Color);
 		this.startGame();
 
-		// Escape
-		window.addEventListener('keydown', (event) => {
-			if (event.key === 'Escape' && this.settingsSetup.classList.contains('show')) {
-				this.settings(false);
-			}
-			if (event.key === 'Escape' && this.instuctions.classList.contains('show')) {
-				this.showInstructions(false);
-			}
-		});
-
-		window.addEventListener("DOMContentLoaded", this.loadPlayerColors);
+		this.view.bindSideClick(this.handleSideClick);
+		this.view.bindBoardClick(this.handleBoardClick);
 	}
 
 	settings(show) {
@@ -444,19 +420,18 @@ class TicTacToeController {
 		this.updateColors(this.player1Color, this.player2Color);
 	}
 
-	// Function to check for saved colors in local storage on page load
 	loadPlayerColors() {
-		// Retrieve colors from local storage
 		const savedPlayer1Color = localStorage.getItem("player1Color");
 		const savedPlayer2Color = localStorage.getItem("player2Color");
+		if (savedPlayer1Color) document.documentElement.style.setProperty("--player1-color", savedPlayer1Color);
+		if (savedPlayer2Color) document.documentElement.style.setProperty("--player2-color", savedPlayer2Color);
+	}
 
-		// If colors are saved, set them as CSS variables
-		if (savedPlayer1Color) {
-			document.documentElement.style.setProperty("--player1-color", savedPlayer1Color);
-		}
-		if (savedPlayer2Color) {
-			document.documentElement.style.setProperty("--player2-color", savedPlayer2Color);
-		}
+	updatePlayerNames() {
+		document.getElementById("player1-name").textContent = this.player1;
+		document.getElementById("player2-name").textContent = this.player2;
+		document.getElementById("player1Name").textContent = this.player1;
+		document.getElementById("player2Name").textContent = this.player2;
 	}
 
 	updateColors(color1, color2) {
@@ -485,48 +460,34 @@ class TicTacToeController {
 	}
 
 	handleSideClick = index => {
-		if (!this.model.selectRing(index)) {
-			return;
-		}
-		if (this.first === null) {
-			this.first = this.model.upd.turn;
-		}
+		if (!this.model.selectRing(index)) return;
 		this.view.renderSides(this.model.sides);
 	}
 
 	handleBoardClick = index => {
-		if (!this.model.placeRing(index)) {
-			return;
-		}
-		if (this.model.upd.turn === 2)
-			return;
+		if (!this.model.placeRing(index)) return;
+		if (this.model.upd.turn === 2) return;
 		this.view.renderBoard(this.model.board);
 		this.view.renderSides(this.model.sides);
-		if (this.model.isEnd()) {
-			this.endGame();
-		}
-		else {
-			this.model.switchTurn();
-		}
+		this.model.isEnd() ? this.endGame() : this.model.switchTurn();
 	}
 
 	endGame() {
 		if (this.model.upd.draw == true) {
 			this.gameEndMessage.innerText = "DRAW";
 			this.gameEndMessage.classList.add('draw');
+			console.log("it's a draw in tictac game")
 		} else {
 			this.view.renderBoard(this.model.board);
 			this.gameEndMessage.innerText = `${this.model.upd.turn ? this.player2 : this.player1}\nWINS`;
 			this.gameEndMessage.classList.add(`${this.model.upd.turn ? "right" : "left"}-wins`);
 			this.winner = this.model.upd.turn ? this.player2 : this.player1;
-			console.log(`${this.model.upd.turn ? this.player2 : this.player1} wins`);
+			console.log(`${this.model.upd.turn ? this.player2 : this.player1} wins tictac game`);
 		}
 		this.gameEndMessage.classList.add('show');
-		this.saveGameResult(this.token, this.player1, this.player2, this.winner, this.model.upd.draw)
+		this.saveGameResult();
 
-		setTimeout(() => {
-			this.gameEndMessage.classList.remove('show');
-		}, 2000);
+		setTimeout(() => this.gameEndMessage.classList.remove('show'), 2000);
 	}
 
 	showInstructions(show) {
@@ -544,29 +505,23 @@ class TicTacToeController {
 		this.instuctions.classList.toggle('show', show);
 	}
 
-	saveGameResult(token, player1, player2, winner, draw) {
-		// console.log('token in save function: ', token);
-		console.log(`player1 ${player1}, player2 ${player2}, winner ${winner}, is_draw ${draw}`);
+	saveGameResult() {
 		fetch(`/api/tictac/save-result/`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
-				"Authorization": `Token ${token}`
+				"Authorization": `Token ${this.token}`
 			},
 			body: JSON.stringify({
-				player1: player1,
-				player2: player2,
-				winner: winner,
-				is_draw: draw,
+				player1: this.player1,
+				player2: this.player2,
+				winner: this.winner,
+				is_draw: this.model.upd.draw,
 			})
 		})
 		.then(response => response.json())
 		.then(data => {
-			if (data.status === 'success') {
-				console.log('Game result saved');
-			} else {
-				console.error('Failed to save result:', data.message);
-			}
+			data.status === 'success' ? console.log('Tictac game result saved') : console.error('Failed to save result:', data.message);
 		})
 		.catch(error => console.error('Error saving game result:', error));
 	}

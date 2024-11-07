@@ -121,8 +121,12 @@ function handleChangePasswordDiv(app, username) {
             body: JSON.stringify(data)
         })
         .then(response => {
-            if (response.ok)
+            if (response.ok) {
                 passwordChangeStatus.textContent = "Password changed successfully.";
+                currentPasswordInput.value = "";
+                newPasswordInput.value = "";
+                confirmPasswordInput.value = "";
+            }
             else {
                 if (response.status === 400) {
                     return response.json()
@@ -132,7 +136,6 @@ function handleChangePasswordDiv(app, username) {
             }
         })
         .then(data => {
-            console.log(data);
             for (let key in data)
                 passwordChangeStatus.textContent = data[key];
         })
@@ -243,10 +246,7 @@ function handleSetDisplayName(app, username) {
                 displayName.value = "";    
             }
             else {
-                if (response.status === 404) {
-                    status.innerHTML = "User name does not exist."
-                }
-                else if (response.status === 409) {
+                if (response.status === 409) {
                     status.innerHTML = "Name sadly already taken. But twas a cool name.";
                 }
                 else
