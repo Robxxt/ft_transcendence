@@ -5,7 +5,7 @@ export async function loadPage(app) {
     const players = JSON.parse(localStorage.getItem('localGamePlayers'));
     if (!players) {
         console.error('No players found');
-        navigateTo('/pong'); // or wherever you want to redirect if there are no players
+        navigateTo('/pong');
         return;
     }
 
@@ -27,10 +27,24 @@ export async function loadPage(app) {
             // Update the game title with players
             const gameTitle = app.querySelector('#game-title');
             gameTitle.innerHTML = `
-                <span class="text-primary"> Challenger ${challenger}</span>
+                <span class="text-primary">Challenger ${challenger}</span>
                 <span class="text-white">vs.</span>
-                <span class="text-danger"> Opponent ${opponent}</span>
+                <span class="text-danger">Opponent ${opponent}</span>
             `;
+
+            // Set up hover functionality for the manual
+            const manualTrigger = app.querySelector('.manual-trigger');
+            const gameManual = new bootstrap.Collapse(document.getElementById('gameManual'), {
+                toggle: false
+            });
+
+            manualTrigger.addEventListener('mouseenter', () => {
+                gameManual.show();
+            });
+
+            manualTrigger.addEventListener('mouseleave', () => {
+                gameManual.hide();
+            });
         })
         .catch(error => {
             console.error(error);
