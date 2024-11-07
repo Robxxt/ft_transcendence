@@ -42,7 +42,7 @@ async function fetchGameRoomData(roomId) {
 function renderGameRoom(app, templateHtml, roomId, data) {
     app.innerHTML = templateHtml;
     document.getElementById('room-id').textContent = roomId;
-    document.getElementById('username').textContent = data.current_user?.username || 'Unknown Player';
+    document.getElementById('username').textContent = data.current_user?.display_name || 'Unknown Player';
 }
 
 function updateRoomState(state) {
@@ -156,7 +156,7 @@ function updateGameState(gameState, ctx, canvas) {
         if (gameState.game_state === 'FINISHED') {
             ctx.fillStyle = 'red';
             ctx.font = '48px Arial';
-            ctx.fillText(`${gameState.winner} wins!`, canvas.width / 2 - 100, canvas.height / 2);
+            ctx.fillText(`${gameState.winner_display_name} wins!`, canvas.width / 2 - 100, canvas.height / 2);
         }
     }
 
@@ -276,7 +276,7 @@ function sendMessage(chatSocket, chatInput, data) {
     const message = chatInput.value.trim();
     if (message) {
         chatSocket.send(JSON.stringify({
-            'username': data.current_user.username,
+            'username': data.current_user.display_name,
             'message': message,
             'timestamp': new Date().toLocaleTimeString()
         }));

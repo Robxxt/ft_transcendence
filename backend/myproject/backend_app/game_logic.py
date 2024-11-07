@@ -8,8 +8,11 @@ import random
 from asgiref.sync import sync_to_async
 import time
 from django.utils import timezone
+from django.contrib.auth import get_user_model
 import math
 from enum import Enum
+
+User = get_user_model()
 
 class GameState(Enum):
     WAITING = 1
@@ -52,7 +55,19 @@ class GameLogic:
         self.speed_boost_active = False
         self.speed_boost_end_time = 0
         self.player_names = {1: "", 2: "", 3: "AI"}
+        self.winner = None
+        self.winner_display_name = None
         self.reset_game()
+
+    async def set_winner(self):
+        self.winner = self.player_names[1] if self.score1 > self.score2 else self.player_names[2]
+        try:
+            winner_user = await sync_to_async(User.objects.get)(username=self.winner)
+            self.winner_display_name = winner_user.display_name
+        except User.DoesNotExist:
+            self.winner_display_name = "Unknown Player"
+
+
 
     @database_sync_to_async
     def _get_player_names(self):
@@ -83,7 +98,7 @@ class GameLogic:
         self.game_state = GameState.DISCONNECTED
         disconnected_player = await self.get_disconnected_player(disconnected_player_channel)
         winner = 3 - disconnected_player  # If player 1 disconnected, winner is 2, and vice versa
-
+        await self.set_winner()
         await self._finish_game_db_ops(disconnected=True, winner=self.player_names[winner])
         await self.update_game_state()
         self.stop_game_loop()
@@ -111,6 +126,12 @@ class GameLogic:
             player1 = self.pong_game.room.player1
             player2 = self.pong_game.room.player2
 
+            if self.pong_game.winner == player1.username:
+                player1.won += 1
+                player2.lost += 1
+            elif self.pong_game.winner == player2.username:
+                player2.won += 1
+                player1.lost += 1
             player1.save()
             player2.save()
 
@@ -216,6 +237,7 @@ class GameLogic:
             self._reset_ball()
             self.game_state = GameState.POINT_SCORED
         if self.score1 >= self.MAX_SCORE or self.score2 >= self.MAX_SCORE:
+            await self.set_winner()
             await self.finish_game()
 
 
@@ -268,6 +290,7 @@ class GameLogic:
             'score2': self.score2,
             'game_state': self.game_state.name,
             'winner': self.pong_game.winner,
+            'winner_display_name': self.winner_display_name,
             'paddle_width': self.PADDLE_WIDTH,
             'paddle_height': self.PADDLE_HEIGHT,
             'paddle_offset': self.PADDLE_OFFSET,

@@ -57,8 +57,11 @@ class ChangePasswordSerializer(serializers.Serializer):
     def validate(self, attrs):
         user = self.context['request'].user
         currentPassword = attrs['currentPassword']
+        newPassword = attrs["newPassword"]
         if not check_password(currentPassword, user.password):
-            raise serializers.ValidationError({'message': 'your new password is the same', })
+            raise serializers.ValidationError("Old password for authentication is wrong")
+        if not newPassword.isalnum():
+            raise serializers.ValidationError("New password is not alpha-numerical")
         return attrs
 
     def save(self):
@@ -141,7 +144,8 @@ class GameRoomSerializer(serializers.ModelSerializer):
             return {
                 'id': request.user.id,
                 'username': request.user.username,
-                'player_number': player_number
+                'player_number': player_number,
+                'display_name': request.user.display_name,
             }
         return None
 

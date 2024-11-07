@@ -77,9 +77,8 @@ def changePassword(request):
     serializer = ChangePasswordSerializer(data=request.data, context={'request' : request})
     if serializer.is_valid():
         serializer.save()
-        return Response({'message' : 'Password has been changed'}, status=status.HTTP_200_OK)
-    print("Validation errors:", serializer.errors)
-    return Response({'error': 2, 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=status.HTTP_200_OK)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
@@ -162,7 +161,7 @@ def removeFriend(request):
         user.friends.remove(user_friend)
     except User.DoesNotExist:
         return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
-    return Response(data, status=status.HTTP_200_OK)
+    return Response(status=status.HTTP_200_OK)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
