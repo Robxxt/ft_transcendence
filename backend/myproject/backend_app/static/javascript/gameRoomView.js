@@ -91,6 +91,7 @@ function showWinnerOverlay(winner) {
     winnerOverlay.classList.remove('d-none');
     const winnerDisplay = document.getElementById('winner-display');
     winnerDisplay.textContent = `${winner} wins the game!`;
+
     // Add click event to return home button
     const returnHomeBtn = document.getElementById('winner-home-btn');
     returnHomeBtn.addEventListener('click', () => {
@@ -99,6 +100,27 @@ function showWinnerOverlay(winner) {
 }
 
 
+
+// function handleGameMessage(event, ctx, canvas) {
+//     const data = JSON.parse(event.data);
+//     console.log("Game WebSocket message received:", data);
+
+//     if (data.action === 'game_state_update') {
+//         updateGameState(data.game_state, ctx, canvas);
+//         updateStartGameButton(
+//             data.game_state.game_state,
+//             gameRoomData.current_user.player_number,
+//             data.game_state.player1_ready,
+//             data.game_state.player2_ready,
+//             data.game_state.player_names
+//         );
+//         if (data.game_state.game_state === 'FINISHED') {
+//             showWinnerOverlay(data.game_state.winner_display_name, data.game_state.disconnected);
+//         }
+//     } else if (data.action === 'room_state_update') {
+//         updateRoomState(data.state);
+//     }
+// }
 
 function handleGameMessage(event, ctx, canvas) {
     const data = JSON.parse(event.data);
@@ -113,14 +135,13 @@ function handleGameMessage(event, ctx, canvas) {
             data.game_state.player2_ready,
             data.game_state.player_names
         );
-        // if (data.game_state.disconnected) {
-        //     showDisconnectedOverlay();
-        // }
         if (data.game_state.game_state === 'FINISHED') {
             showWinnerOverlay(data.game_state.winner_display_name);
         }
     } else if (data.action === 'room_state_update') {
         updateRoomState(data.state);
+    } else if (data.action === 'player_disconnected') {
+        showDisconnectedOverlay();
     }
 }
 

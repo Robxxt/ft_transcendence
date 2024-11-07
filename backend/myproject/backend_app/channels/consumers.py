@@ -83,7 +83,20 @@ class PongConsumer(AsyncWebsocketConsumer):
             self.channel_name
         )
         await self.game_logic.handle_player_disconnect(self.channel_name)
+        await self.channel_layer.group_send(
+            self.room_group_name,
+            {
+                'type': 'player_disconnected',
+                'message': 'A player has disconnected.'
+            }
+        )
 
+    async def player_disconnected(self, event):
+        # Send message to frontend to handle disconnect
+        await self.send(text_data=json.dumps({
+            'action': 'player_disconnected',
+            'message': event['message']
+        }))
 
 
     async def receive(self, text_data):
