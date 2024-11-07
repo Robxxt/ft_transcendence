@@ -31,6 +31,17 @@ class UserDisplayNameSetSerializer(serializers.ModelSerializer):
         model = User
         fields = ["newDisplayName"]
 
+    def validate_newDisplayName(self, value):
+        if User.objects.filter(username=value).exists() or User.objects.filter(display_name=value).exists():
+            raise serializers.ValidationError("The display name cannot be the same as an existing username.")
+        return value
+
+    def save(self, **kwargs):
+        user = self.context["request"].user
+        user.display_name = self.validated_data["display_name"]
+        user.save()
+        return user
+
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, min_length=8, max_length=20)
 
@@ -57,11 +68,14 @@ class ChangePasswordSerializer(serializers.Serializer):
     def validate(self, attrs):
         user = self.context['request'].user
         currentPassword = attrs['currentPassword']
+        newPassword = attrs["newPassword"]
         if not check_password(currentPassword, user.password):
-            raise serializers.ValidationError({'message': 'your new password is the same', })
+            raise serializers.ValidationError("Old password for authentication is wrong")
+        if not newPassword.isalnum():
+            raise serializers.ValidationError("New password is not alpha-numerical")
         return attrs
 
-    def save(self):
+    def save(self, **kwargs):
         user = self.context['request'].user
         user.password = make_password(self.validated_data['newPassword'])
         user.save()
@@ -94,6 +108,25 @@ class PongGameSerializer(serializers.ModelSerializer):
         data['player1'] = instance.room.player1.username
         data['player2'] = instance.room.player2.username
         data.pop('room')
+        return data
+
+class TictacGameResultSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TictacGame
+        fields = ["player1", "player2", "winner", "is_draw", "created_at"]
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data["date"] = instance.created_at.date().isoformat()
+        data["time"] = instance.created_at.time().strftime('%H:%M')
+        data.pop("created_at")
+        if instance.is_draw:
+            data["result"] = "0:0"
+        elif instance.winner == instance.player1:
+            data["result"] = "1:0"
+        else:
+            data["result"] = "0:1"
+        data.pop("is_draw")
         return data
 
 class ChangeAvatarSerialzer(serializers.Serializer):
@@ -141,7 +174,8 @@ class GameRoomSerializer(serializers.ModelSerializer):
             return {
                 'id': request.user.id,
                 'username': request.user.username,
-                'player_number': player_number
+                'player_number': player_number,
+                'display_name': request.user.display_name,
             }
         return None
 

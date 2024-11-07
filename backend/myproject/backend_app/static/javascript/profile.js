@@ -121,21 +121,25 @@ function handleChangePasswordDiv(app, username) {
             body: JSON.stringify(data)
         })
         .then(response => {
-            if (response.ok)
+            if (response.ok) {
                 passwordChangeStatus.textContent = "Password changed successfully.";
+                currentPasswordInput.value = "";
+                newPasswordInput.value = "";
+                confirmPasswordInput.value = "";
+            }
             else {
                 if (response.status === 400) {
-                    passwordChangeStatus.textContent = "New password was not rule conform.";
+                    return response.json()
                 }
-                else if (response.status === 401) {
-                    passwordChangeStatus.textContent = "Old password was wrong.";
-                } 
                 else
                     throw new Error(response.statusText);
             }
         })
+        .then(data => {
+            for (let key in data)
+                passwordChangeStatus.textContent = data[key];
+        })
         .catch(error => {
-            passwordChangeStatus.textContent = "Something went wrong while trying to change the password.";
             console.error(error);
         });
     });
@@ -242,10 +246,7 @@ function handleSetDisplayName(app, username) {
                 displayName.value = "";    
             }
             else {
-                if (response.status === 404) {
-                    status.innerHTML = "User name does not exist."
-                }
-                else if (response.status === 409) {
+                if (response.status === 409) {
                     status.innerHTML = "Name sadly already taken. But twas a cool name.";
                 }
                 else
@@ -272,7 +273,9 @@ function handleWinLossRecordDiv(app, username) {
         .then(response => response.json())
         .then(data => {
             const winLossHTML = `
-                <h1 class="display-l" style="color: magenta;">${data.wins} : ${data.losses}</h1>
+                <div class="text-center">
+                <h1 style="color: magenta;">${data.wins} : ${data.losses}</h1>
+                </div>
             `;
             winLossRecordDiv.innerHTML += winLossHTML;
         })
@@ -455,9 +458,6 @@ function addFriend(username, friend, isFriend) {
             if (!response.ok) {
                 throw new Error("Network response was not ok");
             }
-            return response.json();
-        })
-        .then(data => {
             location.reload();
         })
         .catch(error => {

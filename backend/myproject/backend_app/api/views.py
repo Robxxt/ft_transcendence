@@ -21,7 +21,8 @@ from backend_app.api.serializer import (RegisterSerializer,
                                         UserNameSerializer,
                                         PongGameSerializer,
                                         UserDisplayNameGetSerializer,
-                                        UserDisplayNameSetSerializer)
+                                        UserDisplayNameSetSerializer,
+                                        TictacGameResultSerializer)
 
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
@@ -73,9 +74,8 @@ def changePassword(request):
     serializer = ChangePasswordSerializer(data=request.data, context={'request' : request})
     if serializer.is_valid():
         serializer.save()
-        return Response({'message' : 'Password has been changed'}, status=status.HTTP_200_OK)
-    print("Validation errors:", serializer.errors)
-    return Response({'error': 2, 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=status.HTTP_200_OK)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
@@ -101,13 +101,14 @@ def getDisplayName(request):
 @authentication_classes([TokenAuthentication])
 def setDisplayName(request):
     user = request.user
-    print(request.data)
-    serializer = UserDisplayNameSetSerializer(instance=user, data=request.data, partial=True)
+    if request.data["newDisplayName"] == user.username:
+        return Response(status=status.HTTP_200_OK)
+    serializer = UserDisplayNameSetSerializer(instance=user, data=request.data, partial=True, context={'request' : request})
     if serializer.is_valid():
         serializer.save()
         return Response(status=status.HTTP_200_OK)
     else:
-        return Response(status.HTTP_409_CONFLICT)
+        return Response(status=status.HTTP_409_CONFLICT)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -158,16 +159,18 @@ def removeFriend(request):
         user.friends.remove(user_friend)
     except User.DoesNotExist:
         return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
-    return Response(data, status=status.HTTP_200_OK)
+    return Response(status=status.HTTP_200_OK)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 @authentication_classes([TokenAuthentication])
 def gameList(request):
     user = request.user
-    queryset = PongGame.objects.filter(room__player1=user) | PongGame.objects.filter(room__player2=user)
-    serializer = PongGameSerializer(queryset, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
+    queryset_pong = PongGame.objects.filter(room__player1=user) | PongGame.objects.filter(room__player2=user)
+    serializer_pong = PongGameSerializer(queryset_pong, many=True)
+    queryset_tictactoe = TictacGame.objects.filter(player1=user)
+    serializer_tictactoe = TictacGameResultSerializer(queryset_tictactoe, many=True)
+    return Response(serializer_pong.data + serializer_tictactoe.data, status=status.HTTP_200_OK)
 
 class UserListCreate(generics.ListCreateAPIView):
     queryset = User.objects.all()
