@@ -167,32 +167,3 @@ class TictacGameSerializer(serializers.ModelSerializer):
     class Meta:
         model = TictacGame
         fields = '__all__'
-
-class TournamentCreateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Tournament
-        fields = ['tournament_name']
-
-class TournamentListSerializer(serializers.ModelSerializer):
-    player1_name = serializers.CharField(source='player1.username', read_only=True)
-    player2_name = serializers.CharField(source='player2.username', read_only=True)
-    player3_name = serializers.CharField(source='player3.username', read_only=True)
-    player4_name = serializers.CharField(source='player4.username', read_only=True)
-
-    class Meta:
-        model = Tournament
-        fields = ['tournament_name', 'player1_name', 'player2_name', 'player3_name', 'player4_name', 'id', 'game1', 'game2']
-
-class PlayerAddSerializer(serializers.Serializer):
-    player_name = serializers.CharField(max_length=150)
-
-    def validate(self, data):
-        player_name = data.get('player_name')
-
-        try:
-            user = User.objects.get(username=player_name)
-        except User.DoesNotExist:
-            raise serializers.ValidationError({"detail": "User not found."})
-
-        data['user'] = user
-        return data

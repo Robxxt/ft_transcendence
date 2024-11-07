@@ -24,10 +24,7 @@ from backend_app.api.serializer import (RegisterSerializer,
                                         UserNameSerializer,
                                         PongGameSerializer,
                                         UserDisplayNameGetSerializer,
-                                        UserDisplayNameSetSerializer,
-                                        TournamentCreateSerializer,
-                                        TournamentListSerializer,
-                                        PlayerAddSerializer)
+                                        UserDisplayNameSetSerializer)
 
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
@@ -297,75 +294,6 @@ def getPng(request):
         raise Http404("Avatar not found")
     return FileResponse(open(file_path, 'rb'), content_type='image/png')
 
-class TournamentCreateView(generics.CreateAPIView):
-    queryset = Tournament.objects.all()
-    serializer_class = TournamentCreateSerializer
-
-
-    def create(self, request, *args, **kwargs):
-        player_name = request.data.get('player_name')
-        if not player_name:
-            raise ValidationError({"detail": "Player name is required to create a tournament."})
-
-        try:
-            user = User.objects.get(username=player_name)
-        except User.DoesNotExist:
-            raise ValidationError({"detail": "User not found."})
-        
-        tournament_name = request.data.get('tournament_name')
-        if Tournament.objects.filter(
-                tournament_name=tournament_name,
-                state__in=[Tournament.State.WAITING, Tournament.State.FULL]
-            ).exists():
-            # Return a custom error message and a 409 Conflict status
-            return Response({"detail": "A tournament with this name already exists and is not finished."}, status=status.HTTP_409_CONFLICT)
-
-
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save(player1=user)
-
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
-
-class TournamentListView(generics.ListAPIView):
-    queryset = Tournament.objects.exclude(state=Tournament.State.FINISHED).order_by('-created_at')
-    serializer_class = TournamentListSerializer
-
-
-
-class TournamentAddPlayerView(generics.GenericAPIView):
-    serializer_class = PlayerAddSerializer
-
-    def post(self, request, tournament_id, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = serializer.validated_data['user']
-
-        try:
-            tournament = Tournament.objects.get(id=tournament_id, state=Tournament.State.WAITING)
-        except Tournament.DoesNotExist:
-            raise ValidationError({"detail": "Tournament not found or it is not in a waiting state."})
-
-        # Check if the user is already part of the tournament
-        if user == tournament.player1 or user == tournament.player2 or user == tournament.player3 or user == tournament.player4:
-            raise ValidationError({"detail": "Player is already part of the tournament."})
-
-        # Add player to the tournament
-        if not tournament.player2:
-            tournament.player2 = user
-        elif not tournament.player3:
-            tournament.player3 = user
-        elif not tournament.player4:
-            tournament.player4 = user
-        else:
-            raise ValidationError({"detail": "Tournament is already full."})
-
-        tournament.save()
-
-        return Response({"detail": f"Player {user.username} has been added to the tournament '{tournament.tournament_name}'."},
-                        status=status.HTTP_200_OK)
 
 class PongGameDetailView(generics.RetrieveAPIView):
     serializer_class = PongGameSerializer
@@ -373,46 +301,6 @@ class PongGameDetailView(generics.RetrieveAPIView):
     def get_object(self):
         room_id = self.kwargs.get('room_id')
         return get_object_or_404(PongGame, room__id=room_id)
-
-class CheckGameStateView(APIView):
-
-    def post(self, request):
-        # Extract data from the request
-        tournament_id = request.data.get('tournament_id')
-        player_name = request.data.get('player_name')
-
-        # Validate input data
-        if not tournament_id or not player_name:
-            return Response({"error": "tournament_id and player_name are required."}, status=status.HTTP_400_BAD_REQUEST)
-
-        # Get the tournament instance
-        tournament = get_object_or_404(Tournament, id=tournament_id)
-
-        # Determine which game to check based on player_name
-        if player_name == tournament.player1.username or player_name == tournament.player2.username:
-            game_room = tournament.game1
-        elif player_name == tournament.player3.username or player_name == tournament.player4.username:
-            game_room = tournament.game2
-        else:
-            return Response({"error": "Player not part of this tournament."}, status=status.HTTP_400_BAD_REQUEST)
-
-        # Check the state of the game room
-        if not game_room:
-            return Response({"error": "Game room does not exist."}, status=status.HTTP_404_NOT_FOUND)
-
-        try:
-            # Check if a PongGame exists for the game room
-            pong_game = PongGame.objects.get(room=game_room)
-            if pong_game.winner is None:
-                # PongGame exists but has no winner
-                return Response({"game_room_id": game_room.id}, status=status.HTTP_200_OK)
-
-        except PongGame.DoesNotExist:
-            # PongGame does not exist; return game room ID
-            return Response({"game_room_id": game_room.id}, status=status.HTTP_200_OK)
-
-        # Default response (placeholder for future logic)
-        return Response({"message": "Winner already exists. Logic will be implemented later."}, status=status.HTTP_200_OK)
 
 @csrf_exempt
 def save_local_game(request):
