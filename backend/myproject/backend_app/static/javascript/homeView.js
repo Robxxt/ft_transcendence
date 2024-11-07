@@ -17,6 +17,27 @@ async function getFriendsList() {
     }
 }
 
+async function getDisplayName(foreignUsername = null) {
+    try {
+        const url = foreignUsername 
+            ? `/api/getDisplayName/?foreignusername=${encodeURIComponent(foreignUsername)}`
+            : '/api/getDisplayName/';
+            
+        const response = await fetch(url, {
+            headers: {
+                'Authorization': `Token ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        if (!response.ok) throw new Error('Failed to fetch display name');
+        const data = await response.json();
+        return data.display_name;
+    } catch (error) {
+        console.error('Error fetching display name:', error);
+        return null;
+    }
+}
+
 export function homeView() {
     const app = document.getElementById('app');
     const username = JSON.parse(localStorage.getItem('user')).name;
@@ -105,21 +126,27 @@ export function homeView() {
         `;
     });
 
-    document.getElementById('localGameForm').addEventListener('submit', (e) => {
+
+    document.getElementById('localGameForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         
-        // Get the current user's name from localStorage
+        // Get the current user's name and display name
         const currentUser = JSON.parse(localStorage.getItem('user'));
         const challenger = currentUser.name;
+        const challengerDisplayName = await getDisplayName();
 
         // Get the selected opponent from the dropdown
         const opponentSelect = document.getElementById('opponent');
         const opponent = opponentSelect.options[opponentSelect.selectedIndex].text;
+        const opponentId = opponentSelect.value;
+        const opponentDisplayName = await getDisplayName(opponent);
 
-        // Save both players to localStorage
+        // Save both players to localStorage with their display names
         const gamePlayers = {
             challenger: challenger,
-            opponent: opponent
+            challengerDisplayName: challengerDisplayName || challenger, // fallback to username if display name fetch fails
+            opponent: opponent,
+            opponentDisplayName: opponentDisplayName || opponent // fallback to username if display name fetch fails
         };
         localStorage.setItem('localGamePlayers', JSON.stringify(gamePlayers));
 

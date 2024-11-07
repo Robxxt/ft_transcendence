@@ -95,7 +95,18 @@ def changeAvatar(request):
 @permission_classes([IsAuthenticated])
 @authentication_classes([TokenAuthentication])
 def getDisplayName(request):
-    user = request.user
+    foreign_username = request.query_params.get('foreignusername', None)
+    if foreign_username:
+        try:
+            user = User.objects.get(username=foreign_username)
+        except User.DoesNotExist:
+            return Response(
+                {'error': 'User not found'}, 
+                status=status.HTTP_404_NOT_FOUND
+            )
+    else:
+        user = request.user
+    
     serializer = UserDisplayNameGetSerializer(user)
     return Response(serializer.data, status=status.HTTP_200_OK)
 

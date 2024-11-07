@@ -21,8 +21,8 @@ class PongGame {
         this.winner = null;
         this.keyState = {};
         const players = JSON.parse(localStorage.getItem('localGamePlayers'));
-        this.challenger = players?.challenger || 'Challenger';
-        this.opponent = players?.opponent || 'Opponent';
+        this.challenger = players?.challengerDisplayName || 'Challenger';
+        this.opponent = players?.opponentDisplayName || 'Opponent';
         this.timestamp_created = new Date().toISOString();
         document.addEventListener('keydown', (e) => this.handleKeyDown(e));
         document.addEventListener('keyup', (e) => this.handleKeyUp(e));
@@ -208,8 +208,8 @@ export async function loadPage(app) {
         return;
     }
 
-    const challenger = players.challenger;
-    const opponent = players.opponent;
+    const challenger = players.challengerDisplayName;
+    const opponent = players.opponentDisplayName;
 
     // fetch basic html
     fetch("/static/html/localGame.html")
