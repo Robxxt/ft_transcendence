@@ -272,7 +272,12 @@ export function homeView() {
         if (localStorage.getItem('tournamentState')) {
             localStorage.removeItem('tournamentState');
         }
-
+        if (localStorage.getItem('gameResults')) {
+            localStorage.removeItem('gameResults');
+        }
+        if (localStorage.getItem('gameState')) {
+            localStorage.removeItem('gameState');
+        }
         // Close modal and navigate
         localTournamentModal.hide();
         navigateTo('/local-tournament');

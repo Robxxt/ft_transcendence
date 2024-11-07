@@ -1,72 +1,6 @@
 import { navigateTo } from "./router.js";
 
-export async function updateWinLoss(winnerName, players) {
-    const loserName = winnerName === players.challenger ? players.opponent : players.challenger;
-    
-    const payload = {
-        winner_name: winnerName,
-        loser_name: loserName
-    };
-
-    try {
-        const response = await fetch('/api/update-win-loss', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(payload)
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        return await response.json();
-    } catch (error) {
-        console.error('Error updating win/loss stats:', error);
-        throw error;
-    }
-}
-
-export async function sendGameResultToApi(gameResult, players) {
-    const challengerName = players.challenger;
-    const opponentName = players.opponent;
-    
-    const winnerName = gameResult.winner === players.challengerDisplayName ? 
-        challengerName : opponentName;
-
-    const payload = {
-        challenger_name: challengerName,
-        opponent_name: opponentName,
-        winner_name: winnerName,
-        challenger_score: gameResult.scores[players.challengerDisplayName],
-        opponent_score: gameResult.scores[players.opponentDisplayName],
-        timestamp_created: gameResult.timestamp_created,
-        timestamp_finish: gameResult.timestamp_finish
-    };
-    console.log('Sending game result to API:', payload);
-
-    try {
-        const response = await fetch('/api/save-local-game', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(payload)
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        return await response.json();
-    } catch (error) {
-        console.error('Error saving game result:', error);
-        throw error;
-    }
-}
-
- export class PongGame {
+class PongGame {
     constructor(canvas) {
         this.canvas = canvas;
         this.ctx = canvas.getContext('2d');
@@ -125,7 +59,7 @@ export async function sendGameResultToApi(gameResult, players) {
     
     update() {
         if (this.isGameOver) {
-            this.draw();
+            this.draw(); // Keep drawing even after game is over
             return;
         }
 
@@ -194,6 +128,7 @@ export async function sendGameResultToApi(gameResult, players) {
         const isLeftPaddleWinner = this.leftPaddle.score >= 3;
         this.winner = isLeftPaddleWinner ? this.opponentDisplayName : this.challengerDisplayName;
         
+        // Create game result object with both timestamps
         const gameResult = {
             winner: this.winner,
             scores: {
@@ -204,14 +139,18 @@ export async function sendGameResultToApi(gameResult, players) {
             timestamp_finish: new Date().toISOString()
         };
         
+        // Store in localStorage
         localStorage.setItem('gameResults', JSON.stringify(gameResult));
         
+        // Send to API if store is true
         if (store) {
             const players = JSON.parse(localStorage.getItem('localGamePlayers'));
             
+            // Send game result to first API
             sendGameResultToApi(gameResult, players)
                 .catch(error => console.error('Failed to save game result:', error));
                 
+            // Update win/loss statistics
             const winnerName = gameResult.winner === players.challengerDisplayName ? 
                 players.challenger : players.opponent;
                 
@@ -219,11 +158,13 @@ export async function sendGameResultToApi(gameResult, players) {
                 .catch(error => console.error('Failed to update win/loss stats:', error));
         }
         
+        // Show the game over overlay
         const overlay = document.getElementById('gameOverOverlay');
         const winnerMessage = document.getElementById('winnerMessage');
         winnerMessage.textContent = `${this.winner} Wins!`;
         overlay.classList.remove('d-none');
         
+        // Add event listener for the home button
         document.getElementById('homeButton').addEventListener('click', () => {
             if (localStorage.getItem('gameResults')) {
                 localStorage.removeItem('gameResults');
@@ -238,9 +179,11 @@ export async function sendGameResultToApi(gameResult, players) {
     }
     
     draw() {
+        // Clear canvas
         this.ctx.fillStyle = '#000';
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
         
+        // Draw paddles
         this.ctx.fillStyle = '#fff';
         this.ctx.fillRect(this.leftPaddle.x - this.paddleWidth/2, 
                          this.leftPaddle.y - this.paddleHeight/2, 
@@ -249,27 +192,151 @@ export async function sendGameResultToApi(gameResult, players) {
                          this.rightPaddle.y - this.paddleHeight/2, 
                          this.paddleWidth, this.paddleHeight);
         
+        // Draw ball
         this.ctx.beginPath();
         this.ctx.arc(this.ball.x, this.ball.y, this.ballSize, 0, Math.PI * 2);
         this.ctx.fill();
         
+        // Draw scores
         this.ctx.font = '48px Arial';
         this.ctx.fillText(this.leftPaddle.score, this.canvas.width/4, 50);
         this.ctx.fillText(this.rightPaddle.score, 3 * this.canvas.width/4, 50);
         
+        // Draw center line
         this.ctx.setLineDash([5, 15]);
         this.ctx.beginPath();
         this.ctx.moveTo(this.canvas.width/2, 0);
         this.ctx.lineTo(this.canvas.width/2, this.canvas.height);
         this.ctx.stroke();
 
+        // Draw winner message if game is over
         if (this.isGameOver && this.winner) {
             this.ctx.fillStyle = '#fff';
             this.ctx.font = '48px Arial';
             this.ctx.textAlign = 'center';
             this.ctx.fillText(`${this.winner} Wins!`, this.canvas.width/2, this.canvas.height/2);
-            this.ctx.textAlign = 'start';
+            this.ctx.textAlign = 'start'; // Reset text alignment
         }
     }
 }
 
+async function updateWinLoss(winnerName, players) {
+    // Determine the loser
+    const loserName = winnerName === players.challenger ? players.opponent : players.challenger;
+    
+    const payload = {
+        winner_name: winnerName,
+        loser_name: loserName
+    };
+
+    try {
+        const response = await fetch('/api/update-win-loss', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error updating win/loss stats:', error);
+        throw error;
+    }
+}
+
+async function sendGameResultToApi(gameResult, players) {
+    const challengerName = players.challenger;
+    const opponentName = players.opponent;
+    
+    const winnerName = gameResult.winner === players.challengerDisplayName ? 
+        challengerName : opponentName;
+
+    const payload = {
+        challenger_name: challengerName,
+        opponent_name: opponentName,
+        winner_name: winnerName,
+        challenger_score: gameResult.scores[players.challengerDisplayName],
+        opponent_score: gameResult.scores[players.opponentDisplayName],
+        timestamp_created: gameResult.timestamp_created,
+        timestamp_finish: gameResult.timestamp_finish
+    };
+    console.log('Sending game result to API:', payload);
+
+    try {
+        const response = await fetch('/api/save-local-game', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error saving game result:', error);
+        throw error;
+    }
+}
+
+export async function loadPage(app) {
+    // Get the players from localStorage
+    const players = JSON.parse(localStorage.getItem('localGamePlayers'));
+    if (!players) {
+        console.error('No players found');
+        navigateTo('/start');
+        return;
+    }
+
+    const challengerDisplayName = players.challengerDisplayName;
+    const opponentDisplayName = players.opponentDisplayName;
+
+    // fetch basic html
+    fetch("/static/html/localGame.html")
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(response.statusText);
+            }
+            return response.text();
+        })
+        .then(html => {
+            app.innerHTML = html;
+            
+            // Update the game title with players
+            const gameTitle = app.querySelector('#game-title');
+            gameTitle.innerHTML = `
+                <span class="text-primary">Challenger ${challengerDisplayName}</span>
+                <span class="text-white">vs.</span>
+                <span class="text-danger">Opponent ${opponentDisplayName}</span>
+            `;
+    
+            // Set up hover functionality for the manual
+            const manualTrigger = app.querySelector('.manual-trigger');
+            const gameManual = new bootstrap.Collapse(document.getElementById('gameManual'), {
+                toggle: false
+            });
+    
+            manualTrigger.addEventListener('mouseenter', () => {
+                gameManual.show();
+            });
+    
+            manualTrigger.addEventListener('mouseleave', () => {
+                gameManual.hide();
+            });
+    
+            // Initialize the game
+            const canvas = document.getElementById('pongCanvas');
+            const game = new PongGame(canvas);
+        })
+        .catch(error => {
+            console.error(error);
+        });
+}
