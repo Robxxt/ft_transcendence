@@ -242,12 +242,10 @@ def save_tictac_result(request):
 
         player1 = data.get('player1')
         player2 = data.get('player2')
-        print("player2 in tictac: ", player2)
         winner = data.get('winner')
         is_draw = data.get('is_draw')
 
         user = get_object_or_404(User, username=player1)
-        # print("user in tictac: ", user)
 
         game = TictacGame.objects.create(player1=user)
 

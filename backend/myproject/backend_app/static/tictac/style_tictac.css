@@ -4,7 +4,7 @@
 
 @media (prefers-color-scheme: dark) {
 	:root {
-		--background-color: #282828;
+		--background-color: #282828 !important;
 		--draw-color: #dcdcdc;
 		--color: white ;
 	}
@@ -12,7 +12,7 @@
 
 @media (prefers-color-scheme: light) {
 	:root {
-		--background-color: white;
+		--background-color: white !important;
 		--draw-color: #000000;
 		--color: #000000 ;
 	}
@@ -35,7 +35,6 @@ body {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	/* align-content: center; */
 	flex-wrap: wrap;
 	height: 100vh;
 	margin: 0;
