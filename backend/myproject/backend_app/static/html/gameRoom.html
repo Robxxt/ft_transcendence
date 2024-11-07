@@ -6,13 +6,19 @@
     <title>Game Room</title>
 </head>
 <body>
-    <div id="disconnected-overlay" class="overlay d-none d-flex justify-content-center align-items-center vh-100 bg-dark text-light">
+    <div id="disconnected-overlay" class="overlay d-none position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center vh-100 bg-dark text-light" style="z-index: 1000;">
         <div class="text-center">
             <h2 class="mb-4">Oooops, the connection was interrupted.</h2>
             <p>Please return to the home screen...</p>
             <button id="return-home-btn" class="btn btn-primary mt-4">Return to Home</button>
         </div>
-    </div>    
+    </div>
+    <div id="winner-overlay" class="overlay d-none position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center vh-100 bg-dark text-light" style="z-index: 1000;">
+        <div class="text-center">
+            <h2 id="winner-display" class="mb-4"></h2>
+            <button id="winner-home-btn" class="btn btn-primary mt-4">Return to Home</button>
+        </div>
+    </div>
     <div class="container position-relative" style="min-width: 992px;">
         <div id="waiting-overlay" class="position-fixed top-0 start-0 w-100 h-100 bg-white bg-opacity-75 d-flex flex-column justify-content-center align-items-center" style="z-index: 1000;">
             <div class="spinner-border text-primary mb-3" role="status">

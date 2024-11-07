@@ -86,6 +86,18 @@ function showDisconnectedOverlay() {
     });
 }
 
+function showWinnerOverlay(winner) {
+    const winnerOverlay = document.getElementById('winner-overlay');
+    winnerOverlay.classList.remove('d-none');
+    const winnerDisplay = document.getElementById('winner-display');
+    winnerDisplay.textContent = `${winner} wins the game!`;
+    // Add click event to return home button
+    const returnHomeBtn = document.getElementById('winner-home-btn');
+    returnHomeBtn.addEventListener('click', () => {
+        navigateTo('/start');  // Use the navigateTo function to handle routing
+    });
+}
+
 
 
 function handleGameMessage(event, ctx, canvas) {
@@ -103,6 +115,9 @@ function handleGameMessage(event, ctx, canvas) {
         );
         if (data.game_state.disconnected) {
             showDisconnectedOverlay();
+        }
+        if (data.game_state.game_state === 'FINISHED') {
+            showWinnerOverlay(data.game_state.winner_display_name);
         }
     } else if (data.action === 'room_state_update') {
         updateRoomState(data.state);
@@ -152,7 +167,6 @@ function updateGameState(gameState, ctx, canvas) {
             ctx.fillText('SPEED BOOST!', canvas.width / 2 - 60, 20);
         }
         // Check if game is finished
-        // console.log('Game state from the updategamestate function', gameState);
         if (gameState.game_state === 'FINISHED') {
             ctx.fillStyle = 'red';
             ctx.font = '48px Arial';
