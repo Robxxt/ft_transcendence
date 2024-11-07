@@ -4,13 +4,9 @@ class PongGame {
     constructor(canvas) {
         this.canvas = canvas;
         this.ctx = canvas.getContext('2d');
-        
-        // Game objects
         this.paddleHeight = 80;
         this.paddleWidth = 10;
         this.ballSize = 8;
-        
-        // Initial positions
         this.leftPaddle = { x: 50, y: canvas.height/2, score: 0 };
         this.rightPaddle = { x: canvas.width - 50, y: canvas.height/2, score: 0 };
         this.ball = {
@@ -19,17 +15,14 @@ class PongGame {
             dx: 5,
             dy: 3
         };
-        
-        // Game state
         this.gameLoop = null;
         this.gameStarted = false;
-        
-        // Paddle movement
+        this.isGameOver = false;
+        this.winner = null;
         this.keyState = {};
-        
-        // Bind event listeners
         document.addEventListener('keydown', (e) => this.handleKeyDown(e));
         document.addEventListener('keyup', (e) => this.handleKeyUp(e));
+        this.draw();
     }
     
     handleKeyDown(e) {
@@ -46,41 +39,43 @@ class PongGame {
     start() {
         if (!this.gameStarted) {
             this.gameStarted = true;
-            this.gameLoop = setInterval(() => this.update(), 1000/60); // 60 FPS
+            this.gameLoop = setInterval(() => this.update(), 1000/60);
         }
     }
     
     update() {
-        // Move paddles
+        if (this.isGameOver) {
+            this.draw(); // Keep drawing even after game is over
+            return;
+        }
+
         if (this.keyState['w']) this.leftPaddle.y = Math.max(this.paddleHeight/2, this.leftPaddle.y - 5);
         if (this.keyState['s']) this.leftPaddle.y = Math.min(this.canvas.height - this.paddleHeight/2, this.leftPaddle.y + 5);
         if (this.keyState['o']) this.rightPaddle.y = Math.max(this.paddleHeight/2, this.rightPaddle.y - 5);
         if (this.keyState['l']) this.rightPaddle.y = Math.min(this.canvas.height - this.paddleHeight/2, this.rightPaddle.y + 5);
         
-        // Move ball
         this.ball.x += this.ball.dx;
         this.ball.y += this.ball.dy;
-        
+
         // Ball collision with top and bottom
-        if (this.ball.y <= 0 || this.ball.y >= this.canvas.height) {
+        if (this.ball.y - this.ballSize/2 <= 0 || this.ball.y + this.ballSize/2 >= this.canvas.height) {
             this.ball.dy *= -1;
         }
         
         // Ball collision with paddles
         if (this.checkPaddleCollision(this.leftPaddle) || this.checkPaddleCollision(this.rightPaddle)) {
-            this.ball.dx *= -1.1; // Increase speed slightly
+            this.ball.dx *= -1.1;
         }
         
         // Score points
         if (this.ball.x <= 0) {
             this.rightPaddle.score++;
-            this.resetBall('left');
+            this.resetGame('left');
         } else if (this.ball.x >= this.canvas.width) {
             this.leftPaddle.score++;
-            this.resetBall('right');
+            this.resetGame('right');
         }
         
-        // Check win condition
         if (this.leftPaddle.score >= 3 || this.rightPaddle.score >= 3) {
             this.gameOver();
         }
@@ -95,29 +90,22 @@ class PongGame {
                this.ball.y <= paddle.y + this.paddleHeight/2;
     }
     
-    resetBall(direction) {
+    resetGame(direction) {
         this.ball.x = this.canvas.width/2;
         this.ball.y = this.canvas.height/2;
         this.ball.dx = direction === 'left' ? 5 : -5;
         this.ball.dy = (Math.random() * 6) - 3;
+        this.leftPaddle.y = this.canvas.height/2;
+        this.rightPaddle.y = this.canvas.height/2;
+        this.gameStarted = false;
+        clearInterval(this.gameLoop);
     }
     
     gameOver() {
+        console.log('Game Over');
+        this.isGameOver = true;
+        this.winner = this.leftPaddle.score >= 3 ? 'Opponent' : 'Challenger';
         clearInterval(this.gameLoop);
-        this.gameStarted = false;
-        
-        // Draw winner message
-        this.ctx.fillStyle = '#fff';
-        this.ctx.font = '48px Arial';
-        const winner = this.leftPaddle.score >= 3 ? 'Opponent' : 'Challenger';
-        this.ctx.fillText(`${winner} Wins!`, this.canvas.width/2 - 100, this.canvas.height/2);
-        
-        // Restart game after delay
-        setTimeout(() => {
-            this.leftPaddle.score = 0;
-            this.rightPaddle.score = 0;
-            this.resetBall('left');
-        }, 3000);
     }
     
     draw() {
@@ -150,6 +138,15 @@ class PongGame {
         this.ctx.moveTo(this.canvas.width/2, 0);
         this.ctx.lineTo(this.canvas.width/2, this.canvas.height);
         this.ctx.stroke();
+
+        // Draw winner message if game is over
+        if (this.isGameOver && this.winner) {
+            this.ctx.fillStyle = '#fff';
+            this.ctx.font = '48px Arial';
+            this.ctx.textAlign = 'center';
+            this.ctx.fillText(`${this.winner} Wins!`, this.canvas.width/2, this.canvas.height/2);
+            this.ctx.textAlign = 'start'; // Reset text alignment
+        }
     }
 }
 
