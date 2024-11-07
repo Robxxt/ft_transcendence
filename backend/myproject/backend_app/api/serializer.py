@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth.hashers import make_password, check_password
 from rest_framework.authtoken.models import Token
-from backend_app.models import User, TableMatch, UserMetric, GameRoom, TictacGame, PongGame, Tournament
+from backend_app.models import User, TableMatch, UserMetric, GameRoom, TictacGame, PongGame
 import os
 
 class UserSerializer(serializers.ModelSerializer):

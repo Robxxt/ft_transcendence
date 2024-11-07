@@ -11,7 +11,7 @@ from backend_app.models import (User,
                                 TableMatch, 
                                 UserMetric, 
                                 GameRoom, 
-                                TictacGame, PongGame, Tournament)
+                                TictacGame, PongGame)
 from backend_app.api.serializer import (RegisterSerializer, 
                                         TableMatchSerializer, 
                                         UserMetricSerializer, 
