@@ -4,16 +4,16 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import logout
-from backend_app.models import (User, 
-                                TableMatch, 
-                                UserMetric, 
-                                GameRoom, 
+from backend_app.models import (User,
+                                TableMatch,
+                                UserMetric,
+                                GameRoom,
                                 TictacGame, PongGame)
-from backend_app.api.serializer import (RegisterSerializer, 
-                                        TableMatchSerializer, 
-                                        UserMetricSerializer, 
-                                        UserSerializer, 
-                                        GameRoomSerializer, 
+from backend_app.api.serializer import (RegisterSerializer,
+                                        TableMatchSerializer,
+                                        UserMetricSerializer,
+                                        UserSerializer,
+                                        GameRoomSerializer,
                                         ChangePasswordSerializer,
                                         ChangeAvatarSerialzer,
                                         WinLossSerializer,
@@ -241,13 +241,11 @@ def save_tictac_result(request):
         data = json.loads(request.body)
 
         player1 = data.get('player1')
-        print("player1 in tictac: ", player1)
         player2 = data.get('player2')
         winner = data.get('winner')
         is_draw = data.get('is_draw')
 
         user = get_object_or_404(User, username=player1)
-        print("user in tictac: ", user)
 
         game = TictacGame.objects.create(player1=user)
 
@@ -270,7 +268,7 @@ def save_tictac_result(request):
 @csrf_exempt
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-@authentication_classes([TokenAuthentication])                                       
+@authentication_classes([TokenAuthentication])
 def getPng(request):
     user_id = request.user.id  # Adjust according to how the user ID is retrieved
     avatar_path = os.path.join(settings.MEDIA_ROOT, "avatar", f"{user_id}.png")
