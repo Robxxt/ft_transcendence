@@ -53,7 +53,7 @@ export function homeView() {
             <button id="local-game-btn" class="btn btn-primary mb-2">Local Game</button>
             <button id="join-game-btn" class="btn btn-primary mb-2">Online Game</button>
             <button id="set-ai-play-btn" data-clicked="false" class="btn btn-primary mb-2">Set AI play</button>
-            <button id="tournament-btn" class="btn btn-primary mb-2r">Local Tournament</button>
+            <button id="local-tournament-btn" class="btn btn-primary mb-2">Local Tournament</button>
         </div>
 
         <!-- Local Game Modal -->
@@ -81,18 +81,60 @@ export function homeView() {
                 </div>
             </div>
         </div>
+
+        <!-- Local Tournament Modal -->
+        <div class="modal fade" id="localTournamentModal" tabindex="-1" aria-labelledby="localTournamentModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="localTournamentModalLabel">Select Tournament Opponents</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="localTournamentForm">
+                            <div class="mb-3">
+                                <label for="opponent1" class="form-label">First Opponent:</label>
+                                <select class="form-select tournament-opponent" id="opponent1" required>
+                                    <option value="" selected disabled>Loading opponents...</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="opponent2" class="form-label">Second Opponent:</label>
+                                <select class="form-select tournament-opponent" id="opponent2" required>
+                                    <option value="" selected disabled>Loading opponents...</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="opponent3" class="form-label">Third Opponent:</label>
+                                <select class="form-select tournament-opponent" id="opponent3" required>
+                                    <option value="" selected disabled>Loading opponents...</option>
+                                </select>
+                            </div>
+                            <div id="tournament-error" class="alert alert-danger d-none">
+                                Please select three different opponents
+                            </div>
+                            <div class="text-end">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Start Tournament</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     `;
 
     // Initialize the Bootstrap modal
     const localGameModal = new bootstrap.Modal(document.getElementById('localGameModal'));
+    const localTournamentModal = new bootstrap.Modal(document.getElementById('localTournamentModal'));
 
     // Add event listener for local game button
     document.getElementById('local-game-btn').addEventListener('click', () => {
         localGameModal.show();
     });
 
-    document.getElementById('tournament-btn').addEventListener('click', () => {
-        navigateTo('/tournaments');
+    document.getElementById('local-tournament-btn').addEventListener('click', () => {
+        localTournamentModal.show();
     });
 
     document.getElementById('join-game-btn').addEventListener('click', async () => {
@@ -126,6 +168,23 @@ export function homeView() {
         `;
     });
 
+    document.getElementById('localTournamentModal').addEventListener('show.bs.modal', async () => {
+        const opponents = document.querySelectorAll('.tournament-opponent');
+        opponents.forEach(select => {
+            select.innerHTML = '<option value="" selected disabled>Loading opponents...</option>';
+        });
+        
+        const friends = await getFriendsList();
+        const optionsHTML = `
+            <option value="" selected disabled>Select an opponent</option>
+            ${friends.map(friend => `<option value="${friend.id}">${friend.username}</option>`).join('')}
+        `;
+        
+        opponents.forEach(select => {
+            select.innerHTML = optionsHTML;
+        });
+    });
+
 
     document.getElementById('localGameForm').addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -138,7 +197,6 @@ export function homeView() {
         // Get the selected opponent from the dropdown
         const opponentSelect = document.getElementById('opponent');
         const opponent = opponentSelect.options[opponentSelect.selectedIndex].text;
-        const opponentId = opponentSelect.value;
         const opponentDisplayName = await getDisplayName(opponent);
 
         // Save both players to localStorage with their display names
@@ -158,5 +216,65 @@ export function homeView() {
         // Close modal and navigate
         localGameModal.hide();
         navigateTo('/local-game');
+    });
+    document.getElementById('localTournamentForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        // Get selected opponents
+        const opponent1 = document.getElementById('opponent1');
+        const opponent2 = document.getElementById('opponent2');
+        const opponent3 = document.getElementById('opponent3');
+
+        // Get the selected values
+        const selectedOpponents = new Set([
+            opponent1.options[opponent1.selectedIndex].text,
+            opponent2.options[opponent2.selectedIndex].text,
+            opponent3.options[opponent3.selectedIndex].text
+        ]);
+
+        // Check if we have three distinct opponents
+        if (selectedOpponents.size !== 3) {
+            document.getElementById('tournament-error').classList.remove('d-none');
+            return;
+        }
+
+        // Hide error message if visible
+        document.getElementById('tournament-error').classList.add('d-none');
+
+        // Get current user info
+        const currentUser = JSON.parse(localStorage.getItem('user'));
+        const challenger = currentUser.name;
+        const challengerDisplayName = await getDisplayName();
+
+        // Get display names for all opponents
+        const opponents = Array.from(selectedOpponents);
+        const opponentDisplayNames = await Promise.all(
+            opponents.map(async (opponent) => ({
+                username: opponent,
+                displayName: await getDisplayName(opponent) || opponent
+            }))
+        );
+
+        // Create tournament players object
+        const tournamentPlayers = {
+            challenger: challenger,
+            challengerDisplayName: challengerDisplayName || challenger,
+            opponents: opponentDisplayNames
+        };
+
+        // Store tournament data
+        localStorage.setItem('localTournamentPlayers', JSON.stringify(tournamentPlayers));
+        
+        // Clear any existing tournament state
+        if (localStorage.getItem('tournamentResults')) {
+            localStorage.removeItem('tournamentResults');
+        }
+        if (localStorage.getItem('tournamentState')) {
+            localStorage.removeItem('tournamentState');
+        }
+
+        // Close modal and navigate
+        localTournamentModal.hide();
+        navigateTo('/local-tournament');
     });
 }
