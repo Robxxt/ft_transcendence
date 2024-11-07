@@ -6,6 +6,7 @@ from rest_framework.authtoken.models import Token
 from django.contrib.auth import logout
 from django.utils.dateparse import parse_datetime
 from django.http import JsonResponse
+from django.db import transaction
 from backend_app.models import (User, 
                                 TableMatch, 
                                 UserMetric, 
@@ -471,6 +472,46 @@ def save_local_game(request):
             'success': True,
             'game_room_id': game_room.id,
             'pong_game_id': pong_game.id
+        })
+
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+@csrf_exempt
+def update_win_loss(request):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+    
+    try:
+        data = json.loads(request.body)
+        winner_name = data.get('winner_name')
+        loser_name = data.get('loser_name')
+
+        # Validate required fields
+        if not all([winner_name, loser_name]):
+            return JsonResponse({'error': 'Missing required fields'}, status=400)
+
+        # Update both users atomically
+        with transaction.atomic():
+            try:
+                winner = User.objects.select_for_update().get(username=winner_name)
+                loser = User.objects.select_for_update().get(username=loser_name)
+                
+                winner.won += 1
+                loser.lost += 1
+                
+                winner.save()
+                loser.save()
+
+            except User.DoesNotExist:
+                return JsonResponse({'error': 'One or both users not found'}, status=404)
+
+        return JsonResponse({
+            'success': True,
+            'winner_stats': {'won': winner.won},
+            'loser_stats': {'lost': loser.lost}
         })
 
     except json.JSONDecodeError:

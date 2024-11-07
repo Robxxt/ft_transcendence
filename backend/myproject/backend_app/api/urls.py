@@ -32,5 +32,6 @@ urlpatterns = [
     path('pong-game/<int:room_id>/', views.PongGameDetailView.as_view(), name='pong-game-detail'),
     path('check-game-state/', views.CheckGameStateView.as_view(), name='check-game-state'),
     path('save-local-game', views.save_local_game, name='save-local-game'),
+    path('update-win-loss', views.update_win_loss, name='update-win-loss'),
     path('', include(router.urls))
 ]

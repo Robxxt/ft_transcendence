@@ -140,8 +140,17 @@ class PongGame {
         // Send to API if store is true
         if (store) {
             const players = JSON.parse(localStorage.getItem('localGamePlayers'));
+            
+            // Send game result to first API
             sendGameResultToApi(gameResult, players)
                 .catch(error => console.error('Failed to save game result:', error));
+                
+            // Update win/loss statistics
+            const winnerName = gameResult.winner === players.challengerDisplayName ? 
+                players.challenger : players.opponent;
+                
+            updateWinLoss(winnerName, players)
+                .catch(error => console.error('Failed to update win/loss stats:', error));
         }
         
         // Show the game over overlay
@@ -203,6 +212,35 @@ class PongGame {
             this.ctx.fillText(`${this.winner} Wins!`, this.canvas.width/2, this.canvas.height/2);
             this.ctx.textAlign = 'start'; // Reset text alignment
         }
+    }
+}
+
+async function updateWinLoss(winnerName, players) {
+    // Determine the loser
+    const loserName = winnerName === players.challenger ? players.opponent : players.challenger;
+    
+    const payload = {
+        winner_name: winnerName,
+        loser_name: loserName
+    };
+
+    try {
+        const response = await fetch('/api/update-win-loss', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error updating win/loss stats:', error);
+        throw error;
     }
 }
 
