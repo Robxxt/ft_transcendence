@@ -137,6 +137,23 @@ class PongGame {
         // Store single game result (not in an array)
         localStorage.setItem('gameResults', JSON.stringify(gameResult));
         
+        // Show the game over overlay
+        const overlay = document.getElementById('gameOverOverlay');
+        const winnerMessage = document.getElementById('winnerMessage');
+        winnerMessage.textContent = `${this.winner} Wins!`;
+        overlay.classList.remove('d-none');
+        
+        // Add event listener for the home button
+        document.getElementById('homeButton').addEventListener('click', () => {
+            if (localStorage.getItem('gameResults')) {
+                localStorage.removeItem('gameResults');
+            }
+            if (localStorage.getItem('gameState')) {
+                localStorage.removeItem('gameState');
+            }
+            navigateTo('start');
+        });
+        
         clearInterval(this.gameLoop);
     }
     

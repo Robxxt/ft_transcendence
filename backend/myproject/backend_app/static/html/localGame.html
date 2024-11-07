@@ -62,3 +62,18 @@
         <canvas id="pongCanvas" width="1000" height="600" style="border: 2px solid #fff; background-color: #000;"></canvas>
     </div>
 </div>
+<div id="gameOverOverlay" class="position-fixed top-0 start-0 w-100 h-100 d-none" 
+     style="backdrop-filter: blur(8px); background-color: rgba(0, 0, 0, 0.5); z-index: 1050;">
+    <div class="d-flex align-items-center justify-content-center h-100">
+        <div class="card text-center p-5 bg-dark text-white" style="max-width: 500px;">
+            <div class="card-body">
+                <h1 class="display-4 mb-4">🏆 Game Over! 🏆</h1>
+                <h2 class="mb-4" id="winnerMessage"></h2>
+                <p class="lead mb-4">Thanks for playing!</p>
+                <button class="btn btn-primary btn-lg" id="homeButton">
+                    Return Home
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

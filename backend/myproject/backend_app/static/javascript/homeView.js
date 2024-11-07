@@ -123,12 +123,6 @@ export function homeView() {
         };
         localStorage.setItem('localGamePlayers', JSON.stringify(gamePlayers));
 
-        if (localStorage.getItem('gameResults')) {
-            localStorage.removeItem('gameResults');
-        }
-        if (localStorage.getItem('gameState')) {
-            localStorage.removeItem('gameState');
-        }
         // Close modal and navigate
         localGameModal.hide();
         navigateTo('/local-game');
