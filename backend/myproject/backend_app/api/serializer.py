@@ -122,11 +122,14 @@ class TictacGameResultSerializer(serializers.ModelSerializer):
         data.pop("created_at")
         if instance.is_draw:
             data["result"] = "0:0"
-        elif instance.winner == instance.player1:
+        elif instance.winner == instance.player1.username:
             data["result"] = "1:0"
         else:
             data["result"] = "0:1"
         data.pop("is_draw")
+        save_player1 = instance.player1.username
+        data.pop("player1")
+        data["player1"] = save_player1
         return data
 
 class ChangeAvatarSerialzer(serializers.Serializer):
