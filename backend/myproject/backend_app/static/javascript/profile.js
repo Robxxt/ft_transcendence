@@ -322,6 +322,9 @@ function handleFriendsDiv(app) {
     const token = localStorage.getItem('token');
     const username = localStorage.getItem("user");
     const friendList = document.getElementById("friendList");
+    
+    // empty friendList of old entries
+    friendList.innerHTML = "";
 
     // get list of friends from the endpoint. Set online/offline label afterwards.
     fetch("/api/friendList/", {
@@ -351,6 +354,9 @@ function handleFriendsDiv(app) {
 function handleAddFriendsDiv(app, username) {
     const token = localStorage.getItem('token');
     const userList = document.getElementById("userList");
+
+    // empty userList of old entries
+    userList.innerHTML = "";
 
     // get 2 datasets from endpoint: friends and users. Set friend label, if user is a friend.
     Promise.all([
@@ -401,7 +407,7 @@ function handleAddFriendsDiv(app, username) {
                 anchor.addEventListener("click", function(event) {
                     event.preventDefault();
                     addFriend(username, anchor.id.substring(4), friends.includes(user));
-                  });
+                });
 
                 userList.appendChild(anchor);
             }  
@@ -437,7 +443,8 @@ function addFriend(username, friend, isFriend) {
             return response.json();
         })
         .then(data => {
-            location.reload();
+            handleFriendsDiv(app);
+            handleAddFriendsDiv(app, username);
         })
         .catch(error => {
             console.error(error);
@@ -458,7 +465,8 @@ function addFriend(username, friend, isFriend) {
             if (!response.ok) {
                 throw new Error("Network response was not ok");
             }
-            location.reload();
+            handleFriendsDiv(app);
+            handleAddFriendsDiv(app, username);
         })
         .catch(error => {
             console.error(error);
