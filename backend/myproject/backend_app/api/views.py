@@ -4,6 +4,8 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import logout
+from django.utils.dateparse import parse_datetime
+from django.http import JsonResponse
 from backend_app.models import (User, 
                                 TableMatch, 
                                 UserMetric, 
@@ -410,3 +412,68 @@ class CheckGameStateView(APIView):
 
         # Default response (placeholder for future logic)
         return Response({"message": "Winner already exists. Logic will be implemented later."}, status=status.HTTP_200_OK)
+
+@csrf_exempt
+def save_local_game(request):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+    
+    try:
+        data = json.loads(request.body)
+        
+        # Get required data from request
+        challenger_name = data.get('challenger_name')
+        opponent_name = data.get('opponent_name')
+        winner_name = data.get('winner_name')
+        challenger_score = data.get('challenger_score')
+        opponent_score = data.get('opponent_score')
+        timestamp_created = parse_datetime(data.get('timestamp_created'))
+        timestamp_finish = parse_datetime(data.get('timestamp_finish'))
+
+        # Validate required fields
+        if not all([challenger_name, opponent_name, winner_name, 
+                   challenger_score is not None, opponent_score is not None,
+                   timestamp_created, timestamp_finish]):
+            return JsonResponse({'error': 'Missing required fields'}, status=400)
+
+        # Get User objects
+        try:
+            challenger = User.objects.get(username=challenger_name)
+            opponent = User.objects.get(username=opponent_name)
+        except User.DoesNotExist:
+            return JsonResponse({'error': 'One or both users not found'}, status=404)
+
+        # Create GameRoom
+        game_room = GameRoom.objects.create(
+            player1=challenger,
+            player2=opponent,
+            state=GameRoom.State.FULL,
+            created_at=timestamp_created,
+            started_at=timestamp_created,
+            finished_at=timestamp_finish,
+            isAiPlay=False
+        )
+
+        # Create PongGame
+        pong_game = PongGame.objects.create(
+            room=game_room,
+            score1=challenger_score,
+            score2=opponent_score,
+            is_active=False,
+            game_state=PongGame.State.FINISHED,
+            winner=winner_name,
+            created_at=timestamp_created,
+            started_at=timestamp_created,
+            finished_at=timestamp_finish
+        )
+
+        return JsonResponse({
+            'success': True,
+            'game_room_id': game_room.id,
+            'pong_game_id': pong_game.id
+        })
+
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)

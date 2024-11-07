@@ -149,7 +149,12 @@ export function homeView() {
             opponentDisplayName: opponentDisplayName || opponent // fallback to username if display name fetch fails
         };
         localStorage.setItem('localGamePlayers', JSON.stringify(gamePlayers));
-
+        if (localStorage.getItem('gameResults')) {
+            localStorage.removeItem('gameResults');
+        }
+        if (localStorage.getItem('gameState')) {
+            localStorage.removeItem('gameState');
+        }
         // Close modal and navigate
         localGameModal.hide();
         navigateTo('/local-game');
