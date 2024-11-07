@@ -541,7 +541,9 @@ class TicTacToeController {
 	endGame() {
 		this.gameEndMessage.innerText = this.model.upd.draw ? "DRAW" : `${this.model.upd.turn ? this.player2 : this.player1}\nWINS`;
 		this.gameEndMessage.classList.add(this.model.upd.draw ? 'draw' : `${this.model.upd.turn ? "right" : "left"}-wins`);
+		this.winner = this.model.upd.turn ? this.player2 : this.player1;
 		console.log(`${this.model.upd.turn ? this.player2 : this.player1} wins`);
+		console.log('winner: ', this.winner);
 		this.gameEndMessage.classList.add('show');
 		this.saveGameResult(this.token, this.player1, this.player2, this.winner, this.model.upd.draw)
 
