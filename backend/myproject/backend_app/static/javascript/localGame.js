@@ -21,15 +21,15 @@ class PongGame {
         this.winner = null;
         this.keyState = {};
         const players = JSON.parse(localStorage.getItem('localGamePlayers'));
-        this.challenger = players?.challengerDisplayName || 'Challenger';
-        this.opponent = players?.opponentDisplayName || 'Opponent';
+        this.challengerDisplayName = players?.challengerDisplayName || 'Challenger';
+        this.opponentDisplayName = players?.opponentDisplayName || 'Opponent';
         this.timestamp_created = new Date().toISOString();
         document.addEventListener('keydown', (e) => this.handleKeyDown(e));
         document.addEventListener('keyup', (e) => this.handleKeyUp(e));
         if (localStorage.getItem('gameState')) {
             this.rightPaddle.score = JSON.parse(localStorage.getItem('gameState')).right_score;
             this.leftPaddle.score = JSON.parse(localStorage.getItem('gameState')).left_score;
-            this.checkScore();
+            this.checkScore(false);
         }
         this.draw();
     }
@@ -76,12 +76,12 @@ class PongGame {
             this.ball.dx *= -1.1;
         }
         
-        this.checkScore();
+        this.checkScore(true);
         
         this.draw();
     }
 
-    checkScore() {
+    checkScore(store) {
         if (this.ball.x <= 0) {
             this.rightPaddle.score++;
             this.resetGame('left');
@@ -95,7 +95,7 @@ class PongGame {
         };
         localStorage.setItem('gameState', JSON.stringify(gameState));
         if (this.leftPaddle.score >= 3 || this.rightPaddle.score >= 3) {
-            this.gameOver();
+            this.gameOver(store);
         }
     }
     
@@ -117,25 +117,32 @@ class PongGame {
         clearInterval(this.gameLoop);
     }
     
-    gameOver() {
+    gameOver(store) {
         console.log('Game Over');
         this.isGameOver = true;
         const isLeftPaddleWinner = this.leftPaddle.score >= 3;
-        this.winner = isLeftPaddleWinner ? this.opponent : this.challenger;
+        this.winner = isLeftPaddleWinner ? this.opponentDisplayName : this.challengerDisplayName;
         
         // Create game result object with both timestamps
         const gameResult = {
             winner: this.winner,
             scores: {
-                [this.challenger]: isLeftPaddleWinner ? this.leftPaddle.score : this.rightPaddle.score,
-                [this.opponent]: isLeftPaddleWinner ? this.rightPaddle.score : this.leftPaddle.score
+                [this.challengerDisplayName]: isLeftPaddleWinner ? this.leftPaddle.score : this.rightPaddle.score,
+                [this.opponentDisplayName]: isLeftPaddleWinner ? this.rightPaddle.score : this.leftPaddle.score
             },
             timestamp_created: this.timestamp_created,
             timestamp_finish: new Date().toISOString()
         };
         
-        // Store single game result (not in an array)
+        // Store in localStorage
         localStorage.setItem('gameResults', JSON.stringify(gameResult));
+        
+        // Send to API if store is true
+        if (store) {
+            const players = JSON.parse(localStorage.getItem('localGamePlayers'));
+            sendGameResultToApi(gameResult, players)
+                .catch(error => console.error('Failed to save game result:', error));
+        }
         
         // Show the game over overlay
         const overlay = document.getElementById('gameOverOverlay');
@@ -199,12 +206,50 @@ class PongGame {
     }
 }
 
+async function sendGameResultToApi(gameResult, players) {
+    const challengerName = players.challenger;
+    const opponentName = players.opponent;
+    
+    const winnerName = gameResult.winner === players.challengerDisplayName ? 
+        challengerName : opponentName;
+
+    const payload = {
+        challenger_name: challengerName,
+        opponent_name: opponentName,
+        winner_name: winnerName,
+        challenger_score: gameResult.scores[players.challengerDisplayName],
+        opponent_score: gameResult.scores[players.opponentDisplayName],
+        timestamp_created: gameResult.timestamp_created,
+        timestamp_finish: gameResult.timestamp_finish
+    };
+    console.log('Sending game result to API:', payload);
+
+    try {
+        const response = await fetch('/api/save-local-game', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error saving game result:', error);
+        throw error;
+    }
+}
+
 export async function loadPage(app) {
     // Get the players from localStorage
     const players = JSON.parse(localStorage.getItem('localGamePlayers'));
     if (!players) {
         console.error('No players found');
-        navigateTo('/pong');
+        navigateTo('/start');
         return;
     }
 
