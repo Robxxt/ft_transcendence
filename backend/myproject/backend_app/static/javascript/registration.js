@@ -69,18 +69,14 @@ function handleFormSubmit(event) {
     })
     .then(data => {
         if (data) {
-            if (data.error == 0) {
+            if (data.error === 0) {
                 const userObject = {"name" : username, "isLoggedIn" : true};
                 localStorage.setItem("user", JSON.stringify(userObject));
                 localStorage.setItem("token", data.token);
                 navigateTo("/start");
             }
-            else if (data.error == 1)
-                printSubmitError(1);
-            else if (data.error == 2)
-                printSubmitError(2);
-            else
-                printSubmitError(3);
+            else if (data.error === 1)
+                printSubmitError(data["errors"]);
         }
     })
     .catch(error => {
@@ -125,6 +121,7 @@ function validatePassword() {
 function validatePasswordRepetition() {
     const password = document.getElementById("password").value;
     const passwordRepetition = document.getElementById("passwordRepetition").value;
+
     if (password !== passwordRepetition) {
         document.getElementById("passwordRepetitionError").textContent = "Passwords don't match.";
         return false;
@@ -134,12 +131,12 @@ function validatePasswordRepetition() {
     }
 }
 
-function printSubmitError(errorcode) {
+function printSubmitError(errors) {
     const submitError = document.getElementById("submitError");
-    if (errorcode == 1)
-        submitError.textContent = "Player name already taken. Choose again.";
-    else if (errorcode == 2)
-        submitError.textContent = "Player name or password were not rule conform.";
-    else
-        submitError.textContent = "Unknown error."
+
+    for (const key in errors) {
+        let str = errors[key][0];
+        str = str.charAt(0).toUpperCase() + str.slice(1);
+        submitError.textContent = str;
+    }
 }

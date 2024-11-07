@@ -44,10 +44,9 @@ def register(request):
         serializer = RegisterSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
-            print(f"User created: {user}, ID: {user.id}")
             token = Token.objects.create(user=user)
             return Response({'error': 0, 'token': token.key}, status=status.HTTP_201_CREATED)
-        return Response({'error': 2, 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': 1, 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
 def login(request):
@@ -56,7 +55,6 @@ def login(request):
         return Response({"detail": "Not Found!"}, status=status.HTTP_401_UNAUTHORIZED)
     token, created = Token.objects.get_or_create(user=user)
     serializer = UserSerializer(instance=user)
-    print(f"User exist: {user}, ID: {user.id}")
     return Response({"token": token.key, "user": serializer.data})
 
 @api_view(['POST'])
