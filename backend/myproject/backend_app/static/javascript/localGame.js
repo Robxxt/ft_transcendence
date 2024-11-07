@@ -9,10 +9,6 @@ class PongGame {
         this.ballSize = 8;
         this.leftPaddle = { x: 50, y: canvas.height/2, score: 0 };
         this.rightPaddle = { x: canvas.width - 50, y: canvas.height/2, score: 0 };
-        if (localStorage.getItem('gameState')) {
-            this.rightPaddle.score = JSON.parse(localStorage.getItem('gameState')).right_score;
-            this.leftPaddle.score = JSON.parse(localStorage.getItem('gameState')).left_score;
-        }
         this.ball = {
             x: canvas.width/2,
             y: canvas.height/2,
@@ -30,6 +26,11 @@ class PongGame {
         this.timestamp_created = new Date().toISOString();
         document.addEventListener('keydown', (e) => this.handleKeyDown(e));
         document.addEventListener('keyup', (e) => this.handleKeyUp(e));
+        if (localStorage.getItem('gameState')) {
+            this.rightPaddle.score = JSON.parse(localStorage.getItem('gameState')).right_score;
+            this.leftPaddle.score = JSON.parse(localStorage.getItem('gameState')).left_score;
+            this.checkScore();
+        }
         this.draw();
     }
     
