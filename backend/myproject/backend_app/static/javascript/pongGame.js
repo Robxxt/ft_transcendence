@@ -192,7 +192,7 @@ export async function sendGameResultToApi(gameResult, players) {
         console.log('Game Over');
         this.isGameOver = true;
         const isLeftPaddleWinner = this.leftPaddle.score >= 3;
-        this.winner = isLeftPaddleWinner ? this.opponentDisplayName : this.challengerDisplayName;
+        this.winner = isLeftPaddleWinner ? this.challengerDisplayName : this.opponentDisplayName;
         
         const gameResult = {
             winner: this.winner,
