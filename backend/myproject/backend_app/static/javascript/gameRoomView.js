@@ -113,9 +113,9 @@ function handleGameMessage(event, ctx, canvas) {
             data.game_state.player2_ready,
             data.game_state.player_names
         );
-        if (data.game_state.disconnected) {
-            showDisconnectedOverlay();
-        }
+        // if (data.game_state.disconnected) {
+        //     showDisconnectedOverlay();
+        // }
         if (data.game_state.game_state === 'FINISHED') {
             showWinnerOverlay(data.game_state.winner_display_name);
         }
