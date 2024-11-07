@@ -12,9 +12,10 @@ export function homeView() {
     app.innerHTML = `
         <h1 class="text-center mb-4">Welcome, ${username}!</h1>
         <div class="text-center">
-            <button id="join-game-btn" class="btn btn-primary mb-2">Join Game Room</button>
+            <button id="local-game-btn" class="btn btn-primary mb-2">Local Game</button>
+            <button id="join-game-btn" class="btn btn-primary mb-2">Online Game</button>
             <button id="set-ai-play-btn" data-clicked="false" class="btn btn-primary mb-2">Set AI play</button>
-            <button id="tournament-btn" class="btn btn-primary mb-2r">Tournament</button>
+            <button id="tournament-btn" class="btn btn-primary mb-2r"> Local Tournament</button>
         </div>
     `;
     document.getElementById('tournament-btn').addEventListener('click', () => {
