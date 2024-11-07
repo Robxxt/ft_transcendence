@@ -105,9 +105,25 @@ export function homeView() {
         `;
     });
 
-    // Handle form submission
     document.getElementById('localGameForm').addEventListener('submit', (e) => {
         e.preventDefault();
+        
+        // Get the current user's name from localStorage
+        const currentUser = JSON.parse(localStorage.getItem('user'));
+        const challenger = currentUser.name;
+
+        // Get the selected opponent from the dropdown
+        const opponentSelect = document.getElementById('opponent');
+        const opponent = opponentSelect.options[opponentSelect.selectedIndex].text;
+
+        // Save both players to localStorage
+        const gamePlayers = {
+            challenger: challenger,
+            opponent: opponent
+        };
+        localStorage.setItem('localGamePlayers', JSON.stringify(gamePlayers));
+
+        // Close modal and navigate
         localGameModal.hide();
         navigateTo('/local-game');
     });
