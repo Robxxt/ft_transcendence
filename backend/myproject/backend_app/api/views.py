@@ -4,10 +4,13 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import logout
-from backend_app.models import (User,
-                                TableMatch,
-                                UserMetric,
-                                GameRoom,
+from django.utils.dateparse import parse_datetime
+from django.http import JsonResponse
+from django.db import transaction
+from backend_app.models import (User, 
+                                TableMatch, 
+                                UserMetric, 
+                                GameRoom, 
                                 TictacGame, PongGame)
 from backend_app.api.serializer import (RegisterSerializer,
                                         TableMatchSerializer,
@@ -33,6 +36,7 @@ import json
 from django.http import FileResponse, Http404
 import os
 from django.conf import settings
+from django.utils.decorators import method_decorator
 
 @api_view(['POST'])
 def register(request):
@@ -92,7 +96,18 @@ def changeAvatar(request):
 @permission_classes([IsAuthenticated])
 @authentication_classes([TokenAuthentication])
 def getDisplayName(request):
-    user = request.user
+    foreign_username = request.query_params.get('foreignusername', None)
+    if foreign_username:
+        try:
+            user = User.objects.get(username=foreign_username)
+        except User.DoesNotExist:
+            return Response(
+                {'error': 'User not found'}, 
+                status=status.HTTP_404_NOT_FOUND
+            )
+    else:
+        user = request.user
+    
     serializer = UserDisplayNameGetSerializer(user)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -194,7 +209,6 @@ class GameRoomView(APIView):
     def post(self, request):
         try:
             aiPlay = request.data["aiPlay"]
-            # username = request.data["username"]
             username = get_object_or_404(User, username=request.data['username'])
             if username is None:
                 return Response({"error": "Username is required"}, status=status.HTTP_400_BAD_REQUEST)
@@ -280,5 +294,117 @@ def getPng(request):
         file_path = default_avatar_path
     else:
         raise Http404("Avatar not found")
-    # Use FileResponse to serve the image
     return FileResponse(open(file_path, 'rb'), content_type='image/png')
+
+
+class PongGameDetailView(generics.RetrieveAPIView):
+    serializer_class = PongGameSerializer
+
+    def get_object(self):
+        room_id = self.kwargs.get('room_id')
+        return get_object_or_404(PongGame, room__id=room_id)
+
+@csrf_exempt
+def save_local_game(request):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+    
+    try:
+        data = json.loads(request.body)
+        
+        # Get required data from request
+        challenger_name = data.get('challenger_name')
+        opponent_name = data.get('opponent_name')
+        winner_name = data.get('winner_name')
+        challenger_score = data.get('challenger_score')
+        opponent_score = data.get('opponent_score')
+        timestamp_created = parse_datetime(data.get('timestamp_created'))
+        timestamp_finish = parse_datetime(data.get('timestamp_finish'))
+
+        # Validate required fields
+        if not all([challenger_name, opponent_name, winner_name, 
+                   challenger_score is not None, opponent_score is not None,
+                   timestamp_created, timestamp_finish]):
+            return JsonResponse({'error': 'Missing required fields'}, status=400)
+
+        # Get User objects
+        try:
+            challenger = User.objects.get(username=challenger_name)
+            opponent = User.objects.get(username=opponent_name)
+        except User.DoesNotExist:
+            return JsonResponse({'error': 'One or both users not found'}, status=404)
+
+        # Create GameRoom
+        game_room = GameRoom.objects.create(
+            player1=challenger,
+            player2=opponent,
+            state=GameRoom.State.FULL,
+            created_at=timestamp_created,
+            started_at=timestamp_created,
+            finished_at=timestamp_finish,
+            isAiPlay=False
+        )
+
+        # Create PongGame
+        pong_game = PongGame.objects.create(
+            room=game_room,
+            score1=challenger_score,
+            score2=opponent_score,
+            is_active=False,
+            game_state=PongGame.State.FINISHED,
+            winner=winner_name,
+            created_at=timestamp_created,
+            started_at=timestamp_created,
+            finished_at=timestamp_finish
+        )
+
+        return JsonResponse({
+            'success': True,
+            'game_room_id': game_room.id,
+            'pong_game_id': pong_game.id
+        })
+
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+@csrf_exempt
+def update_win_loss(request):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+    
+    try:
+        data = json.loads(request.body)
+        winner_name = data.get('winner_name')
+        loser_name = data.get('loser_name')
+
+        # Validate required fields
+        if not all([winner_name, loser_name]):
+            return JsonResponse({'error': 'Missing required fields'}, status=400)
+
+        # Update both users atomically
+        with transaction.atomic():
+            try:
+                winner = User.objects.select_for_update().get(username=winner_name)
+                loser = User.objects.select_for_update().get(username=loser_name)
+                
+                winner.won += 1
+                loser.lost += 1
+                
+                winner.save()
+                loser.save()
+
+            except User.DoesNotExist:
+                return JsonResponse({'error': 'One or both users not found'}, status=404)
+
+        return JsonResponse({
+            'success': True,
+            'winner_stats': {'won': winner.won},
+            'loser_stats': {'lost': loser.lost}
+        })
+
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)

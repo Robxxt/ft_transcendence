@@ -12,3 +12,4 @@ tictac_demo
 db.sqlite3
 autotest/venv
 Changed
+.vscode/
