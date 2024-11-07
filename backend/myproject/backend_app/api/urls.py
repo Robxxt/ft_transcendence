@@ -30,5 +30,7 @@ urlpatterns = [
     path('tournaments/add/', views.TournamentCreateView.as_view(), name='tournament-add'),
     path('tournaments/<int:tournament_id>/join/', views.TournamentAddPlayerView.as_view(), name='tournament-join'),
     path('pong-game/<int:room_id>/', views.PongGameDetailView.as_view(), name='pong-game-detail'),
+    path('check-game-state/', views.CheckGameStateView.as_view(), name='check-game-state'),
+
     path('', include(router.urls))
 ]

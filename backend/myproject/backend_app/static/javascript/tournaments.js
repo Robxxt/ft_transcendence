@@ -165,11 +165,23 @@ async function handleTournamentAction(target) {
                 player_name: username
             });
         } else if (action === 'Play') {
-            // Redirect to the game page or handle game start
-            if (username === player1 || username === player2)
-                navigateTo(`/game-room/${game1}`);
-            else if (username === player3 || username === player4)
-                navigateTo(`/game-room/${game2}`);
+            try {
+                const response = await apiRequest(`api/check-game-state/`, 'POST', {
+                    player_name: username,
+                    tournament_id: tournamentId,
+                });
+            
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+            
+                const responseData = await response.json();
+                const gameID = responseData.game_room_id;
+            
+                navigateTo(`/game-room/${gameID}`);
+            } catch (error) {
+                console.error('Failed to navigate to game room:', error);
+            }
         }
 
         // Refresh the tournaments list
