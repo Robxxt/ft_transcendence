@@ -31,6 +31,11 @@ class PongGame {
             this.leftPaddle.score = JSON.parse(localStorage.getItem('gameState')).left_score;
             this.checkScore(false);
         }
+        const gameState = {
+            right_score: this.rightPaddle.score,
+            left_score: this.leftPaddle.score,
+        };
+        localStorage.setItem('gameState', JSON.stringify(gameState));
         this.draw();
     }
     
