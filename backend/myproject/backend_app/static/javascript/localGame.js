@@ -9,6 +9,10 @@ class PongGame {
         this.ballSize = 8;
         this.leftPaddle = { x: 50, y: canvas.height/2, score: 0 };
         this.rightPaddle = { x: canvas.width - 50, y: canvas.height/2, score: 0 };
+        if (localStorage.getItem('gameState')) {
+            this.rightPaddle.score = JSON.parse(localStorage.getItem('gameState')).right_score;
+            this.leftPaddle.score = JSON.parse(localStorage.getItem('gameState')).left_score;
+        }
         this.ball = {
             x: canvas.width/2,
             y: canvas.height/2,
@@ -20,6 +24,10 @@ class PongGame {
         this.isGameOver = false;
         this.winner = null;
         this.keyState = {};
+        const players = JSON.parse(localStorage.getItem('localGamePlayers'));
+        this.challenger = players?.challenger || 'Challenger';
+        this.opponent = players?.opponent || 'Opponent';
+        this.timestamp_created = new Date().toISOString();
         document.addEventListener('keydown', (e) => this.handleKeyDown(e));
         document.addEventListener('keyup', (e) => this.handleKeyUp(e));
         this.draw();
@@ -67,7 +75,12 @@ class PongGame {
             this.ball.dx *= -1.1;
         }
         
-        // Score points
+        this.checkScore();
+        
+        this.draw();
+    }
+
+    checkScore() {
         if (this.ball.x <= 0) {
             this.rightPaddle.score++;
             this.resetGame('left');
@@ -75,12 +88,14 @@ class PongGame {
             this.leftPaddle.score++;
             this.resetGame('right');
         }
-        
+        const gameState = {
+            right_score: this.rightPaddle.score,
+            left_score: this.leftPaddle.score,
+        };
+        localStorage.setItem('gameState', JSON.stringify(gameState));
         if (this.leftPaddle.score >= 3 || this.rightPaddle.score >= 3) {
             this.gameOver();
         }
-        
-        this.draw();
     }
     
     checkPaddleCollision(paddle) {
@@ -104,7 +119,23 @@ class PongGame {
     gameOver() {
         console.log('Game Over');
         this.isGameOver = true;
-        this.winner = this.leftPaddle.score >= 3 ? 'Opponent' : 'Challenger';
+        const isLeftPaddleWinner = this.leftPaddle.score >= 3;
+        this.winner = isLeftPaddleWinner ? this.opponent : this.challenger;
+        
+        // Create game result object with both timestamps
+        const gameResult = {
+            winner: this.winner,
+            scores: {
+                [this.challenger]: isLeftPaddleWinner ? this.leftPaddle.score : this.rightPaddle.score,
+                [this.opponent]: isLeftPaddleWinner ? this.rightPaddle.score : this.leftPaddle.score
+            },
+            timestamp_created: this.timestamp_created,
+            timestamp_finish: new Date().toISOString()
+        };
+        
+        // Store single game result (not in an array)
+        localStorage.setItem('gameResults', JSON.stringify(gameResult));
+        
         clearInterval(this.gameLoop);
     }
     
