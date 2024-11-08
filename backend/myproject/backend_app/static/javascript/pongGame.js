@@ -169,12 +169,18 @@ export async function sendGameResultToApi(gameResult, players) {
             this.gameOver(store);
         }
     }
-    
     checkPaddleCollision(paddle) {
-        return this.ball.x >= paddle.x - this.paddleWidth/2 &&
-               this.ball.x <= paddle.x + this.paddleWidth/2 &&
-               this.ball.y >= paddle.y - this.paddleHeight/2 &&
-               this.ball.y <= paddle.y + this.paddleHeight/2;
+        if (
+            this.ball.x >= paddle.x - this.paddleWidth / 2 &&
+            this.ball.x <= paddle.x + this.paddleWidth / 2 &&
+            this.ball.y >= paddle.y - this.paddleHeight / 2 &&
+            this.ball.y <= paddle.y + this.paddleHeight / 2
+        ) {
+            const relativeIntersectY = (this.ball.y - paddle.y) / (this.paddleHeight / 2);
+            this.ball.dy = relativeIntersectY * 5;
+            return true;
+        }
+        return false;
     }
     
     resetGame(direction) {
