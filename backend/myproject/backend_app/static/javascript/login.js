@@ -44,8 +44,7 @@ function handleFormSubmit(event) {
     fetch("/api/login/", {
         method: "POST",
         headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": csrftoken
+            "Content-Type": "application/json"
         },
         body: JSON.stringify({ username, password })
     })

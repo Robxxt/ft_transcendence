@@ -67,7 +67,6 @@ export function createNavBar() {
 export async function loadAvatar(username) {
     const token = localStorage.getItem('token');
     const csrftoken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-    console.log('Token for Avatar', token);
     
     try {
         const response = await fetch(`/api/getPng/`, {

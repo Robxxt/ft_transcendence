@@ -40,12 +40,16 @@ from django.utils.decorators import method_decorator
 
 @api_view(['POST'])
 def register(request):
+    print("h0")
     if request.method == 'POST':
+        print("h1")
         serializer = RegisterSerializer(data=request.data)
         if serializer.is_valid():
+            print("h2")
             user = serializer.save()
             token = Token.objects.create(user=user)
             return Response({'error': 0, 'token': token.key}, status=status.HTTP_201_CREATED)
+        print("h3")
         return Response({'error': 1, 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
