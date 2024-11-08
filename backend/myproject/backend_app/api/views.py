@@ -332,7 +332,19 @@ def save_local_game(request):
         except User.DoesNotExist:
             return JsonResponse({'error': 'One or both users not found'}, status=404)
 
-        # Create GameRoom
+        # Lock users in a consistent order to prevent deadlocks
+        with transaction.atomic():
+            users = list(User.objects.select_for_update().filter(
+                username__in=[challenger_name, opponent_name]
+            ).order_by('id'))
+            
+            if len(users) != 2:
+                return JsonResponse({'error': 'One or both users not found'}, status=404)
+
+            user_map = {user.username: user for user in users}
+            challenger = user_map[challenger_name]
+            opponent = user_map[opponent_name]
+
         game_room = GameRoom.objects.create(
             player1=challenger,
             player2=opponent,
@@ -342,8 +354,7 @@ def save_local_game(request):
             finished_at=timestamp_finish,
             isAiPlay=False
         )
-
-        # Create PongGame
+        
         pong_game = PongGame.objects.create(
             room=game_room,
             score1=challenger_score,
@@ -367,6 +378,7 @@ def save_local_game(request):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
+
 @csrf_exempt
 def update_win_loss(request):
     if request.method != 'POST':
@@ -377,24 +389,27 @@ def update_win_loss(request):
         winner_name = data.get('winner_name')
         loser_name = data.get('loser_name')
 
-        # Validate required fields
         if not all([winner_name, loser_name]):
             return JsonResponse({'error': 'Missing required fields'}, status=400)
 
-        # Update both users atomically
+        # Lock and update both users atomically
         with transaction.atomic():
-            try:
-                winner = User.objects.select_for_update().get(username=winner_name)
-                loser = User.objects.select_for_update().get(username=loser_name)
-                
-                winner.won += 1
-                loser.lost += 1
-                
-                winner.save()
-                loser.save()
+            users = list(User.objects.select_for_update().filter(
+                username__in=[winner_name, loser_name]
+            ).order_by('id'))  # Consistent ordering by ID to prevent deadlocks
 
-            except User.DoesNotExist:
+            if len(users) != 2:
                 return JsonResponse({'error': 'One or both users not found'}, status=404)
+
+            user_map = {user.username: user for user in users}
+            winner = user_map.get(winner_name)
+            loser = user_map.get(loser_name)
+
+            winner.won += 1
+            loser.lost += 1
+
+            winner.save()
+            loser.save()
 
         return JsonResponse({
             'success': True,
