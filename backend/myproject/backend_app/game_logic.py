@@ -91,6 +91,8 @@ class GameLogic:
 
     async def handle_player_disconnect(self, player_channel):
         self.connected_players.discard(player_channel)
+        if self.game_state == GameState.FINISHED:
+          return
         if len(self.connected_players) < 2:
             await self.end_game_due_to_disconnection(player_channel)
 
@@ -116,7 +118,10 @@ class GameLogic:
         with transaction.atomic():
             self.pong_game.refresh_from_db()
             self.pong_game.game_state = PongGame.State.FINISHED
-            self.pong_game.winner = winner or (self.player_names[1] if self.score1 > self.score2 else self.player_names[2])
+            if disconnected:
+              self.pong_game.winner = None
+            else:
+              self.pong_game.winner = winner or (self.player_names[1] if self.score1 > self.score2 else self.player_names[2])
             self.pong_game.finished_at = timezone.now()
             self.pong_game.score1 = self.score1
             self.pong_game.score2 = self.score2
