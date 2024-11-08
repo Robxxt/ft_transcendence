@@ -26,6 +26,14 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['transcendence.com', '0.0.0.0','192.168.65.1', "localhost", "django"]
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://localhost',
+    'http://localhost',
+    'http://django',
+    'https://django',
+    # You can also add other trusted domains here if needed
+]
+
 AUTH_USER_MODEL = 'backend_app.User'
 
 # Application definition
