@@ -250,9 +250,8 @@ function updateGameState(gameState, ctx, canvas) {
         }
     
         const actions = {
-            'ArrowUp': 'up',
-            'ArrowDown': 'down',
-            ' ': 'activate_speed_boost'
+            'w': 'up',
+            's': 'down',
         };
     
         const action = actions[event.key];
