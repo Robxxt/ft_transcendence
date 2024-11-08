@@ -39,7 +39,6 @@ export function loadPage(app) {
 }
 
 function handleFormSubmit(event) {
-    const csrftoken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     event.preventDefault();
 
     // check username and password again
@@ -55,8 +54,7 @@ function handleFormSubmit(event) {
     fetch("/api/register/", {
         method: "POST",
         headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": csrftoken
+            "Content-Type": "application/json"
         },
         body: JSON.stringify(data)
     })
