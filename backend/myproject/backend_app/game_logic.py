@@ -22,11 +22,11 @@ class GameState(Enum):
     DISCONNECTED = 5
 
 class GameLogic:
-    MAX_SCORE: int = 1
+    MAX_SCORE: int = 3
     PADDLE_WIDTH: float = 0.02
     PADDLE_HEIGHT: float = 0.15
     PADDLE_OFFSET: float = 0.02 
-    BALL_SPEED: float = 0.2
+    BALL_SPEED: float = 0.4
     MAX_ANGLE: float = math.pi / 2
     BALL_RADIUS: float = 0.1 * PADDLE_HEIGHT
     SPEED_BOOST_FACTOR = 1.5
