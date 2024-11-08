@@ -7,6 +7,7 @@ let currentGameSocket = null;
 let currentChatSocket = null;
 let keyListenerAttached = false;
 let gameRoomData = null;
+let popStateHandlerAttached = false;
 
 export async function gameRoomView(roomId) {
     const app = document.getElementById('app');
@@ -28,9 +29,22 @@ export async function gameRoomView(roomId) {
         
         setupGame(roomId, data);
         setupChatWebSocket(roomId, data);
+        setupPopStateHandler();
         updateRoomState(data.state);
+        history.pushState({ roomId }, '', window.location.pathname);
     } catch (error) {
         handleError(app, error);
+    }
+}
+
+
+function setupPopStateHandler() {
+    if (!popStateHandlerAttached) {
+        window.addEventListener('popstate', () => {
+            console.log('Back/forward button pressed, cleaning up game room...');
+            cleanupGameRoom();
+        });
+        popStateHandlerAttached = true;
     }
 }
 
@@ -75,6 +89,11 @@ function cleanupGameRoom() {
     if (keyListenerAttached) {
         document.removeEventListener('keydown', handleKeyPress);
         keyListenerAttached = false;
+    }
+
+    if (popStateHandlerAttached) {
+        window.removeEventListener('popstate', cleanupGameRoom);
+        popStateHandlerAttached = false;
     }
     
     // Reset game data
