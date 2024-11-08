@@ -57,6 +57,9 @@ class GameLogic:
         self.player_names = {1: "", 2: "", 3: "game_ai"}
         self.winner = None
         self.winner_display_name = None
+        self.ai_last_target_update = 0
+        self.ai_last_move_time = 0
+        self.ai_target_y = 0.5
         self.reset_game()
 
     async def set_winner(self):
@@ -338,15 +341,31 @@ class GameLogic:
         await self.update_game_state()
 
     def move_ai(self):
-        glitch = random.choices([True, False], weights=[1, 18])[0]
+            current_time = time.time()
+            if current_time - self.ai_last_target_update >= 1.0:
+                if self.ball_speed_x > 0:
+                    time_to_reach = (1 - self.ball_x) / self.ball_speed_x
+                    predicted_y = self.ball_y + (self.ball_speed_y * time_to_reach)
+                    predicted_y = max(self.PADDLE_HEIGHT / 2, 
+                                    min(1 - self.PADDLE_HEIGHT / 2, predicted_y))
+                    variation = random.uniform(-0.01, 0.01)
+                    self.ai_target_y = predicted_y + variation
+                else:
+                    time_to_reach_left = (-1) * self.ball_x / self.ball_speed_x
+                    if time_to_reach_left < 1.0:
+                        predicted_y = self.ball_y + (self.ball_speed_y * time_to_reach_left)
+                        self.ai_target_y = predicted_y
+                    else:
+                        self.ai_target_y = 0.5 + random.uniform(-0.05, 0.05)
 
-        if abs(self.ball_y - self.paddle2_y) < 0.01:
-            return
-        if glitch:
-            return
-        if self.paddle2_y > self.ball_y:
-            self.move_paddle(2, "up")
-        elif self.paddle2_y < self.ball_y:
-            self.move_paddle(2, "down")
-        else:
-            pass
+                self.ai_last_target_update = current_time
+            if current_time - self.ai_last_move_time >= 0.15:
+                if abs(self.paddle2_y - self.ai_target_y) > 0.041:
+                    if self.paddle2_y < self.ai_target_y:
+                        self.move_paddle(2, "down")
+                    else:
+                        self.move_paddle(2, "up")
+                self.ai_last_move_time = current_time
+
+
+
