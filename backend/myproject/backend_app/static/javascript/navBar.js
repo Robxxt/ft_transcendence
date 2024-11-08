@@ -40,15 +40,13 @@ export function createNavBar() {
     // send logout to server
     document.getElementById("logoutButton").addEventListener("click", () => {
         const token = localStorage.getItem('token');
-        const csrftoken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
         // logout at server
         fetch("/api/logout_user/", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Token ${token}`,
-                "X-CSRFToken": csrftoken
+                "Authorization": `Token ${token}`
             },
             body: JSON.stringify({user : username})
         })
@@ -65,16 +63,13 @@ export function createNavBar() {
 }
 
 export async function loadAvatar(username) {
-    const token = localStorage.getItem('token');
-    const csrftoken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-    
+    const token = localStorage.getItem('token');    
     try {
         const response = await fetch(`/api/getPng/`, {
             method: 'GET',
             cache: 'no-store',
             headers: {
-                "X-CSRFToken": csrftoken,
-                'Authorization': `Token ${token}`,
+                'Authorization': `Token ${token}`
             }
         });
         console.log('Fetch response:', response);
