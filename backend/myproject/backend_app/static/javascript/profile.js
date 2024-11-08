@@ -418,7 +418,6 @@ function handleAddFriendsDiv(app, username) {
 }
 
 function addFriend(username, friend, isFriend) {
-    const csrftoken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     const token = localStorage.getItem('token');
     const data = {
         user: username,
@@ -431,7 +430,6 @@ function addFriend(username, friend, isFriend) {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
-                "X-CSRFToken": csrftoken,
                 "Authorization": `Token ${token}`
             },
             body: JSON.stringify(data)
