@@ -130,7 +130,8 @@ class TictacGameResultSerializer(serializers.ModelSerializer):
         if instance.player2:
             data["player2"] = instance.player2.username
         else:
-            data["player2"] = "Prof. Procrastinator"
+            data["player2"] = data["second_player_typed_name"]
+            print(data["player2"])
         data.pop("is_draw")
         return data
 
