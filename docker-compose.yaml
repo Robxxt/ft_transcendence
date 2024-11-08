@@ -68,12 +68,13 @@ services:
       - "6379:6379"
     restart: always
   nginx:
-    image: nginx:latest
+    build: ./provisioning/nginx
     container_name: tr_nginx
-    ports:
-      - "80:80"
     volumes:
       - ./provisioning/nginx/conf.d:/etc/nginx/conf.d
+    ports:
+      - "80:80"
+      - "443:443"
     depends_on:
       - django
 

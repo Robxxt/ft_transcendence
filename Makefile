@@ -14,5 +14,6 @@ fclean:
 				postgres \
 				ft_transcendence-django \
 				redis \
+				ft_transcendence-nginx \
 
 re: fclean all
