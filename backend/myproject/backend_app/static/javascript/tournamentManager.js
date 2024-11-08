@@ -17,9 +17,9 @@ export class TournamentManager {
                         winner: null
                     },
                     game2: {
-                        challenger: players.opponents[1],
+                        challenger: players.opponents[1].username,
                         challengerDisplayName: players.opponents[1].displayName,
-                        opponent: players.opponents[2],
+                        opponent: players.opponents[2].username,
                         opponentDisplayName: players.opponents[2].displayName,
                         winner: null
                     },
@@ -53,14 +53,14 @@ export class TournamentManager {
             
             // If both semifinal games are complete, set up the final
             if (this.state.matchups.game1.winner && this.state.matchups.game2.winner) {
-                this.state.matchups.game3.challenger = this.state.matchups.game1.winner;
-                this.state.matchups.game3.challengerDisplayName = 
-                (this.state.matchups.game1.winner === this.state.matchups.game1.challenger) ? 
-                this.state.matchups.game1.challengerDisplayName : this.state.matchups.game1.opponentDisplayName;
-                this.state.matchups.game3.opponent = this.state.matchups.game2.winner;
-                this.state.matchups.game3.opponentDisplayName = 
-                (this.state.matchups.game2.winner === this.state.matchups.game2.challenger) ? 
-                this.state.matchups.game2.challengerDisplayName : this.state.matchups.game2.opponentDisplayName;
+                this.state.matchups.game3.challengerDisplayName = this.state.matchups.game1.winner;
+                this.state.matchups.game3.challenger = 
+                (this.state.matchups.game1.winner === this.state.matchups.game1.challengerDisplayName) ? 
+                this.state.matchups.game1.challenger : this.state.matchups.game1.opponent;
+                this.state.matchups.game3.opponentDisplayName = this.state.matchups.game2.winner;
+                this.state.matchups.game3.opponent = 
+                (this.state.matchups.game2.winner === this.state.matchups.game2.challengerDisplayName) ? 
+                this.state.matchups.game2.challenger : this.state.matchups.game2.opponent;
             }
         } else {
             // Tournament is complete
