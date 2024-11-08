@@ -3,14 +3,12 @@ export function tictacView() {
 	const appDiv = document.getElementById('app');
 
 	const username = JSON.parse(localStorage.getItem('user')).name;
-	console.log('player1 name from json.parse: ', username);
 	if (!username) {
 		console.error('Tictac error: No user name');
 		return;
 	}
 
 	const usertoken = localStorage.getItem('token');
-    console.log("Auth Token:", usertoken);
 	if (!usertoken) {
 		console.error('Tictac error: No token');
 		return;

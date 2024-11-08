@@ -304,15 +304,15 @@ function updateStartGameButton(gameState, playerNumber, player1Ready, player2Rea
         return;
     }
     
-    console.log("Updating button state:", { gameState, playerNumber, player1Ready, player2Ready, playerNames });
+    // console.log("Updating button state:", { gameState, playerNumber, player1Ready, player2Ready, playerNames });
 
     // debug
-    console.log("debug " + gameState);
+    // console.log("debug " + gameState);
 
     if (gameState === 'FINISHED') {
         // Remove the button when the game is finished
         startGameBtnContainer.innerHTML = '';
-        console.log("Game finished, button removed");
+        // console.log("Game finished, button removed");
     } else if (gameState === 'PLAYING') {
         startGameBtn.disabled = true;
         startGameBtn.textContent = 'Game in Progress';
