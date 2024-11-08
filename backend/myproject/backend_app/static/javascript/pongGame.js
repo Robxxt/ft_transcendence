@@ -107,7 +107,7 @@ export async function sendGameResultToApi(gameResult, players) {
     
     handleKeyDown(e) {
         this.keyState[e.key.toLowerCase()] = true;
-        if (!this.gameStarted) {
+        if (!this.gameStarted  && e.key.toLowerCase() === 'r') {
             this.start();
         }
     }
