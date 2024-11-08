@@ -1,5 +1,6 @@
 import { apiRequest, API_BASE_URL } from './apiServices.js';
 import { navigateTo } from './router.js';
+import { addRouteChangeListener, removeRouteChangeListener } from './router.js';
 
 
 const WEBSOCKET_BASE_URL = `ws://${window.location.host}`;
@@ -14,7 +15,12 @@ export async function gameRoomView(roomId) {
     try {
         // Clean up previous game state
         cleanupGameRoom();
+        const cleanup = () => {
+            console.log("Cleaning up game room due to navigation");
+            cleanupGameRoom();
+        };
         
+        addRouteChangeListener(cleanup);
         console.log("trying to access!");
         const [templateHtml, data] = await Promise.all([
             fetchTemplate('/static/html/gameRoom.html'),
@@ -29,6 +35,13 @@ export async function gameRoomView(roomId) {
         setupGame(roomId, data);
         setupChatWebSocket(roomId, data);
         updateRoomState(data.state);
+        const handlePopState = () => {
+            console.log("Browser navigation detected");
+            cleanup();
+            removeRouteChangeListener(cleanup);
+            window.removeEventListener('popstate', handlePopState);
+        };
+        window.addEventListener('popstate', handlePopState);
     } catch (error) {
         handleError(app, error);
     }
