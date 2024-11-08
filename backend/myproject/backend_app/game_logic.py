@@ -22,7 +22,7 @@ class GameState(Enum):
     DISCONNECTED = 5
 
 class GameLogic:
-    MAX_SCORE: int = 3
+    MAX_SCORE: int = 1
     PADDLE_WIDTH: float = 0.02
     PADDLE_HEIGHT: float = 0.15
     PADDLE_OFFSET: float = 0.02 
@@ -54,7 +54,7 @@ class GameLogic:
         self.connected_players = set()
         self.speed_boost_active = False
         self.speed_boost_end_time = 0
-        self.player_names = {1: "", 2: "", 3: "AI"}
+        self.player_names = {1: "", 2: "", 3: "game_ai"}
         self.winner = None
         self.winner_display_name = None
         self.reset_game()
