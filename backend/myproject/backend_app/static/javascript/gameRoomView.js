@@ -304,10 +304,12 @@ function updateStartGameButton(gameState, playerNumber, player1Ready, player2Rea
         startGameBtn.style.display = 'inline-block';
     } else {
         startGameBtn.style.display = 'inline-block';
-        if (playerNumber === 1) {
+        const isAIPlayer = playerNumber > 2;
+        const actualPlayerNumber = isAIPlayer ? 1 : playerNumber;
+        if (actualPlayerNumber === 1) {
             startGameBtn.disabled = player1Ready;
             startGameBtn.textContent = player1Ready ? `Waiting for ${playerNames['2']}` : 'Start Game';
-        } else if (playerNumber === 2) {
+        } else if (actualPlayerNumber === 2) {
             startGameBtn.disabled = player2Ready;
             startGameBtn.textContent = player2Ready ? `Waiting for ${playerNames['1']}` : 'Start Game';
         }

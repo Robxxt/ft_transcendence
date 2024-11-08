@@ -22,7 +22,7 @@ class GameState(Enum):
     DISCONNECTED = 5
 
 class GameLogic:
-    MAX_SCORE: int = 1
+    MAX_SCORE: int = 3
     PADDLE_WIDTH: float = 0.02
     PADDLE_HEIGHT: float = 0.15
     PADDLE_OFFSET: float = 0.02 
