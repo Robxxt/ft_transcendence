@@ -143,7 +143,10 @@ export async function sendGameResultToApi(gameResult, players) {
         }
         
         // Ball collision with paddles
-        if (this.checkPaddleCollision(this.leftPaddle) || this.checkPaddleCollision(this.rightPaddle)) {
+        // if (this.checkPaddleCollision(this.leftPaddle) || this.checkPaddleCollision(this.rightPaddle)) {
+        //     this.ball.dx *= -1.1;
+        // }
+        if (this.checkLeftPaddleCollision() || this.checkRightPaddleCollision()) {
             this.ball.dx *= -1.1;
         }
         
@@ -169,20 +172,29 @@ export async function sendGameResultToApi(gameResult, players) {
             this.gameOver(store);
         }
     }
-    checkPaddleCollision(paddle) {
-        if (
-            this.ball.x >= paddle.x - this.paddleWidth / 2 &&
-            this.ball.x <= paddle.x + this.paddleWidth / 2 &&
-            this.ball.y >= paddle.y - this.paddleHeight / 2 &&
-            this.ball.y <= paddle.y + this.paddleHeight / 2
-        ) {
-            const relativeIntersectY = (this.ball.y - paddle.y) / (this.paddleHeight / 2);
+    checkLeftPaddleCollision() {
+        const ballLeft = this.ball.x - this.ballSize/2;
+        if (ballLeft <= this.leftPaddle.x + this.paddleWidth/2 &&
+            ballLeft >= this.leftPaddle.x - this.paddleWidth/2 &&
+            this.ball.y >= this.leftPaddle.y - this.paddleHeight/2 &&
+            this.ball.y <= this.leftPaddle.y + this.paddleHeight/2) {
+            const relativeIntersectY = (this.ball.y - this.leftPaddle.y) / (this.paddleHeight/2);
             this.ball.dy = relativeIntersectY * 5;
             return true;
         }
-        return false;
     }
     
+    checkRightPaddleCollision() {
+        const ballRight = this.ball.x + this.ballSize/2;
+        if (ballRight >= this.rightPaddle.x - this.paddleWidth/2 &&
+            ballRight <= this.rightPaddle.x + this.paddleWidth/2 &&
+            this.ball.y >= this.rightPaddle.y - this.paddleHeight/2 &&
+            this.ball.y <= this.rightPaddle.y + this.paddleHeight/2) {
+            const relativeIntersectY = (this.ball.y - this.rightPaddle.y) / (this.paddleHeight/2);
+            this.ball.dy = relativeIntersectY * 5;
+            return true;
+        }
+    }
     resetGame(direction) {
         this.ball.x = this.canvas.width/2;
         this.ball.y = this.canvas.height/2;
