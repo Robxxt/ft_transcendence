@@ -3,7 +3,9 @@ import { navigateTo } from './router.js';
 import { addRouteChangeListener, removeRouteChangeListener } from './router.js';
 
 
-const WEBSOCKET_BASE_URL = `ws://${window.location.host}`;
+const WEBSOCKET_BASE_URL = window.location.protocol === 'https:' ? 
+                           `wss://${window.location.host}` : 
+                           `ws://${window.location.host}`;
 let currentGameSocket = null;
 let currentChatSocket = null;
 let keyListenerAttached = false;

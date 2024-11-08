@@ -2,6 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth.hashers import make_password, check_password
 from rest_framework.authtoken.models import Token
 from backend_app.models import User, TableMatch, UserMetric, GameRoom, TictacGame, PongGame
+from django.conf import settings
 import os
 
 class UserSerializer(serializers.ModelSerializer):
@@ -15,7 +16,7 @@ class UserNameSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["username", "isLoggedIn"]
-    
+
     def get_isLoggedIn(self, obj):
         return Token.objects.filter(user=obj).exists()
 
@@ -79,7 +80,7 @@ class ChangePasswordSerializer(serializers.Serializer):
         user = self.context['request'].user
         user.password = make_password(self.validated_data['newPassword'])
         user.save()
-    
+
 class WinLossSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -113,7 +114,7 @@ class PongGameSerializer(serializers.ModelSerializer):
 class TictacGameResultSerializer(serializers.ModelSerializer):
     class Meta:
         model = TictacGame
-        fields = ["player1", "player2", "winner", "is_draw", "created_at"]
+        fields = '__all__'
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
@@ -126,28 +127,31 @@ class TictacGameResultSerializer(serializers.ModelSerializer):
             data["result"] = "1:0"
         else:
             data["result"] = "0:1"
+        data["player1"] = instance.player1.username
+        if instance.player2:
+            data["player2"] = instance.player2.username
+        else:
+            data["player2"] = data["second_player_typed_name"]
+            print(data["player2"])
         data.pop("is_draw")
-        save_player1 = instance.player1.username
-        data.pop("player1")
-        data["player1"] = save_player1
         return data
 
 class ChangeAvatarSerialzer(serializers.Serializer):
     avatar = serializers.ImageField(required=True)
-    
+
     def update(self, instance, validated_data):
         avatar = validated_data.get('avatar')
         if avatar:
             # Define the path where the avatar will be saved
-            avatar_path = os.path.join('avatars', f'{instance.id}.png')
+            avatar_path = os.path.join(settings.MEDIA_ROOT, 'avatar', f'{instance.id}.png')
 
             # Check if the file already exists and delete it if it does
-            if os.path.exists(instance.avatar.path):
-                os.remove(instance.avatar.path)
+            if os.path.exists(avatar_path):
+                os.remove(avatar_path)
 
             # Save the new avatar
             instance.avatar.save(f'{instance.id}.png', avatar.file, save=False)
-        
+
         instance.save()
         return instance
 

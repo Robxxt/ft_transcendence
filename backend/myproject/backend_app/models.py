@@ -127,7 +127,8 @@ class PongGame(models.Model):
 
 class TictacGame(models.Model):
 	player1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='player1_tictac')
-	player2 = models.CharField(max_length=50, blank=True, null=True)
+	player2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='player2_tictac', null=True, blank=True)
+	second_player_typed_name = models.CharField(max_length=50, blank=True, null=True)
 	winner = models.CharField(max_length=50, blank=True, null=True)
 	is_draw = models.BooleanField(default=False)
 	created_at = models.DateTimeField(auto_now_add=True)

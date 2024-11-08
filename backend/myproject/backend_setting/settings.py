@@ -26,6 +26,15 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['transcendence.com', '0.0.0.0','192.168.65.1', "localhost", "django"]
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://localhost',
+    'http://0.0.0.0',
+    'https://0.0.0.0',
+    'http://localhost',
+    'http://django',
+    'https://django',
+]
+
 AUTH_USER_MODEL = 'backend_app.User'
 
 # Application definition
@@ -51,7 +60,6 @@ MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
