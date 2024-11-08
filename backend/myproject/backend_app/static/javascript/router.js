@@ -11,6 +11,7 @@ const routes = {
     '/tictac': () => import('/static/tictac/tictactoe.js').then(module => module.tictacView()),
     '/tournaments': () => import('/static/javascript/tournaments.js').then(module => module.loadPage(document.getElementById('app'))),
     '/local-game': () => import('/static/javascript/localGame.js').then(module => module.loadPage(document.getElementById('app'))),
+    '/local-tournament': () => import('/static/javascript/tournamentFlow.js').then(module => module.loadPage(document.getElementById('app'))),
 };
 
 export function navigateTo(url) {
