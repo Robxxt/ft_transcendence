@@ -26,7 +26,7 @@ class GameLogic:
     PADDLE_WIDTH: float = 0.02
     PADDLE_HEIGHT: float = 0.15
     PADDLE_OFFSET: float = 0.02 
-    BALL_SPEED: float = 0.4
+    BALL_SPEED: float = 0.3
     MAX_ANGLE: float = math.pi / 2
     BALL_RADIUS: float = 0.1 * PADDLE_HEIGHT
     SPEED_BOOST_FACTOR = 1.5
