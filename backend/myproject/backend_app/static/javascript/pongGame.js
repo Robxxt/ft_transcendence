@@ -197,8 +197,8 @@ export async function sendGameResultToApi(gameResult, players) {
         const gameResult = {
             winner: this.winner,
             scores: {
-                [this.challengerDisplayName]: isLeftPaddleWinner ? this.leftPaddle.score : this.rightPaddle.score,
-                [this.opponentDisplayName]: isLeftPaddleWinner ? this.rightPaddle.score : this.leftPaddle.score
+                [this.challengerDisplayName]: this.leftPaddle.score,
+                [this.opponentDisplayName]: this.rightPaddle.score
             },
             timestamp_created: this.timestamp_created,
             timestamp_finish: new Date().toISOString()

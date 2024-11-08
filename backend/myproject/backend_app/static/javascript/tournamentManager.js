@@ -14,21 +14,27 @@ export class TournamentManager {
                         challengerDisplayName: players.challengerDisplayName,
                         opponent: players.opponents[0].username,
                         opponentDisplayName: players.opponents[0].displayName,
-                        winner: null
+                        winner: null,
+                        challengerscore: 0,
+                        opponentscore: 0,
                     },
                     game2: {
                         challenger: players.opponents[1].username,
                         challengerDisplayName: players.opponents[1].displayName,
                         opponent: players.opponents[2].username,
                         opponentDisplayName: players.opponents[2].displayName,
-                        winner: null
+                        winner: null,
+                        challengerscore: 0,
+                        opponentscore: 0,
                     },
                     game3: {
                         challenger: null, // Will be winner of game1
                         challengerDisplayName: null,
                         opponent: null,  // Will be winner of game2
                         opponentDisplayName: null,
-                        winner: null
+                        winner: null,
+                        challengerscore: 0,
+                        opponentscore: 0,
                     }
                 },
                 tournamentWinner: null,
@@ -43,9 +49,11 @@ export class TournamentManager {
         return this.state.matchups[gameKey];
     }
 
-    updateGameResult(winner) {
+    updateGameResult(winner, challengerScore, opponentScore) {
         const gameKey = `game${this.state.currentGame}`;
         this.state.matchups[gameKey].winner = winner;
+        this.state.matchups[gameKey].challengerscore = challengerScore;
+        this.state.matchups[gameKey].opponentscore = opponentScore;
 
         // If this was game 1 or 2, set up the final match
         if (this.state.currentGame < 3) {
@@ -63,7 +71,6 @@ export class TournamentManager {
                 this.state.matchups.game2.challenger : this.state.matchups.game2.opponent;
             }
         } else {
-            // Tournament is complete
             this.state.tournamentWinner = winner;
             this.state.isComplete = true;
         }
