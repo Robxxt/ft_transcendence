@@ -183,7 +183,7 @@ def removeFriend(request):
 @authentication_classes([TokenAuthentication])
 def gameList(request):
     user = request.user
-    queryset_pong = PongGame.objects.filter(room__player1=user) | PongGame.objects.filter(room__player2=user)
+    queryset_pong = (PongGame.objects.filter(room__player1=user) | PongGame.objects.filter(room__player2=user)).filter(winner__isnull=False)
     serializer_pong = PongGameSerializer(queryset_pong, many=True)
     queryset_tictactoe = TictacGame.objects.filter(player1=user) | TictacGame.objects.filter(player2=user)
     serializer_tictactoe = TictacGameResultSerializer(queryset_tictactoe, many=True)

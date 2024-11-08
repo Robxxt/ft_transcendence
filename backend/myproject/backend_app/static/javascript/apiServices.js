@@ -2,16 +2,8 @@ import { navigateTo } from './router.js';
 // apiService.js
 export const API_BASE_URL = 'api/';
 
-function getCSRFToken() {
-    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-    return csrfToken;
-}
 
 export async function apiRequest(url, method, body = null, headers = {}) {
-    if (method === 'POST' || method === 'PUT' || method === 'DELETE') {
-        const csrfToken = getCSRFToken();
-        headers['X-CSRFToken'] = csrfToken;
-    }
     headers['Content-Type'] = 'application/json';
     const token = localStorage.getItem("token");
     if (token) {

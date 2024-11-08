@@ -1,5 +1,7 @@
 import { createNavBar } from './navBar.js';
 
+const routeChangeListeners = new Set();
+
 const routes = {
     '/': () => import('/static/javascript/login.js').then(module => module.loadPage(document.getElementById('app'))),
     '/login': () => import('/static/javascript/login.js').then(module => module.loadPage(document.getElementById('app'))),
@@ -13,8 +15,17 @@ const routes = {
     '/local-game': () => import('/static/javascript/localGame.js').then(module => module.loadPage(document.getElementById('app'))),
     '/local-tournament': () => import('/static/javascript/tournamentFlow.js').then(module => module.loadPage(document.getElementById('app'))),
 };
+export function addRouteChangeListener(callback) {
+    routeChangeListeners.add(callback);
+}
+
+export function removeRouteChangeListener(callback) {
+    routeChangeListeners.delete(callback);
+}
 
 export function navigateTo(url) {
+    routeChangeListeners.forEach(listener => listener());
+    routeChangeListeners.clear();
     history.pushState(null, null, url);
     router();
 }

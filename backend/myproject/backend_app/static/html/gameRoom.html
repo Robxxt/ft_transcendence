@@ -8,7 +8,7 @@
 <body>
     <div id="disconnected-overlay" class="overlay d-none position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center vh-100 bg-dark text-light" style="z-index: 1000;">
         <div class="text-center">
-            <h2 class="mb-4">Oooops, the connection was interrupted.</h2>
+            <h2 class="mb-4">The connection to the socket was lost during the game</h2>
             <p>Please return to the home screen...</p>
             <button id="return-home-btn" class="btn btn-primary mt-4">Return to Home</button>
         </div>
@@ -26,8 +26,12 @@
             </div>
             <h3>Waiting for Player Two</h3>
         </div>
-        <h1 class="text-center mb-4">Game Room <span id="room-id"></span></h1>
-        <p>Welcome, <span id="username"></span>!</p>
+        <h1 class="text-center mb-4 text-white">Game Room <span id="room-id"></span></h1>
+        <h1 class="text-center mb-4 text-white">Welcome, <span id="username"></span>!</h1>
+        <div class="alert alert-info text-center mb-4 w-75 mx-auto">
+            <i class="bi bi-controller me-2"></i>
+            Control your paddle using <kbd>W</kbd> to move up and <kbd>S</kbd> to move down
+        </div>
         <div class="row">
             <div class="col-md-8">
                 <canvas id="pong-canvas" width="600" height="400" class="border"></canvas>

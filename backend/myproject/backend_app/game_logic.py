@@ -22,11 +22,11 @@ class GameState(Enum):
     DISCONNECTED = 5
 
 class GameLogic:
-    MAX_SCORE: int = 1
+    MAX_SCORE: int = 3
     PADDLE_WIDTH: float = 0.02
     PADDLE_HEIGHT: float = 0.15
     PADDLE_OFFSET: float = 0.02 
-    BALL_SPEED: float = 0.2
+    BALL_SPEED: float = 0.3
     MAX_ANGLE: float = math.pi / 2
     BALL_RADIUS: float = 0.1 * PADDLE_HEIGHT
     SPEED_BOOST_FACTOR = 1.5
@@ -54,7 +54,7 @@ class GameLogic:
         self.connected_players = set()
         self.speed_boost_active = False
         self.speed_boost_end_time = 0
-        self.player_names = {1: "", 2: "", 3: "AI"}
+        self.player_names = {1: "", 2: "", 3: "game_ai"}
         self.winner = None
         self.winner_display_name = None
         self.reset_game()
@@ -91,6 +91,8 @@ class GameLogic:
 
     async def handle_player_disconnect(self, player_channel):
         self.connected_players.discard(player_channel)
+        if self.game_state == GameState.FINISHED:
+          return
         if len(self.connected_players) < 2:
             await self.end_game_due_to_disconnection(player_channel)
 
@@ -116,7 +118,10 @@ class GameLogic:
         with transaction.atomic():
             self.pong_game.refresh_from_db()
             self.pong_game.game_state = PongGame.State.FINISHED
-            self.pong_game.winner = winner or (self.player_names[1] if self.score1 > self.score2 else self.player_names[2])
+            if disconnected:
+              self.pong_game.winner = None
+            else:
+              self.pong_game.winner = winner or (self.player_names[1] if self.score1 > self.score2 else self.player_names[2])
             self.pong_game.finished_at = timezone.now()
             self.pong_game.score1 = self.score1
             self.pong_game.score2 = self.score2
@@ -205,12 +210,12 @@ class GameLogic:
 
         if (paddle1_left - self.BALL_RADIUS <= self.ball_x <= paddle1_right + self.BALL_RADIUS and 
             paddle1_top - self.BALL_RADIUS <= self.ball_y <= paddle1_bottom + self.BALL_RADIUS):
-            if self.ball_speed_x < 0:  # Only bounce if moving towards the paddle
+            if self.ball_speed_x < 0:
                 self._handle_paddle_collision(1, paddle1_top, paddle1_bottom)
 
         elif (paddle2_left - self.BALL_RADIUS <= self.ball_x <= paddle2_right + self.BALL_RADIUS and 
               paddle2_top - self.BALL_RADIUS <= self.ball_y <= paddle2_bottom + self.BALL_RADIUS):
-            if self.ball_speed_x > 0:  # Only bounce if moving towards the paddle
+            if self.ball_speed_x > 0:
                 self._handle_paddle_collision(2, paddle2_top, paddle2_bottom)
 
     def _handle_paddle_collision(self, paddle: int, paddle_top: float, paddle_bottom: float):
@@ -219,7 +224,7 @@ class GameLogic:
         angle = (relative_impact - 0.5) * self.MAX_ANGLE
         
         speed = math.sqrt(self.ball_speed_x**2 + self.ball_speed_y**2)
-        
+        speed *= 1.05
         if paddle == 1:
             self.ball_speed_x = abs(speed * math.cos(angle))
             self.ball_speed_y = speed * math.sin(angle)
@@ -252,11 +257,10 @@ class GameLogic:
         self.player2_ready = False
 
     def move_paddle(self, player: int, direction: str) -> None:
-        movement = -0.02 if direction == 'up' else 0.02
+        movement = -0.04 if direction == 'up' else 0.04
         lower_bound = self.PADDLE_HEIGHT / 2
         upper_bound = 1 - self.PADDLE_HEIGHT / 2
         
-        # debug
         if player == 1 or player == 3:
             new_position = self.paddle1_y + movement
             if lower_bound <= new_position <= upper_bound:

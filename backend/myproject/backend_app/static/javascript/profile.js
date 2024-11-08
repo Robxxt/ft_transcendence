@@ -216,7 +216,6 @@ function handleSetDisplayName(app, username) {
     });
 
     form.addEventListener("submit", function(event) {
-        const csrftoken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         const displayName = document.getElementById("displayName");
 
         event.preventDefault();
@@ -232,7 +231,6 @@ function handleSetDisplayName(app, username) {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
-                "X-CSRFToken": csrftoken,
                 "Authorization": `Token ${token}`
             },
             body: JSON.stringify({
@@ -418,7 +416,6 @@ function handleAddFriendsDiv(app, username) {
 }
 
 function addFriend(username, friend, isFriend) {
-    const csrftoken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     const token = localStorage.getItem('token');
     const data = {
         user: username,
@@ -431,7 +428,6 @@ function addFriend(username, friend, isFriend) {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
-                "X-CSRFToken": csrftoken,
                 "Authorization": `Token ${token}`
             },
             body: JSON.stringify(data)
@@ -456,7 +452,6 @@ function addFriend(username, friend, isFriend) {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
-                "X-CSRFToken": csrftoken,
                 "Authorization": `Token ${token}`
             },
             body: JSON.stringify(data)

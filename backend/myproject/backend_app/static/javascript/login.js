@@ -34,7 +34,6 @@ export function loadPage(app) {
 
 function handleFormSubmit(event) {
     const errorMessage = document.getElementById("errorMessage");
-    const csrftoken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     
     event.preventDefault();
 
