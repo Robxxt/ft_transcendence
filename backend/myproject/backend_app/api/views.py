@@ -7,10 +7,10 @@ from django.contrib.auth import logout
 from django.utils.dateparse import parse_datetime
 from django.http import JsonResponse
 from django.db import transaction
-from backend_app.models import (User, 
-                                TableMatch, 
-                                UserMetric, 
-                                GameRoom, 
+from backend_app.models import (User,
+                                TableMatch,
+                                UserMetric,
+                                GameRoom,
                                 TictacGame, PongGame)
 from backend_app.api.serializer import (RegisterSerializer,
                                         TableMatchSerializer,
@@ -100,12 +100,12 @@ def getDisplayName(request):
             user = User.objects.get(username=foreign_username)
         except User.DoesNotExist:
             return Response(
-                {'error': 'User not found'}, 
+                {'error': 'User not found'},
                 status=status.HTTP_404_NOT_FOUND
             )
     else:
         user = request.user
-    
+
     serializer = UserDisplayNameGetSerializer(user)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -181,7 +181,7 @@ def gameList(request):
     user = request.user
     queryset_pong = PongGame.objects.filter(room__player1=user) | PongGame.objects.filter(room__player2=user)
     serializer_pong = PongGameSerializer(queryset_pong, many=True)
-    queryset_tictactoe = TictacGame.objects.filter(player1=user)
+    queryset_tictactoe = TictacGame.objects.filter(player1=user) | TictacGame.objects.filter(player2=user)
     serializer_tictactoe = TictacGameResultSerializer(queryset_tictactoe, many=True)
     return Response(serializer_pong.data + serializer_tictactoe.data, status=status.HTTP_200_OK)
 
@@ -258,15 +258,16 @@ def save_tictac_result(request):
         is_draw = data.get('is_draw')
 
         user = get_object_or_404(User, username=player1)
+        user2 = User.objects.filter(username=player2).first() if player2 else None
 
-        game = TictacGame.objects.create(player1=user)
+        game = TictacGame.objects.create(player1=user, player2=user2)
 
         if is_draw:
             game.is_draw = is_draw
         else:
             game.winner = winner
             if player2:
-                game.player2 = player2
+                game.second_player_typed_name = player2
         game.save()
         game_serializer = TictacGameSerializer(game)
         return Response({'status': 'success', 'data': game_serializer.data}, status=status.HTTP_200_OK)
@@ -306,10 +307,10 @@ class PongGameDetailView(generics.RetrieveAPIView):
 def save_local_game(request):
     if request.method != 'POST':
         return JsonResponse({'error': 'Method not allowed'}, status=405)
-    
+
     try:
         data = json.loads(request.body)
-        
+
         # Get required data from request
         challenger_name = data.get('challenger_name')
         opponent_name = data.get('opponent_name')
@@ -320,7 +321,7 @@ def save_local_game(request):
         timestamp_finish = parse_datetime(data.get('timestamp_finish'))
 
         # Validate required fields
-        if not all([challenger_name, opponent_name, winner_name, 
+        if not all([challenger_name, opponent_name, winner_name,
                    challenger_score is not None, opponent_score is not None,
                    timestamp_created, timestamp_finish]):
             return JsonResponse({'error': 'Missing required fields'}, status=400)
@@ -337,7 +338,7 @@ def save_local_game(request):
             users = list(User.objects.select_for_update().filter(
                 username__in=[challenger_name, opponent_name]
             ).order_by('id'))
-            
+
             if len(users) != 2:
                 return JsonResponse({'error': 'One or both users not found'}, status=404)
 
@@ -354,7 +355,7 @@ def save_local_game(request):
             finished_at=timestamp_finish,
             isAiPlay=False
         )
-        
+
         pong_game = PongGame.objects.create(
             room=game_room,
             score1=challenger_score,
@@ -383,7 +384,7 @@ def save_local_game(request):
 def update_win_loss(request):
     if request.method != 'POST':
         return JsonResponse({'error': 'Method not allowed'}, status=405)
-    
+
     try:
         data = json.loads(request.body)
         winner_name = data.get('winner_name')
