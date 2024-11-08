@@ -257,7 +257,7 @@ class GameLogic:
         self.player2_ready = False
 
     def move_paddle(self, player: int, direction: str) -> None:
-        movement = -0.02 if direction == 'up' else 0.02
+        movement = -0.04 if direction == 'up' else 0.04
         lower_bound = self.PADDLE_HEIGHT / 2
         upper_bound = 1 - self.PADDLE_HEIGHT / 2
         
