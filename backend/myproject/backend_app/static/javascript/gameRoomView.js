@@ -3,22 +3,29 @@ import { navigateTo } from './router.js';
 
 
 const WEBSOCKET_BASE_URL = `ws://${window.location.host}`;
-
+let currentGameSocket = null;
+let currentChatSocket = null;
+let keyListenerAttached = false;
 let gameRoomData = null;
 
 export async function gameRoomView(roomId) {
     const app = document.getElementById('app');
 
     try {
-        console.log("trying to acces!")
+        // Clean up previous game state
+        cleanupGameRoom();
+        
+        console.log("trying to access!");
         const [templateHtml, data] = await Promise.all([
-            fetchTemplate('/static/html/gameRoom.html'), // This made an Issue
+            fetchTemplate('/static/html/gameRoom.html'),
             fetchGameRoomData(roomId)
         ]);
 
         gameRoomData = data;
         renderGameRoom(app, templateHtml, roomId, data);
-        console.log('Game Room View Call than one Time!!!');
+        
+        await waitForDOMElements(['pong-canvas', 'start-game-btn', 'start-game-btn-container']);
+        
         setupGame(roomId, data);
         setupChatWebSocket(roomId, data);
         updateRoomState(data.state);
@@ -26,6 +33,54 @@ export async function gameRoomView(roomId) {
         handleError(app, error);
     }
 }
+
+// Helper function to wait for DOM elements
+function waitForDOMElements(elementIds, timeout = 5000) {
+    return new Promise((resolve, reject) => {
+        const startTime = Date.now();
+        
+        function checkElements() {
+            const allElementsPresent = elementIds.every(id => document.getElementById(id));
+            
+            if (allElementsPresent) {
+                resolve();
+                return;
+            }
+            
+            if (Date.now() - startTime > timeout) {
+                reject(new Error(`Timeout waiting for elements: ${elementIds.join(', ')}`));
+                return;
+            }
+            
+            // Check again in 50ms
+            setTimeout(checkElements, 50);
+        }
+        
+        checkElements();
+    });
+}
+
+function cleanupGameRoom() {
+    // Close existing WebSocket connections
+    if (currentGameSocket) {
+        currentGameSocket.close();
+        currentGameSocket = null;
+    }
+    if (currentChatSocket) {
+        currentChatSocket.close();
+        currentChatSocket = null;
+    }
+
+    // Remove existing key event listener
+    if (keyListenerAttached) {
+        document.removeEventListener('keydown', handleKeyPress);
+        keyListenerAttached = false;
+    }
+    
+    // Reset game data
+    gameRoomData = null;
+}
+
 
 async function fetchTemplate(url) {
     const response = await fetch(url);
@@ -61,18 +116,18 @@ function handleError(app, error) {
 }
 
 function setupGame(roomId, data) {
-    const gameSocket = new WebSocket(`${WEBSOCKET_BASE_URL}/ws/game/${roomId}/`);
+    currentGameSocket = new WebSocket(`${WEBSOCKET_BASE_URL}/ws/game/${roomId}/`);
     const canvas = document.getElementById('pong-canvas');
     const ctx = canvas.getContext('2d');
 
-    gameSocket.onopen = () => {
+    currentGameSocket.onopen = () => {
         console.log("Game WebSocket connection established.");
-        setupGameControls(gameSocket, data);
+        setupGameControls(currentGameSocket, data);
     };
 
-    gameSocket.onmessage = (event) => handleGameMessage(event, ctx, canvas);
-    gameSocket.onerror = (event) => console.error("Game WebSocket error:", event);
-    gameSocket.onclose = () => console.log("Game WebSocket connection closed.");
+    currentGameSocket.onmessage = (event) => handleGameMessage(event, ctx, canvas);
+    currentGameSocket.onerror = (event) => console.error("Game WebSocket error:", event);
+    currentGameSocket.onclose = () => console.log("Game WebSocket connection closed.");
 }
 
 function showDisconnectedOverlay() {
@@ -175,27 +230,40 @@ function updateGameState(gameState, ctx, canvas) {
     }
 
 
-function setupGameControls(gameSocket, data) {
-    document.addEventListener('keydown', (event) => handleKeyPress(event, gameSocket, data));
-    setupStartGameButton(gameSocket, data);
-}
-
-function handleKeyPress(event, gameSocket, data) {
-    const actions = {
-        'ArrowUp': 'up',
-        'ArrowDown': 'down',
-        ' ': 'activate_speed_boost'
-    };
-
-    const action = actions[event.key];
-    if (action) {
-        gameSocket.send(JSON.stringify({
-            action: action === 'activate_speed_boost' ? 'activate_speed_boost' : 'move_paddle',
-            game_action: action,
-            player: data.current_user.player_number
-        }));
+    function setupGameControls(gameSocket, data) {
+        // Remove existing listener if it exists
+        if (keyListenerAttached) {
+            document.removeEventListener('keydown', handleKeyPress);
+        }
+        
+        // Create a bound version of handleKeyPress that includes gameSocket and data
+        const keyPressHandler = (event) => handleKeyPress(event, gameSocket, data);
+        document.addEventListener('keydown', keyPressHandler);
+        keyListenerAttached = true;
+        
+        setupStartGameButton(gameSocket, data);
     }
-}
+
+    function handleKeyPress(event, gameSocket, data) {
+        if (!gameSocket || gameSocket.readyState !== WebSocket.OPEN || !gameRoomData) {
+            return;
+        }
+    
+        const actions = {
+            'ArrowUp': 'up',
+            'ArrowDown': 'down',
+            ' ': 'activate_speed_boost'
+        };
+    
+        const action = actions[event.key];
+        if (action) {
+            gameSocket.send(JSON.stringify({
+                action: action === 'activate_speed_boost' ? 'activate_speed_boost' : 'move_paddle',
+                game_action: action,
+                player: data.current_user.player_number
+            }));
+        }
+    }
 
 function setupStartGameButton(gameSocket, data) {
     const startGameBtn = document.getElementById('start-game-btn');
@@ -249,20 +317,20 @@ function updateStartGameButton(gameState, playerNumber, player1Ready, player2Rea
 
 // Chat WebSocket setup
 function setupChatWebSocket(roomId, data) {
-    const chatSocket = new WebSocket(`${WEBSOCKET_BASE_URL}/ws/game-room/${roomId}/`);
+    currentChatSocket = new WebSocket(`${WEBSOCKET_BASE_URL}/ws/game-room/${roomId}/`);
     const chatMessages = document.getElementById('chat-messages');
     const chatInput = document.getElementById('chat-input');
     const sendMessageBtn = document.getElementById('send-message-btn');
 
-    chatSocket.onopen = () => console.log("Chat WebSocket connection established.");
-    chatSocket.onmessage = (event) => handleChatMessage(event, chatMessages);
-    chatSocket.onerror = (event) => console.error("Chat WebSocket error:", event);
-    chatSocket.onclose = () => console.log("Chat WebSocket connection closed.");
+    currentChatSocket.onopen = () => console.log("Chat WebSocket connection established.");
+    currentChatSocket.onmessage = (event) => handleChatMessage(event, chatMessages);
+    currentChatSocket.onerror = (event) => console.error("Chat WebSocket error:", event);
+    currentChatSocket.onclose = () => console.log("Chat WebSocket connection closed.");
 
-    sendMessageBtn.addEventListener('click', () => sendMessage(chatSocket, chatInput, data));
+    sendMessageBtn.addEventListener('click', () => sendMessage(currentChatSocket, chatInput, data));
     chatInput.addEventListener('keypress', (event) => {
         if (event.key === 'Enter') {
-            sendMessage(chatSocket, chatInput, data);
+            sendMessage(currentChatSocket, chatInput, data);
         }
     });
 }
