@@ -48,7 +48,6 @@ export function homeView() {
     }
 
     app.innerHTML = `
-        <h1 class="text-center mb-4">Welcome, ${username}!</h1>
         <div class="text-center">
             <button id="local-game-btn" class="btn btn-primary mb-2">Local Game</button>
             <button id="join-game-btn" class="btn btn-primary mb-2">Online Game</button>
