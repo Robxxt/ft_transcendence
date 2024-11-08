@@ -2,7 +2,9 @@ import { apiRequest, API_BASE_URL } from './apiServices.js';
 import { navigateTo } from './router.js';
 
 
-const WEBSOCKET_BASE_URL = `ws://${window.location.host}`;
+const WEBSOCKET_BASE_URL = window.location.protocol === 'https:' ? 
+                           `wss://${window.location.host}` : 
+                           `ws://${window.location.host}`;
 
 let gameRoomData = null;
 
