@@ -261,7 +261,6 @@ class GameLogic:
         lower_bound = self.PADDLE_HEIGHT / 2
         upper_bound = 1 - self.PADDLE_HEIGHT / 2
         
-        # debug
         if player == 1 or player == 3:
             new_position = self.paddle1_y + movement
             if lower_bound <= new_position <= upper_bound:
