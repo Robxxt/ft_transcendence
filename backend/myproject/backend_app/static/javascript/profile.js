@@ -216,7 +216,6 @@ function handleSetDisplayName(app, username) {
     });
 
     form.addEventListener("submit", function(event) {
-        const csrftoken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         const displayName = document.getElementById("displayName");
 
         event.preventDefault();
@@ -232,7 +231,6 @@ function handleSetDisplayName(app, username) {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
-                "X-CSRFToken": csrftoken,
                 "Authorization": `Token ${token}`
             },
             body: JSON.stringify({
