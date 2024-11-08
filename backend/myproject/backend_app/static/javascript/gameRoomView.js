@@ -276,7 +276,7 @@ function setupStartGameButton(gameSocket, data) {
             }
         });
     } else {
-        console.error("Start game button not found in the DOM");
+        console.warn("Start game button not found in the DOM");
     }
 }
 
@@ -285,7 +285,7 @@ function updateStartGameButton(gameState, playerNumber, player1Ready, player2Rea
     const startGameBtnContainer = document.getElementById('start-game-btn-container');
     
     if (!startGameBtn || !startGameBtnContainer) {
-        console.error("Start game button or its container not found in the DOM");
+        console.warn("Start game button or its container not found in the DOM");
         return;
     }
     
