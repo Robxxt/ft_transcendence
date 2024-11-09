@@ -8,12 +8,10 @@ from django.utils.dateparse import parse_datetime
 from django.http import JsonResponse
 from django.db import transaction
 from backend_app.models import (User,
-                                TableMatch,
                                 UserMetric,
                                 GameRoom,
                                 TictacGame, PongGame)
 from backend_app.api.serializer import (RegisterSerializer,
-                                        TableMatchSerializer,
                                         UserMetricSerializer,
                                         UserSerializer,
                                         GameRoomSerializer,
@@ -192,10 +190,6 @@ class UserListCreate(generics.ListCreateAPIView):
 class UserDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-
-class TableMatchViewSet(viewsets.ModelViewSet):
-    queryset = TableMatch.objects.all()
-    serializer_class = TableMatchSerializer
 
 class UserMetricViewSet(viewsets.ModelViewSet):
     queryset = UserMetric.objects.all()

@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth.hashers import make_password, check_password
 from rest_framework.authtoken.models import Token
-from backend_app.models import User, TableMatch, UserMetric, GameRoom, TictacGame, PongGame
+from backend_app.models import User, UserMetric, GameRoom, TictacGame, PongGame
 from django.conf import settings
 import os
 
@@ -154,11 +154,6 @@ class ChangeAvatarSerialzer(serializers.Serializer):
 
         instance.save()
         return instance
-
-class TableMatchSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = TableMatch
-        fields = '__all__'
 
 class UserMetricSerializer(serializers.ModelSerializer):
     class Meta:
