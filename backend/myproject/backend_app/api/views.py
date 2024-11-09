@@ -8,12 +8,10 @@ from django.utils.dateparse import parse_datetime
 from django.http import JsonResponse
 from django.db import transaction
 from backend_app.models import (User,
-                                TableMatch,
                                 UserMetric,
                                 GameRoom,
                                 TictacGame, PongGame)
 from backend_app.api.serializer import (RegisterSerializer,
-                                        TableMatchSerializer,
                                         UserMetricSerializer,
                                         UserSerializer,
                                         GameRoomSerializer,
@@ -40,16 +38,12 @@ from django.utils.decorators import method_decorator
 
 @api_view(['POST'])
 def register(request):
-    print("h0")
     if request.method == 'POST':
-        print("h1")
         serializer = RegisterSerializer(data=request.data)
         if serializer.is_valid():
-            print("h2")
             user = serializer.save()
             token = Token.objects.create(user=user)
             return Response({'error': 0, 'token': token.key}, status=status.HTTP_201_CREATED)
-        print("h3")
         return Response({'error': 1, 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
@@ -197,10 +191,6 @@ class UserDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
-class TableMatchViewSet(viewsets.ModelViewSet):
-    queryset = TableMatch.objects.all()
-    serializer_class = TableMatchSerializer
-
 class UserMetricViewSet(viewsets.ModelViewSet):
     queryset = UserMetric.objects.all()
     serializer_class = UserMetricSerializer
@@ -237,7 +227,6 @@ class GameRoomView(APIView):
             serializer = GameRoomSerializer(room)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
-            print(f"Error occurred: {e}")
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def get(self, request, room_id):

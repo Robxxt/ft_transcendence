@@ -147,7 +147,6 @@ function handleChangePasswordDiv(app, username) {
 
 function handleChangeAvatarDiv(app, username) {
     const token = localStorage.getItem('token');
-    console.log("Auth Token:", token);
     const avatarForm = document.getElementById("avatarForm");
     const avatarInput = document.getElementById("avatarInput");
     const avatarUploadStatus = document.getElementById("avatarUploadStatus");

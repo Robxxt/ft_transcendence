@@ -72,11 +72,10 @@ export async function loadAvatar(username) {
                 'Authorization': `Token ${token}`
             }
         });
-        console.log('Fetch response:', response);
 
         if (response.ok) {
             let blob = await response.blob();
-            console.log("Blob:", blob);
+            // console.log("Blob:", blob);
             const imageUrl = URL.createObjectURL(blob);
             const imgElement = document.getElementById("avatar");
             
