@@ -23,7 +23,9 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['transcendence.com', '0.0.0.0','192.168.65.1', "localhost", "django"]
+intra_ip = os.environ.get("IP_ADDRESS")
+
+ALLOWED_HOSTS = ['transcendence.com', '0.0.0.0','192.168.65.1', "localhost", "django", intra_ip]
 
 CSRF_TRUSTED_ORIGINS = [
     'https://localhost',
